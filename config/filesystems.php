@@ -60,6 +60,27 @@ return [
             'report' => false,
         ],
 
+        // Portados desde el proyecto 5.5: documentos de clientes (DownloadController,
+        // DocumentoClienteObserver, FileUploadTrait) y plantillas .docx (GenerarDocumentacionTrait)
+        // viven fuera de storage/app, publicados bajo public/.
+        'uploads' => [
+            'driver' => 'local',
+            'root' => public_path('uploads'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/uploads',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
+        'templates' => [
+            'driver' => 'local',
+            'root' => public_path('templates'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/templates',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*

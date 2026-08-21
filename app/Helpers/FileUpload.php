@@ -5,9 +5,9 @@ use Illuminate\Support\Facades\Storage;
  
 class FileUploadHelper {
 
-    public static function path($dirPath='',$disk = 'uploads') 
+    public static function path($dirPath='',$disk = 'uploads')
     {
-    	return Storage::disk($disk)->getDriver()->getAdapter()->getPathPrefix().$dirPath;
+    	return Storage::disk($disk)->path($dirPath);
     }
 
 	public static function fullUrl($dirPath='',$filename='',$disk = 'uploads')
