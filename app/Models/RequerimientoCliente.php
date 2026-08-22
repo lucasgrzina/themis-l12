@@ -145,7 +145,7 @@ class RequerimientoCliente extends Model
 
     public function getFechaMatCausanteAttribute($value)
     {
-        return ($value ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$value)->format('d/m/Y') : "");
+        return ($value ? \Carbon\Carbon::parse($value)->format('d/m/Y') : "");
     }
     public function setFechaMatCausanteAttribute($value)
     {
@@ -154,7 +154,7 @@ class RequerimientoCliente extends Model
 
     public function getFechaFallecimientoCausanteAttribute($value)
     {
-        return ($value ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$value)->format('d/m/Y') : "");
+        return ($value ? \Carbon\Carbon::parse($value)->format('d/m/Y') : "");
     }
     public function setFechaFallecimientoCausanteAttribute($value)
     {
@@ -163,7 +163,7 @@ class RequerimientoCliente extends Model
 
     public function getFechaConvCausanteAttribute($value)
     {
-        return ($value ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$value)->format('m/Y') : "");
+        return ($value ? \Carbon\Carbon::parse($value)->format('m/Y') : "");
     }
     public function setFechaConvCausanteAttribute($value)
     {
@@ -172,7 +172,7 @@ class RequerimientoCliente extends Model
 
     public function getFechaTurnoAttribute($value)
     {
-        return ($value ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$value)->format('d/m/Y') : "");
+        return ($value ? \Carbon\Carbon::parse($value)->format('d/m/Y') : "");
     }
     public function setFechaTurnoAttribute($value)
     {

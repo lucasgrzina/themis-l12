@@ -55,7 +55,7 @@ class ObservacionCliente extends Model
 
     public function getCreatedAtAttribute($value)
     {
-        return ($value ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$value)->format('d/m/Y') : null);
+        return ($value ? \Carbon\Carbon::parse($value)->format('d/m/Y') : null);
     }   
 
     public function cliente() 

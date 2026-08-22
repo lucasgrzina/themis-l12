@@ -188,7 +188,7 @@ class Cliente extends Model
 
     public function getFechaNacAttribute($value)
     {
-        return ($value ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$value)->format('d/m/Y') : '');
+        return ($value ? \Carbon\Carbon::parse($value)->format('d/m/Y') : '');
     }
     public function setFechaNacAttribute($value)
     {
@@ -197,7 +197,7 @@ class Cliente extends Model
 
     public function getFechaIngPaisAttribute($value)
     {
-        return ($value ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$value)->format('d/m/Y') : "");
+        return ($value ? \Carbon\Carbon::parse($value)->format('d/m/Y') : "");
     }
     public function setFechaIngPaisAttribute($value)
     {
@@ -206,7 +206,7 @@ class Cliente extends Model
 
     public function getFechaEntrevistaAttribute($value)
     {
-        return ($value ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$value)->format('d/m/Y') : "");
+        return ($value ? \Carbon\Carbon::parse($value)->format('d/m/Y') : "");
     }
     public function setFechaEntrevistaAttribute($value)
     {
@@ -215,7 +215,7 @@ class Cliente extends Model
 
     public function getFechaVtoDirectorioAttribute($value)
     {
-        return ($value ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$value)->format('d/m/Y') : "");
+        return ($value ? \Carbon\Carbon::parse($value)->format('d/m/Y') : "");
     }
     public function setFechaVtoDirectorioAttribute($value)
     {

@@ -57,7 +57,7 @@ class ResponsableRequerimiento extends Model
 
     public function getFechaAsignacionAttribute($value)
     {
-        return ($value ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$value)->format('d/m/Y') : "");
+        return ($value ? \Carbon\Carbon::parse($value)->format('d/m/Y') : "");
     }
     public function setFechaAsignacionAttribute($value)
     {

@@ -64,7 +64,7 @@ class AvisoCliente extends Model
 
     public function getFechaAttribute($value)
     {
-        return ($value ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$value)->toIso8601String() : null);
+        return ($value ? \Carbon\Carbon::parse($value)->toIso8601String() : null);
     }
     public function setFechaAttribute($value)
     {
@@ -82,7 +82,7 @@ class AvisoCliente extends Model
             return "DESCARTADO";
         }
         $today = \Carbon\Carbon::now();
-        $fecha = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$this->attributes['fecha']);
+        $fecha = \Carbon\Carbon::parse($this->attributes['fecha']);
         if ($fecha->gte($today))
         {
             return "PENDIENTE";

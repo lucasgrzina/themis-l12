@@ -63,7 +63,7 @@ class TramiteConciliacion extends Model
     }
     public function getCreatedAtAttribute($value)
     {
-        return ($value ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$value)->format('d/m/Y H:i:s') : "");
+        return ($value ? \Carbon\Carbon::parse($value)->format('d/m/Y H:i:s') : "");
     }
     public function tramite() 
     {
