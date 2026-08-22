@@ -95,7 +95,6 @@ class TramiteCliente extends Model
         'usuario_archivo_id' => 'integer',
         'fecha_ingreso' => 'date',
         'fecha_egreso' => 'date',
-        'beneficios' => 'array',
         'tramite_ant_id' => 'integer',
         'tramite_sig_id' => 'integer',
         'fecha_vto' => 'date',

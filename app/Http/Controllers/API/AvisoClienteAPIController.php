@@ -120,9 +120,12 @@ class AvisoClienteAPIController extends AppBaseController
                 LEFT JOIN tipo_tramites tt ON v.tipo_tramite_id = tt.id
                 ORDER BY fecha_vto ASC, cliente_id ASC
             ";
+            $data = \DB::select($sql);
         }
-
-        $data = \DB::select(\DB::raw($sql));
+        else
+        {
+            $data = [];
+        }
 
         return ['data' => $data];
 
