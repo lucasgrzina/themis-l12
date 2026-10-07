@@ -1,0 +1,71 @@
+@import url("https://fonts.googleapis.com/css?family=Ruda:400,700,900");
+@import "node_modules/font-awesome/scss/font-awesome.scss";
+
+// admin-lte-sass ships its glyphicons fonts under build/fonts/bootstrap, but its own
+// _variables.scss computes $icon-font-path relative to build/bootstrap/scss/bootstrap,
+// which points at a folder that doesn't exist. Override with the real relative path.
+$icon-font-path: "../../../fonts/bootstrap/";
+
+@import "node_modules/admin-lte-sass/build/bootstrap/scss/_bootstrap.scss";
+/*ADMIN LTE*/
+@import "node_modules/admin-lte-sass/build/scss/variables";
+@import "node_modules/admin-lte-sass/build/scss/core";
+
+body {
+  font-family: 'Ruda', 'Helvetica Neue', Helvetica, Arial, sans-serif!important;
+}
+/* H1 - H6 font */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  font-family: 'Ruda', sans-serif;
+}
+
+@import "node_modules/admin-lte-sass/build/scss/mixins";
+@import "node_modules/admin-lte-sass/build/scss/miscellaneous";
+// //COMPONENTS
+// //-----------
+@import "node_modules/admin-lte-sass/build/scss/components/header";
+@import "node_modules/admin-lte-sass/build/scss/components/sidebar";
+@import "node_modules/admin-lte-sass/build/scss/components/sidebar-mini";
+@import "node_modules/admin-lte-sass/build/scss/components/control-sidebar";
+@import "node_modules/admin-lte-sass/build/scss/components/dropdown";
+@import "node_modules/admin-lte-sass/build/scss/components/forms";
+@import "node_modules/admin-lte-sass/build/scss/components/progress-bars";
+@import "node_modules/admin-lte-sass/build/scss/components/small-box";
+@import "node_modules/admin-lte-sass/build/scss/components/boxes";
+@import "node_modules/admin-lte-sass/build/scss/components/info-box";
+@import "node_modules/admin-lte-sass/build/scss/components/timeline";
+@import "node_modules/admin-lte-sass/build/scss/components/buttons";
+@import "node_modules/admin-lte-sass/build/scss/components/callout";
+@import "node_modules/admin-lte-sass/build/scss/components/alerts";
+@import "node_modules/admin-lte-sass/build/scss/components/navs";
+@import "node_modules/admin-lte-sass/build/scss/components/products";
+@import "node_modules/admin-lte-sass/build/scss/components/table";
+@import "node_modules/admin-lte-sass/build/scss/components/labels";
+@import "node_modules/admin-lte-sass/build/scss/components/direct-chat";
+@import "node_modules/admin-lte-sass/build/scss/components/users-list";
+@import "node_modules/admin-lte-sass/build/scss/components/carousel";
+@import "node_modules/admin-lte-sass/build/scss/components/modal";
+@import "node_modules/admin-lte-sass/build/scss/components/social-widgets";
+@import "node_modules/admin-lte-sass/build/scss/pages/login_and_register";
+
+@import "node_modules/admin-lte-sass/build/scss/plugins/select2";
+
+@import 'resources/assets/css/skin-blue-light';
+
+.skin-blue-light .main-header li.user-header {
+    background-color: #369;
+}
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header {
+	    height: 85px;
+}
