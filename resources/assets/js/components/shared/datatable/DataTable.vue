@@ -129,7 +129,8 @@ export default {
                 class: { 'box-body': true, 'no-padding': true, 'table-responsive': true}
               },
               [
-                this.renderVuetable(h)    
+                // No montar Vuetable hasta tener apiUrl: evita un request fantasma a '' en el mount
+                (this.apiUrl ? this.renderVuetable(h) : null)
               ]
             ),
             h('div',
@@ -202,6 +203,7 @@ export default {
             sortOrder: this.sortOrder,
             appendParams: this.appendParams,
             httpOptions: this.httpOptions,
+            httpFetch: this.httpFetch,
             loadOnStart: this.loadOnStart,
             css: this.css.table,
             noDataTemplate: ' '
@@ -241,6 +243,22 @@ export default {
           })
         ]
       )
+    },
+    // Cancela el request anterior para que una respuesta vieja no pise a la nueva
+    httpFetch (apiUrl, httpOptions) {
+      if (this.cancelSource) {
+        this.cancelSource.cancel()
+      }
+      const source = axios.CancelToken.source()
+      this.cancelSource = source
+      return axios.get(apiUrl, Object.assign({}, httpOptions, { cancelToken: source.token }))
+        .catch((error) => {
+          if (axios.isCancel(error)) {
+            // promesa pendiente: ni success ni failed, el request nuevo actualiza la tabla
+            return new Promise(() => {})
+          }
+          throw error
+        })
     },
     // ------------------
     allcap (value) {
@@ -316,7 +334,7 @@ export default {
       this.$refs.vuetable.toggleDetailRow(data.id)
     },
     onLoadError (error) {
-      if (error.response.status === 401) {
+      if (error && error.response && error.response.status === 401) {
         this.$store.dispatch('logoutRequest')
             .then(() => {
                 this.$router.push({name: 'login'});
@@ -338,7 +356,7 @@ export default {
     },
 
     onFilterSet (filterText) {
-      this.appendParams.search = filterText
+      this.$set(this.appendParams, 'search', filterText)
       Vue.nextTick( () => {
         if (this.$refs.vuetable) {
           this.$refs.vuetable.refresh()
@@ -346,7 +364,7 @@ export default {
       })
     },
     onFilterReset () {
-      delete this.appendParams.search
+      this.$delete(this.appendParams, 'search')
       Vue.nextTick( () => {
         if (this.$refs.vuetable) {
           this.$refs.vuetable.refresh()

@@ -809,6 +809,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! axios */ "./node_modules/axios/lib/axios.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var vue_events__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-events */ "./node_modules/vue-events/dist/index.js");
 /* harmony import */ var vuetable_2_src_components_Vuetable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuetable-2/src/components/Vuetable */ "./node_modules/vuetable-2/src/components/Vuetable.vue");
@@ -925,7 +926,9 @@ vue__WEBPACK_IMPORTED_MODULE_9__["default"].component('top-actions', _TopActions
         'no-padding': true,
         'table-responsive': true
       }
-    }, [this.renderVuetable(h)]), h('div', {
+    }, [
+    // No montar Vuetable hasta tener apiUrl: evita un request fantasma a '' en el mount
+    this.apiUrl ? this.renderVuetable(h) : null]), h('div', {
       "class": {
         'box-footer': true,
         clearfix: true
@@ -988,6 +991,7 @@ vue__WEBPACK_IMPORTED_MODULE_9__["default"].component('top-actions', _TopActions
           sortOrder: this.sortOrder,
           appendParams: this.appendParams,
           httpOptions: this.httpOptions,
+          httpFetch: this.httpFetch,
           loadOnStart: this.loadOnStart,
           css: this.css.table,
           noDataTemplate: ' '
@@ -1023,6 +1027,23 @@ vue__WEBPACK_IMPORTED_MODULE_9__["default"].component('top-actions', _TopActions
           'vuetable-pagination:change-page': this.onChangePage
         }
       })]);
+    },
+    // Cancela el request anterior para que una respuesta vieja no pise a la nueva
+    httpFetch: function httpFetch(apiUrl, httpOptions) {
+      if (this.cancelSource) {
+        this.cancelSource.cancel();
+      }
+      var source = axios__WEBPACK_IMPORTED_MODULE_10__["default"].CancelToken.source();
+      this.cancelSource = source;
+      return axios__WEBPACK_IMPORTED_MODULE_10__["default"].get(apiUrl, Object.assign({}, httpOptions, {
+        cancelToken: source.token
+      }))["catch"](function (error) {
+        if (axios__WEBPACK_IMPORTED_MODULE_10__["default"].isCancel(error)) {
+          // promesa pendiente: ni success ni failed, el request nuevo actualiza la tabla
+          return new Promise(function () {});
+        }
+        throw error;
+      });
     },
     // ------------------
     allcap: function allcap(value) {
@@ -1091,7 +1112,7 @@ vue__WEBPACK_IMPORTED_MODULE_9__["default"].component('top-actions', _TopActions
     },
     onLoadError: function onLoadError(error) {
       var _this = this;
-      if (error.response.status === 401) {
+      if (error && error.response && error.response.status === 401) {
         this.$store.dispatch('logoutRequest').then(function () {
           _this.$router.push({
             name: 'login'
@@ -1115,7 +1136,7 @@ vue__WEBPACK_IMPORTED_MODULE_9__["default"].component('top-actions', _TopActions
     },
     onFilterSet: function onFilterSet(filterText) {
       var _this3 = this;
-      this.appendParams.search = filterText;
+      this.$set(this.appendParams, 'search', filterText);
       vue__WEBPACK_IMPORTED_MODULE_9__["default"].nextTick(function () {
         if (_this3.$refs.vuetable) {
           _this3.$refs.vuetable.refresh();
@@ -1124,7 +1145,7 @@ vue__WEBPACK_IMPORTED_MODULE_9__["default"].component('top-actions', _TopActions
     },
     onFilterReset: function onFilterReset() {
       var _this4 = this;
-      delete this.appendParams.search;
+      this.$delete(this.appendParams, 'search');
       vue__WEBPACK_IMPORTED_MODULE_9__["default"].nextTick(function () {
         if (_this4.$refs.vuetable) {
           _this4.$refs.vuetable.refresh();
