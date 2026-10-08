@@ -26,6 +26,32 @@ $host = (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
             .main-sidebar {
                 z-index: 1031;
             }
+            @if(app()->environment('local'))
+            /* desplaza la app (incluidos header/sidebar fixed) para que la barra no los tape */
+            #app { transform: translateY(16px); }
+            @keyframes ambiente-prueba-parpadeo {
+                0%, 49%   { background: #e00000bf; color: #ffffff85; }
+                50%, 100% { background: #ffffff85;    color: #e00000bf; }
+            }
+            .ambiente-prueba {
+                position: fixed;
+                left: 0;
+                right: 0;
+                top: 0;
+                height: 16px;
+                line-height: 16px;
+                background: #e00000bf;
+                color: #fff;
+                font-size: 9px;
+                font-weight: bold;
+                font-style: italic;
+                text-align: center;
+                text-transform: uppercase;
+                z-index: 99999;
+                pointer-events: none;
+                animation: ambiente-prueba-parpadeo 1s steps(1, end) infinite;
+            }
+            @endif
         </style>
         <script>
             window.Laravel = {!! json_encode([
@@ -48,6 +74,9 @@ $host = (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
             </p>
         </div>
         <div id="app"></div>
+        @if(app()->environment('local'))
+            <div class="ambiente-prueba">AMBIENTE DE PRUEBA</div>
+        @endif
         @if($host !== 'themis.local')
             <script src="{{ asset('/js/app.js') }}?version={{ env('ASSETS_VERSION') }}"></script>
         @else
