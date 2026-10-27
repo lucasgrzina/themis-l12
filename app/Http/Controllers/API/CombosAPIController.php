@@ -36,7 +36,7 @@ class CombosAPIController extends AppBaseController
 {
     /** @var  RolesRepository */
     private $repository;
-    public function timeClientes($con_horas = false, ClienteRepository $repo,Request $request)
+    public function timeClientes(ClienteRepository $repo, Request $request, $con_horas = false)
     {
         $repo->pushCriteria(new RequestCriteria($request));
         $data = $repo->orderBy('nombre_completo')->scopeQuery(function($q) use ($con_horas) {
@@ -408,7 +408,8 @@ class CombosAPIController extends AppBaseController
         $data = [ 
             'gestion' => $gestionRepo->scopeQuery(function($q) {
                 return $q->whereVigente(true)->orderBy('nombre','asc'); 
-            })->all(['id','nombre'])
+            })->all(['id','nombre']),
+            'gestion_default' => config('themis.time.gestion_default')
         ];
 
         return $this->sendResponse($data, 'La operacion finalizo con exito');

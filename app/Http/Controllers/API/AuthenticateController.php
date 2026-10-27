@@ -30,4 +30,20 @@ class AuthenticateController extends AppBaseController
 
         return response()->json(compact('token'));
     }
+
+    /**
+     * Renueva el token JWT a partir del token actual (valido o expirado dentro
+     * de refresh_ttl). Usado por la webapp de carga para mantener la sesion
+     * sin obligar a reloguear cada hora.
+     */
+    public function refresh()
+    {
+        try {
+            $token = JWTAuth::parseToken()->refresh();
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'Could not refresh token'], 401);
+        }
+
+        return response()->json(compact('token'));
+    }
 }

@@ -182,6 +182,7 @@
             <a>
               <i class="">&nbsp;</i>
               <span class="page">Horas</span>
+              <span v-if="timerPendientes > 0" class="pull-right-container"><small class="label pull-right bg-yellow" title="Cargas sin vincular (administradores: de todo el equipo)">{{ timerPendientes }}</small></span>
             </a>
           </router-link>          
         </template>
@@ -436,7 +437,11 @@ export default {
   computed: {
     ...mapGetters([
       'isMember','isTimeLevel'
-    ])      
+    ]),
+    timerPendientes () {
+      let t = this.$store.state.timer
+      return this.isTimeLevel(5) && t.pendientesEquipo !== null ? t.pendientesEquipo : t.pendientes
+    }
   },
   methods: {
     canViewTime () {

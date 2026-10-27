@@ -28,16 +28,30 @@ class TimeHorasCriteria implements CriteriaInterface
      */
     public function apply($model, \Prettus\Repository\Contracts\RepositoryInterface $repository)
     {
-        if (request()->get('desde','') !== '')
+        $soloPendientes = request()->get('estado') === 'pendiente';
+        if ($soloPendientes)
+        {
+            $model->where('estado','pendiente');
+        }
+        else
+        {
+            $model->where('estado','!=','corriendo');
+        }
+
+        if (!$soloPendientes && request()->get('desde','') !== '')
         {
             $model->where('fecha','>=',Carbon::createFromFormat('d/m/Y',request()->get('desde'))->format('Y-m-d'));
         }
-        if (request()->get('hasta','') !== '')
+        if (!$soloPendientes && request()->get('hasta','') !== '')
         {
             $model->where('fecha','<=',Carbon::createFromFormat('d/m/Y',request()->get('hasta'))->format('Y-m-d'));
         }
 
-        if (request()->has('user_id'))
+        if ($soloPendientes && request()->user()->time_level !== 5)
+        {
+            $model->where('user_id',request()->user()->id);
+        }
+        elseif (request()->has('user_id'))
         {
             if (request()->get('user_id',null) !== null)
             {

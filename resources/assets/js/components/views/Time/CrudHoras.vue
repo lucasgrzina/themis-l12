@@ -2,6 +2,26 @@
 <div>
 	<filter-bar @time-horas:create="create" @time-horas:filter-set="doFilter" :filtros="filtros"></filter-bar>
 
+	<div class="box box-warning" v-if="isTimeLevel(5) && filtros.estado === 'pendiente'">
+		<div class="box-header with-border"><h3 class="box-title">Pendientes de vincular por usuario</h3></div>
+		<div class="box-body table-responsive no-padding">
+			<table class="table table-hover">
+				<tbody>
+					<tr><th>Usuario</th><th class="text-center">Cargas</th><th class="text-center">Minutos</th><th class="text-center">Más antigua</th></tr>
+					<tr v-for="r in resumen" style="cursor:pointer" @click="filtrarUsuario(r.user_id)">
+						<td>{{ r.name }}</td>
+						<td class="text-center">{{ r.cantidad }}</td>
+						<td class="text-center">{{ r.minutos }}</td>
+						<td class="text-center">{{ r.mas_antigua | dateFormat }}</td>
+					</tr>
+					<tr v-if="resumen.length === 0"><td colspan="4" class="text-center">No hay cargas pendientes</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<timer-bar v-if="isTimeLevel(5) || isTimeLevel(1)" @show-pendientes="verPendientes"></timer-bar>
+
     <div class="box">
 	    <div v-if="firstFilter" class="box-body table-responsive no-padding">
 	        <table class="table">
@@ -19,9 +39,9 @@
 		            <tr v-for="(item,index) in list.data.data"  v-if="!list.loading">
 		            	<td class="text-center">{{ item.fecha | dateFormat }}</td>
 		            	<td>{{ item.minutos }}</td>
-		            	<td>{{ item.usuario.name }}</td>
-		            	<td>{{ item.cliente.nombre_completo }}</td>
-		            	<td>{{ item.gestion.nombre }}</td>
+		            	<td>{{ item.usuario ? item.usuario.name : '' }}</td>
+		            	<td>{{ item.cliente ? item.cliente.nombre_completo : '' }}<span v-if="item.estado === 'pendiente'" class="label bg-yellow">Sin vincular</span></td>
+		            	<td>{{ item.gestion ? item.gestion.nombre : '' }}</td>
 		            	<td>{{ item.referencia }}</td>
 		            	<td class="text-center">
 		            		<a href="javascript:void(0)" v-if="isTimeLevel(5)" @click="facturar(item)" style="font-size:20px;line-height:20px;color: #605ca8;">
@@ -79,7 +99,7 @@
 				</div>
 				<div class="form-group col-sm-3" :class="{'has-error': errors.has('minutos')}">
 					<label for="minutos">Minutos</label>
-					<input type="number" name="minutos" v-model="selectedItem.minutos" min="10" step="5" class="form-control input-sm" v-validate="'required'" data-vv-validate-on="none">
+					<input type="number" name="minutos" v-model="selectedItem.minutos" min="5" step="5" class="form-control input-sm" v-validate="'required'" data-vv-validate-on="none">
 					<span class="help-block" v-show="errors.has('minutos')">{{ errors.first('minutos') }}</span>
 				</div>	
 		  		<div class="form-group col-sm-6" :class="{'has-error': errors.has('cliente_id')}">
@@ -97,6 +117,16 @@
 		            <span class="help-block" v-show="errors.has('cliente_id')">{{ errors.first('cliente_id') }}</span>
 	            </div>
 	            <div class="clearfix"></div>
+				<div class="form-group col-sm-3">
+					<label for="hora_inicio">Hora desde</label>
+					<input type="time" name="hora_inicio" v-model="selectedItem.hora_inicio" @change="onHoraChange" class="form-control input-sm">
+				</div>
+				<div class="form-group col-sm-3">
+					<label for="hora_fin">Hora hasta</label>
+					<input type="time" name="hora_fin" v-model="selectedItem.hora_fin" @change="onHoraChange" class="form-control input-sm">
+				</div>
+				<div class="col-sm-6"><p class="help-block" style="margin-top:25px;">Opcional: al indicar desde/hasta se calculan los minutos (redondeo a 5).</p></div>
+				<div class="clearfix"></div>
 				<div class="form-group col-sm-6" :class="{'has-error': errors.has('gestion_id')}">
 					<label for="gestion_id">Gestión</label>
 					<select name="gestion_id" v-model="selectedItem.gestion_id" class="form-control">
@@ -141,6 +171,7 @@ import Vue from 'vue'
 import moment from 'moment'
 import { modal } from 'vue-strap'
 import FilterBar from './includes/FilterBarHoras'
+import TimerBar from './includes/TimerBar'
 import config from '../../../config'
 import Api from '../../../api'
 import vSelect from "vue-select"
@@ -153,6 +184,7 @@ export default {
   components: {
     modal,
     FilterBar,
+    TimerBar,
     vSelect,
     Datepicker,
     pagination
@@ -175,8 +207,10 @@ export default {
 	        desde: moment().startOf('month').format('DD/MM/YYYY'),
 	        hasta: moment().endOf('month').format('DD/MM/YYYY'),   
 			page: 1,
-			cliente_id: null
-		},		
+			cliente_id: null,
+			estado: null
+		},
+		resumen: [],		
 		amModal: {
 			title: 'Crear/Editar Hora',
 			submited: false,
@@ -210,9 +244,32 @@ export default {
   },    
 	mounted () {
 		this.apiUrl = config.serverURI + this.uri;
+		this.$events.$on('time-timer:finished', this.onTimerFinished);
 	},  
 
+  beforeDestroy () {
+  	this.$events.$off('time-timer:finished', this.onTimerFinished);
+  },
   methods: {
+	onTimerFinished() {
+		if (this.firstFilter) this.getData();
+	},
+	onHoraChange() {
+		let i = this.selectedItem.hora_inicio, f = this.selectedItem.hora_fin;
+		if (!i || !f) return;
+		let diff = moment(f, 'HH:mm').diff(moment(i, 'HH:mm'), 'minutes');
+		if (diff > 0) {
+			this.$set(this.selectedItem, 'minutos', Math.max(5, Math.ceil(diff / 5) * 5));
+		}
+	},
+	filtrarUsuario(userId) {
+		this.filtros.user_id = userId;
+		this.doFilter();
+	},
+	getResumen() {
+		if (!this.isTimeLevel(5)) return;
+		Api.get(this.uri.concat('pendientes-resumen')).then(resp => { this.resumen = resp.data; });
+	},
 	doFilter() {
 		this.firstFilter = true;
 		this.filtros.page = 1;
@@ -220,7 +277,7 @@ export default {
     	this.errors.clear('filtros');
 
 		this.$validator.validateAll('filtros').then((result) => {
-     	    if (result && this.errors.items.length < 1) {
+     	    if (result) {
      	    	this.getData();
 	        } else {
 	        	this.list.loading = false;
@@ -231,6 +288,7 @@ export default {
 
 	}, 
 	getData() {
+		if (this.filtros.estado === 'pendiente') this.getResumen();
     	this.list.loading = true;
     	Api.post(this.uri.concat('filtrar'),this.filtros).then((result) => {
     		this.list.data.data.length = 0;
@@ -291,6 +349,7 @@ export default {
 		        		.then((result) => {
 		        				this.$store.dispatch('addTimeClienteData',this.selectedItem.cliente)
 		        				this.getData();
+		        				this.$store.dispatch('loadTimer');
 		        				resolve()
 		        				_this.closeAmModal();
 		        				this.$store.dispatch('showSuccessNotification',result.data.message)
@@ -323,6 +382,7 @@ export default {
 	        			dialog.close()
 	        			this.$store.dispatch('showSuccessNotification',result.data.message)
 	    				this.getData()
+	    				this.$store.dispatch('loadTimer')
 	        		},() => {
 	        			dialog.close()
 	        		})  			
@@ -349,15 +409,25 @@ export default {
 	      	id: 0,
 	      	gestion: null,
 	      	referenciadb: null,
-	      	referencia: null
+	      	referencia: 'Temas Varios',
+	      	minutos: 15,
+	      	hora_inicio: item.inicio ? moment(item.inicio).format('HH:mm') : null,
+	      	hora_fin: item.fin ? moment(item.fin).format('HH:mm') : null
 	    },item);
+	    if (!_this.selectedItem.referencia) _this.selectedItem.referencia = 'Temas Varios';
 
-	    this.clearErrors()   
+	    this.clearErrors()
 	    this.amModal.loaded = false;
 	    this.amModal.show = true
-		
+
 		Api.combos('time/am-horas').then(resp => {
 			_this.info.gestion = resp.data.gestion
+			if (!_this.selectedItem.gestion_id) {
+				let def = _.find(resp.data.gestion, g => g.nombre === resp.data.gestion_default)
+				if (def) {
+					_this.$set(_this.selectedItem, 'gestion_id', def.id)
+				}
+			}
 			this.amModal.loaded = true;
 			
 		});
@@ -371,6 +441,7 @@ export default {
     		show: false,
     		submited: false
     	})
+    	this.clearErrors();
     	this.resetInfo();
     	//this.reset()
     },
@@ -381,6 +452,9 @@ export default {
         loading(true)
         Api.combos('time/clientes?search=' + search).then(resp => {
            vm.info.clientes.data = resp.data
+           loading(false)
+        }).catch(() => {
+           vm.info.clientes.data = []
            loading(false)
         })
     }, 500), 
@@ -403,6 +477,10 @@ export default {
     resetInfo() {
 	    this.info.referencias.length = 0;
 	    this.info.clientes.length = 0;
+    },
+    verPendientes() {
+    	this.filtros.estado = 'pendiente';
+    	this.doFilter();
     },
     facturar(item) {
     	item.facturar = !item.facturar;

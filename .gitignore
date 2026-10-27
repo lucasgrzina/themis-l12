@@ -24,3 +24,5 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 /database/bkp/*.sql
+/storage/*.sql
+/.codegraph

@@ -38,7 +38,10 @@ class TimeHora extends Model
         'facturar',
         'descripcion',
         'fecha',
-        'minutos'
+        'minutos',
+        'estado',
+        'inicio',
+        'fin'
     ];
 
     /**
@@ -54,7 +57,9 @@ class TimeHora extends Model
         'facturar' => 'boolean',
         'descripcion' => 'string',
         'fecha' => 'date',
-        'minutos' => 'integer'
+        'minutos' => 'integer',
+        'inicio' => 'datetime',
+        'fin' => 'datetime'
     ];
 
     /**

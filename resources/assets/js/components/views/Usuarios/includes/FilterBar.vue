@@ -2,10 +2,10 @@
   <div class="filter-bar">
       <form class="form-inline">
           <div class="form-group" style="max-width: 250px;">
-            <input type="text" v-model="filter.search" class="form-control input-sm pull-right" @keyup.enter="doFilter">
+            <input type="text" v-model="filter.search" class="form-control input-sm pull-right" @keyup.enter="doFilter" @input="debouncedFilter">
           </div>        
           <div class="form-group" style="max-width: 250px;">
-            <select v-model="filter.time" class="form-control input-sm" name="time" placeholder="Time">
+            <select v-model="filter.time" class="form-control input-sm" name="time" placeholder="Time" @change="doFilter">
               <option :value="null">Todos los usuarios</option>
               <optgroup label="Time">
                 <option :value="'todos'">Todos los niveles</option>
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce'
 export default {
   data () {
     return {
@@ -35,14 +36,23 @@ export default {
       }
     }
   },
+  created () {
+    this.debouncedFilter = debounce(this.doFilter, 400)
+  },
+  beforeDestroy () {
+    this.debouncedFilter.cancel()
+  },
   methods: {
     doFilter () {
+      this.debouncedFilter.cancel()
       this.$emit('usuarios:filter-set',this.filter)
       //this.$events.fire('filter-set', this.filterText)
     },
     resetFilter () {
-      this.filterText = ''
-      this.$emit('usuarios:filter-reset')
+      this.debouncedFilter.cancel()
+      this.filter.search = ''
+      this.filter.time = null
+      this.doFilter()
       //this.$events.fire('filter-reset')
     }
   }

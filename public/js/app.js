@@ -333,7 +333,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'SidebarName',
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)(['isMember', 'isTimeLevel'])),
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)(['isMember', 'isTimeLevel'])), {}, {
+    timerPendientes: function timerPendientes() {
+      var t = this.$store.state.timer;
+      return this.isTimeLevel(5) && t.pendientesEquipo !== null ? t.pendientesEquipo : t.pendientes;
+    }
+  }),
   methods: {
     canViewTime: function canViewTime() {
       return this.isTimeLevel(1) || this.isTimeLevel(2) || this.isTimeLevel(5);
@@ -366,7 +371,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../config */ "./resources/assets/js/config/index.js");
 /* harmony import */ var _Sidebar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Sidebar */ "./resources/assets/js/components/Sidebar.vue");
 /* harmony import */ var _Notification_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Notification.vue */ "./resources/assets/js/components/Notification.vue");
@@ -375,12 +380,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _views_Usuarios_Profile_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./views/Usuarios/Profile.vue */ "./resources/assets/js/components/views/Usuarios/Profile.vue");
 /* harmony import */ var vue_events__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue-events */ "./node_modules/vue-events/dist/index.js");
 /* harmony import */ var _includes_TopMenuAvisos_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./includes/TopMenuAvisos.vue */ "./resources/assets/js/components/includes/TopMenuAvisos.vue");
+/* harmony import */ var _views_Time_includes_TimerWidget_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./views/Time/includes/TimerWidget.vue */ "./resources/assets/js/components/views/Time/includes/TimerWidget.vue");
+/* harmony import */ var _views_Time_includes_TimerDock_vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./views/Time/includes/TimerDock.vue */ "./resources/assets/js/components/views/Time/includes/TimerDock.vue");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
 
 
 
@@ -398,7 +407,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     Notification: _Notification_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
     modal: vue_strap__WEBPACK_IMPORTED_MODULE_3__.modal,
     Profile: _views_Usuarios_Profile_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
-    TopMenuAvisos: _includes_TopMenuAvisos_vue__WEBPACK_IMPORTED_MODULE_6__["default"]
+    TopMenuAvisos: _includes_TopMenuAvisos_vue__WEBPACK_IMPORTED_MODULE_6__["default"],
+    TimerWidget: _views_Time_includes_TimerWidget_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    TimerDock: _views_Time_includes_TimerDock_vue__WEBPACK_IMPORTED_MODULE_8__["default"]
   },
   created: function created() {
     this.$events.$on('close-edit-profile', this.closeProfileModal);
@@ -419,7 +430,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
     };
   },
-  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_7__.mapState)(['authUser'])), (0,vuex__WEBPACK_IMPORTED_MODULE_7__.mapGetters)(['hasAnyPerm'])),
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_9__.mapState)(['authUser'])), (0,vuex__WEBPACK_IMPORTED_MODULE_9__.mapGetters)(['hasAnyPerm'])),
   methods: {
     showProfileModal: function showProfileModal() {
       this.profileModal.selectedItem = {
@@ -879,6 +890,10 @@ vue__WEBPACK_IMPORTED_MODULE_9__["default"].component('top-actions', _TopActions
         return true;
       }
     },
+    liveSearch: {
+      type: Boolean,
+      "default": true
+    },
     actionPerm: {
       type: String,
       required: true
@@ -902,6 +917,9 @@ vue__WEBPACK_IMPORTED_MODULE_9__["default"].component('top-actions', _TopActions
         slot: 'slot-filter-bar'
       }
     }, [this.$slots['slot-filter-bar'] ? this.$slots['slot-filter-bar'] : h('filter-bar', {
+      props: {
+        live: this.liveSearch
+      },
       on: {
         'vuetable:filter-set': this.onFilterSet,
         'vuetable:filter-reset': this.onFilterReset
@@ -1184,19 +1202,54 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash/debounce */ "./node_modules/lodash/debounce.js");
+/* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash_debounce__WEBPACK_IMPORTED_MODULE_0__);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: {
+    // Filtra a medida que se tipea (con debounce) en vez de esperar al Enter/botón
+    live: {
+      type: Boolean,
+      "default": true
+    },
+    debounce: {
+      type: Number,
+      "default": 400
+    }
+  },
   data: function data() {
     return {
-      filterText: ''
+      filterText: '',
+      lastEmitted: ''
     };
   },
+  created: function created() {
+    this.debouncedFilter = lodash_debounce__WEBPACK_IMPORTED_MODULE_0___default()(this.doFilter, this.debounce);
+  },
+  beforeDestroy: function beforeDestroy() {
+    this.debouncedFilter.cancel();
+  },
   methods: {
+    onInput: function onInput() {
+      if (this.live) {
+        this.debouncedFilter();
+      }
+    },
     doFilter: function doFilter() {
-      this.$emit('vuetable:filter-set', this.filterText);
+      this.debouncedFilter.cancel();
+      var text = this.filterText.trim();
+      // evita requests repetidos si el valor efectivo no cambió
+      if (text === this.lastEmitted) {
+        return;
+      }
+      this.lastEmitted = text;
+      this.$emit('vuetable:filter-set', text);
       //this.$events.fire('filter-set', this.filterText)
     },
     resetFilter: function resetFilter() {
+      this.debouncedFilter.cancel();
       this.filterText = '';
+      this.lastEmitted = '';
       this.$emit('vuetable:filter-reset');
       //this.$events.fire('filter-reset')
     }
@@ -2674,15 +2727,15 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
      	if (!this.selectedItem.expediente) {
      		this.addError('expediente', 'Campo requerido','server','tramites');
      	}
-       	if (this.selectedItem.fecha_inicio === '') {
+      	if (this.selectedItem.fecha_inicio === '') {
      		this.addError('fecha_inicio', 'Campo requerido','server','tramites');
      	}
-       	if (!this.selectedItem.estado_tramite_id) {
+      	if (!this.selectedItem.estado_tramite_id) {
      		this.addError('estado_tramite_id', 'Campo requerido','server','tramites');
      	}
-       	if (this.mostrarResolucion()) {
+      	if (this.mostrarResolucion()) {
       	if (this.selectedItem.resolucion) {
-       			switch(this.selectedItem.area_id) {
+      			switch(this.selectedItem.area_id) {
      				case 1:
         		if (this.selectedItem.tipo_resolucion != 0 && this.selectedItem.tipo_resolucion != 1) {
         			this.addError('tipo_resolucion', 'Campo requerido','server','tramites');
@@ -2696,7 +2749,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     		    		}
         			}
         		}
-       					break;
+      					break;
      				case 5:
         		if (this.ingresarVto() && this.selectedItem.fecha_vto === '') {
         			this.addError('fecha_vto', 'Campo requerido','server','tramites');
@@ -2705,12 +2758,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
      			}
       	}	    		
      	}
-       	if (this.esVueltaAnses()) {
+      	if (this.esVueltaAnses()) {
       	if (!this.selectedItem.estado_anses_id) {
       		this.addError('estado_anses_id', 'Campo requerido','server','tramites');
       	}
      	}
-       	switch (this.selectedItem.area_id) {
+      	switch (this.selectedItem.area_id) {
      		case 1:
        	if (!this.selectedItem.rep_origen_id) {
        		this.addError('rep_origen_id', 'Campo requerido','server','tramites');
@@ -2719,7 +2772,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     default:
     	break;
      	}
-    	this.$validator.validateAll('tramites').then((result) => {
+    this.$validator.validateAll('tramites').then((result) => {
       	    if (result && this.errors.items.length < 1) {
       	    	this.saving = true;
        	Api.store(this.uri,this.selectedItem)
@@ -2756,7 +2809,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     /*puedoVerBeneficios() {
     return this.selectedItem.id > 0 && (this.soyResponsable() || this.soyResponsableArea(this.selectedItem.area_id));
     },
-     	soyResponsable() {
+    	soyResponsable() {
     let _return = false;
     for(let i = 0; i < this.selectedItem.requerimiento.responsables.length; i++) {
     if (this.selectedItem.requerimiento.responsables[i].user_id === this.authUser.id) {
@@ -9840,16 +9893,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_strap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-strap */ "./node_modules/vue-strap/dist/vue-strap.js");
 /* harmony import */ var vue_strap__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_strap__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _includes_FilterBarHoras__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./includes/FilterBarHoras */ "./resources/assets/js/components/views/Time/includes/FilterBarHoras.vue");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../config */ "./resources/assets/js/config/index.js");
-/* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../api */ "./resources/assets/js/api/index.js");
-/* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue-select */ "./node_modules/vue-select/dist/vue-select.js");
-/* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vue_select__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var vuejs_datepicker__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuejs-datepicker */ "./node_modules/vuejs-datepicker/dist/vuejs-datepicker.esm.js");
-/* harmony import */ var vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuejs-datepicker/dist/locale */ "./node_modules/vuejs-datepicker/dist/locale/index.js");
-/* harmony import */ var vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var laravel_vue_pagination__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! laravel-vue-pagination */ "./node_modules/laravel-vue-pagination/dist/laravel-vue-pagination.common.js");
-/* harmony import */ var laravel_vue_pagination__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(laravel_vue_pagination__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _includes_TimerBar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./includes/TimerBar */ "./resources/assets/js/components/views/Time/includes/TimerBar.vue");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../config */ "./resources/assets/js/config/index.js");
+/* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../api */ "./resources/assets/js/api/index.js");
+/* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue-select */ "./node_modules/vue-select/dist/vue-select.js");
+/* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(vue_select__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var vuejs_datepicker__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuejs-datepicker */ "./node_modules/vuejs-datepicker/dist/vuejs-datepicker.esm.js");
+/* harmony import */ var vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuejs-datepicker/dist/locale */ "./node_modules/vuejs-datepicker/dist/locale/index.js");
+/* harmony import */ var vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var laravel_vue_pagination__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! laravel-vue-pagination */ "./node_modules/laravel-vue-pagination/dist/laravel-vue-pagination.common.js");
+/* harmony import */ var laravel_vue_pagination__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(laravel_vue_pagination__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -9867,21 +9921,23 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 
 
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'ListadoTimeHoras',
   components: {
     modal: vue_strap__WEBPACK_IMPORTED_MODULE_1__.modal,
     FilterBar: _includes_FilterBarHoras__WEBPACK_IMPORTED_MODULE_2__["default"],
-    vSelect: (vue_select__WEBPACK_IMPORTED_MODULE_5___default()),
-    Datepicker: vuejs_datepicker__WEBPACK_IMPORTED_MODULE_6__["default"],
-    pagination: (laravel_vue_pagination__WEBPACK_IMPORTED_MODULE_8___default())
+    TimerBar: _includes_TimerBar__WEBPACK_IMPORTED_MODULE_3__["default"],
+    vSelect: (vue_select__WEBPACK_IMPORTED_MODULE_6___default()),
+    Datepicker: vuejs_datepicker__WEBPACK_IMPORTED_MODULE_7__["default"],
+    pagination: (laravel_vue_pagination__WEBPACK_IMPORTED_MODULE_9___default())
   },
   data: function data() {
     return {
       canFilter: true,
       firstFilter: false,
       selectedItem: null,
-      es: vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_7__.es,
+      es: vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_8__.es,
       list: {
         pagination: {},
         data: {
@@ -9893,8 +9949,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         desde: moment__WEBPACK_IMPORTED_MODULE_0___default()().startOf('month').format('DD/MM/YYYY'),
         hasta: moment__WEBPACK_IMPORTED_MODULE_0___default()().endOf('month').format('DD/MM/YYYY'),
         page: 1,
-        cliente_id: null
+        cliente_id: null,
+        estado: null
       },
+      resumen: [],
       amModal: {
         title: 'Crear/Editar Hora',
         submited: false,
@@ -9918,37 +9976,65 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       apiUrl: ''
     };
   },
-  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_9__.mapState)(['authUser'])), (0,vuex__WEBPACK_IMPORTED_MODULE_9__.mapGetters)(['isTimeLevel'])),
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_10__.mapState)(['authUser'])), (0,vuex__WEBPACK_IMPORTED_MODULE_10__.mapGetters)(['isTimeLevel'])),
   mounted: function mounted() {
-    this.apiUrl = _config__WEBPACK_IMPORTED_MODULE_3__["default"].serverURI + this.uri;
+    this.apiUrl = _config__WEBPACK_IMPORTED_MODULE_4__["default"].serverURI + this.uri;
+    this.$events.$on('time-timer:finished', this.onTimerFinished);
+  },
+  beforeDestroy: function beforeDestroy() {
+    this.$events.$off('time-timer:finished', this.onTimerFinished);
   },
   methods: {
-    doFilter: function doFilter() {
+    onTimerFinished: function onTimerFinished() {
+      if (this.firstFilter) this.getData();
+    },
+    onHoraChange: function onHoraChange() {
+      var i = this.selectedItem.hora_inicio,
+        f = this.selectedItem.hora_fin;
+      if (!i || !f) return;
+      var diff = moment__WEBPACK_IMPORTED_MODULE_0___default()(f, 'HH:mm').diff(moment__WEBPACK_IMPORTED_MODULE_0___default()(i, 'HH:mm'), 'minutes');
+      if (diff > 0) {
+        this.$set(this.selectedItem, 'minutos', Math.max(5, Math.ceil(diff / 5) * 5));
+      }
+    },
+    filtrarUsuario: function filtrarUsuario(userId) {
+      this.filtros.user_id = userId;
+      this.doFilter();
+    },
+    getResumen: function getResumen() {
       var _this2 = this;
+      if (!this.isTimeLevel(5)) return;
+      _api__WEBPACK_IMPORTED_MODULE_5__["default"].get(this.uri.concat('pendientes-resumen')).then(function (resp) {
+        _this2.resumen = resp.data;
+      });
+    },
+    doFilter: function doFilter() {
+      var _this3 = this;
       this.firstFilter = true;
       this.filtros.page = 1;
       this.errors.clear('filtros');
       this.$validator.validateAll('filtros').then(function (result) {
-        if (result && _this2.errors.items.length < 1) {
-          _this2.getData();
+        if (result) {
+          _this3.getData();
         } else {
-          _this2.list.loading = false;
+          _this3.list.loading = false;
         }
       }, function (errors) {
-        _this2.list.loading = false;
+        _this3.list.loading = false;
       });
     },
     getData: function getData() {
-      var _this3 = this;
+      var _this4 = this;
+      if (this.filtros.estado === 'pendiente') this.getResumen();
       this.list.loading = true;
-      _api__WEBPACK_IMPORTED_MODULE_4__["default"].post(this.uri.concat('filtrar'), this.filtros).then(function (result) {
-        _this3.list.data.data.length = 0;
-        _this3.list.data = result.data;
-        _this3.list.loading = false;
+      _api__WEBPACK_IMPORTED_MODULE_5__["default"].post(this.uri.concat('filtrar'), this.filtros).then(function (result) {
+        _this4.list.data.data.length = 0;
+        _this4.list.data = result.data;
+        _this4.list.loading = false;
       }, function (errors) {
-        _this3.list.data.data.length = 0;
-        _this3.list.data = [];
-        _this3.list.loading = false;
+        _this4.list.data.data.length = 0;
+        _this4.list.data = [];
+        _this4.list.loading = false;
       });
     },
     changePage: function changePage(page) {
@@ -9971,39 +10057,40 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.reset({});
     },
     save: function save() {
-      var _this4 = this;
+      var _this5 = this;
       var _this = this;
       return new Promise(function (resolve, reject) {
-        _this4.amModal.errors = '';
-        _this4.errors.clear();
-        if (!_this4.selectedItem.fecha_dp) {
-          _this4.addError('fecha', 'Campo requerido', 'server');
+        _this5.amModal.errors = '';
+        _this5.errors.clear();
+        if (!_this5.selectedItem.fecha_dp) {
+          _this5.addError('fecha', 'Campo requerido', 'server');
         }
-        if (!_this4.selectedItem.cliente_id) {
-          _this4.addError('cliente_id', 'Campo requerido', 'server');
+        if (!_this5.selectedItem.cliente_id) {
+          _this5.addError('cliente_id', 'Campo requerido', 'server');
         }
-        if (!_this4.selectedItem.gestion_id) {
-          _this4.addError('gestion_id', 'Campo requerido', 'server');
+        if (!_this5.selectedItem.gestion_id) {
+          _this5.addError('gestion_id', 'Campo requerido', 'server');
         }
-        if (!_this4.selectedItem.referencia) {
-          _this4.addError('referencia', 'Campo requerido', 'server');
+        if (!_this5.selectedItem.referencia) {
+          _this5.addError('referencia', 'Campo requerido', 'server');
         }
-        _this4.$validator.validateAll().then(function (result) {
-          if (result && _this4.errors.items.length < 1) {
-            _this4.amModal.saving = true;
+        _this5.$validator.validateAll().then(function (result) {
+          if (result && _this5.errors.items.length < 1) {
+            _this5.amModal.saving = true;
             //this.selectedItem.cliente_id = this.selectedCliente.id;
-            _api__WEBPACK_IMPORTED_MODULE_4__["default"].store(_this4.uri, _this4.selectedItem).then(function (result) {
-              _this4.$store.dispatch('addTimeClienteData', _this4.selectedItem.cliente);
-              _this4.getData();
+            _api__WEBPACK_IMPORTED_MODULE_5__["default"].store(_this5.uri, _this5.selectedItem).then(function (result) {
+              _this5.$store.dispatch('addTimeClienteData', _this5.selectedItem.cliente);
+              _this5.getData();
+              _this5.$store.dispatch('loadTimer');
               resolve();
               _this.closeAmModal();
-              _this4.$store.dispatch('showSuccessNotification', result.data.message);
+              _this5.$store.dispatch('showSuccessNotification', result.data.message);
             }, function (resp) {
               console.debug(resp.message);
-              _this4.amModal.errors = resp.message;
+              _this5.amModal.errors = resp.message;
               if (resp.fields) {
                 for (var key in resp.fields) {
-                  _this4.addError(key, resp.fields[key][0], 'server');
+                  _this5.addError(key, resp.fields[key][0], 'server');
                 }
               }
               resolve();
@@ -10017,35 +10104,36 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       });
     },
     remove: function remove(item) {
-      var _this5 = this;
+      var _this6 = this;
       this.$dialog.confirm('¿Deséa continuar con la eliminación del registro?', {
         loader: true
       }).then(function (dialog) {
         dialog.loading(true);
-        _api__WEBPACK_IMPORTED_MODULE_4__["default"]["delete"](_this5.uri, item).then(function (result) {
+        _api__WEBPACK_IMPORTED_MODULE_5__["default"]["delete"](_this6.uri, item).then(function (result) {
           dialog.close();
-          _this5.$store.dispatch('showSuccessNotification', result.data.message);
-          _this5.getData();
+          _this6.$store.dispatch('showSuccessNotification', result.data.message);
+          _this6.getData();
+          _this6.$store.dispatch('loadTimer');
         }, function () {
           dialog.close();
         });
       });
     },
     removeSelected: function removeSelected(ids, dialog) {
-      var _this6 = this;
+      var _this7 = this;
       dialog.loading(true);
-      _api__WEBPACK_IMPORTED_MODULE_4__["default"]["delete"](this.uri.concat('eliminar-seleccion'), {
+      _api__WEBPACK_IMPORTED_MODULE_5__["default"]["delete"](this.uri.concat('eliminar-seleccion'), {
         ids: ids
       }).then(function (result) {
         dialog.close();
-        _this6.$refs.list.$refs.vuetable.refresh();
-        _this6.$store.dispatch('showSuccessNotification', result.data.message);
+        _this7.$refs.list.$refs.vuetable.refresh();
+        _this7.$store.dispatch('showSuccessNotification', result.data.message);
       }, function () {
         dialog.close();
       });
     },
     reset: function reset(item) {
-      var _this7 = this;
+      var _this8 = this;
       var _this = this;
       _this.selectedItem = _.assign({
         cliente_id: null,
@@ -10054,14 +10142,26 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         id: 0,
         gestion: null,
         referenciadb: null,
-        referencia: null
+        referencia: 'Temas Varios',
+        minutos: 15,
+        hora_inicio: item.inicio ? moment__WEBPACK_IMPORTED_MODULE_0___default()(item.inicio).format('HH:mm') : null,
+        hora_fin: item.fin ? moment__WEBPACK_IMPORTED_MODULE_0___default()(item.fin).format('HH:mm') : null
       }, item);
+      if (!_this.selectedItem.referencia) _this.selectedItem.referencia = 'Temas Varios';
       this.clearErrors();
       this.amModal.loaded = false;
       this.amModal.show = true;
-      _api__WEBPACK_IMPORTED_MODULE_4__["default"].combos('time/am-horas').then(function (resp) {
+      _api__WEBPACK_IMPORTED_MODULE_5__["default"].combos('time/am-horas').then(function (resp) {
         _this.info.gestion = resp.data.gestion;
-        _this7.amModal.loaded = true;
+        if (!_this.selectedItem.gestion_id) {
+          var def = _.find(resp.data.gestion, function (g) {
+            return g.nombre === resp.data.gestion_default;
+          });
+          if (def) {
+            _this.$set(_this.selectedItem, 'gestion_id', def.id);
+          }
+        }
+        _this8.amModal.loaded = true;
       });
     },
     clearErrors: function clearErrors() {
@@ -10073,6 +10173,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         show: false,
         submited: false
       });
+      this.clearErrors();
       this.resetInfo();
       //this.reset()
     },
@@ -10081,8 +10182,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     },
     searchClientes: _.debounce(function (search, loading, vm) {
       loading(true);
-      _api__WEBPACK_IMPORTED_MODULE_4__["default"].combos('time/clientes?search=' + search).then(function (resp) {
+      _api__WEBPACK_IMPORTED_MODULE_5__["default"].combos('time/clientes?search=' + search).then(function (resp) {
         vm.info.clientes.data = resp.data;
+        loading(false);
+      })["catch"](function () {
+        vm.info.clientes.data = [];
         loading(false);
       });
     }, 500),
@@ -10092,7 +10196,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         _this.selectedItem.cliente = item;
         _this.selectedItem.cliente_id = item.id;
         _this.amModal.loadingReferencias = true;
-        _api__WEBPACK_IMPORTED_MODULE_4__["default"].combos('time/referencias/' + _this.selectedItem.cliente_id).then(function (resp) {
+        _api__WEBPACK_IMPORTED_MODULE_5__["default"].combos('time/referencias/' + _this.selectedItem.cliente_id).then(function (resp) {
           _this.info.referencias = resp.data.referencias;
           _this.amModal.loadingReferencias = false;
         });
@@ -10106,9 +10210,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.info.referencias.length = 0;
       this.info.clientes.length = 0;
     },
+    verPendientes: function verPendientes() {
+      this.filtros.estado = 'pendiente';
+      this.doFilter();
+    },
     facturar: function facturar(item) {
       item.facturar = !item.facturar;
-      _api__WEBPACK_IMPORTED_MODULE_4__["default"].post(this.uri.concat('facturar'), item).then(function (resp) {
+      _api__WEBPACK_IMPORTED_MODULE_5__["default"].post(this.uri.concat('facturar'), item).then(function (resp) {
         //item.facturar = !item.facturar; 
       }, function (error) {
         console.debug(error);
@@ -10470,6 +10578,9 @@ __webpack_require__.r(__webpack_exports__);
       _api__WEBPACK_IMPORTED_MODULE_3__["default"].combos('time/clientes?search=' + search).then(function (resp) {
         vm.info.clientes.data = resp.data;
         loading(false);
+      })["catch"](function () {
+        vm.info.clientes.data = [];
+        loading(false);
       });
     }, 500),
     onChangeCliente: function onChangeCliente(item) {
@@ -10654,6 +10765,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       _api__WEBPACK_IMPORTED_MODULE_3__["default"].combos('time/clientes?search=' + search).then(function (resp) {
         vm.info.clientes.data = resp.data;
         loading(false);
+      })["catch"](function () {
+        vm.info.clientes.data = [];
+        loading(false);
       });
     }, 500),
     onChangeCliente: function onChangeCliente(item) {
@@ -10827,6 +10941,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       _api__WEBPACK_IMPORTED_MODULE_3__["default"].combos('time/clientes?search=' + search).then(function (resp) {
         vm.info.clientes.data = resp.data;
         loading(false);
+      })["catch"](function () {
+        vm.info.clientes.data = [];
+        loading(false);
       });
     }, 500),
     onChangeCliente: function onChangeCliente(item) {
@@ -10941,6 +11058,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].combos('time/clientes?search=' + search).then(function (resp) {
         vm.info.clientes.data = resp.data;
         loading(false);
+      })["catch"](function () {
+        vm.info.clientes.data = [];
+        loading(false);
       });
     }, 500),
     onChangeCliente: function onChangeCliente(item) {
@@ -11013,6 +11133,9 @@ __webpack_require__.r(__webpack_exports__);
       _api__WEBPACK_IMPORTED_MODULE_1__["default"].combos('time/clientes?search=' + search).then(function (resp) {
         vm.info.clientes.data = resp.data;
         loading(false);
+      })["catch"](function () {
+        vm.info.clientes.data = [];
+        loading(false);
       });
     }, 500),
     onChangeCliente: function onChangeCliente(item) {
@@ -11022,6 +11145,280 @@ __webpack_require__.r(__webpack_exports__);
         this.filter.cliente = null;
       }
       this.$emit('time-referencias:filter-set', this.filter);
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=script&lang=js":
+/*!*****************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=script&lang=js ***!
+  \*****************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _TimerMixin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TimerMixin */ "./resources/assets/js/components/views/Time/includes/TimerMixin.js");
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: 'TimerBar',
+  mixins: [_TimerMixin__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  data: function data() {
+    return {
+      descripcion: '',
+      busy: false
+    };
+  },
+  methods: {
+    start: function start() {
+      var _this = this;
+      if (this.busy || this.timer) return;
+      this.busy = true;
+      this.$store.dispatch('startTimer', {
+        descripcion: this.descripcion
+      }).then(function () {
+        _this.descripcion = '';
+      })["finally"](function () {
+        _this.busy = false;
+      });
+    },
+    discard: function discard() {
+      var _this2 = this;
+      this.$dialog.confirm('¿Descartar el timer en curso? No se guardará ningún registro.', {
+        loader: true
+      }).then(function (dialog) {
+        _this2.$store.dispatch('discardTimer').then(function () {
+          return dialog.close();
+        }, function () {
+          return dialog.close();
+        });
+      });
+    },
+    openFinish: function openFinish() {
+      this.$store.dispatch('openTimerFinish');
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=script&lang=js":
+/*!******************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=script&lang=js ***!
+  \******************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var vue_strap__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-strap */ "./node_modules/vue-strap/dist/vue-strap.js");
+/* harmony import */ var vue_strap__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_strap__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-select */ "./node_modules/vue-select/dist/vue-select.js");
+/* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_select__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../api */ "./resources/assets/js/api/index.js");
+/* harmony import */ var _TimerMixin__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./TimerMixin */ "./resources/assets/js/components/views/Time/includes/TimerMixin.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
+
+
+
+
+// Timer global: boton flotante + atajo de teclado + modal para terminar.
+// Se monta una sola vez en TopMenu para que funcione en toda la plataforma.
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: 'TimerDock',
+  components: {
+    modal: vue_strap__WEBPACK_IMPORTED_MODULE_0__.modal,
+    vSelect: (vue_select__WEBPACK_IMPORTED_MODULE_1___default())
+  },
+  mixins: [_TimerMixin__WEBPACK_IMPORTED_MODULE_3__["default"]],
+  data: function data() {
+    return {
+      busy: false,
+      gestiones: [],
+      referencias: [],
+      finish: {
+        errors: '',
+        cliente: null,
+        cliente_id: null,
+        gestion_id: null,
+        referencia: null,
+        descripcion: ''
+      }
+    };
+  },
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_4__.mapGetters)(['isTimeLevel'])), {}, {
+    visible: function visible() {
+      return this.isTimeLevel(5) || this.isTimeLevel(1);
+    },
+    clientes: function clientes() {
+      return _.sortBy(this.$store.state.general.clientesTime, function (o) {
+        return o.nombre_completo;
+      });
+    },
+    finishOpen: {
+      get: function get() {
+        return this.$store.state.timer.finishOpen;
+      },
+      set: function set(v) {
+        this.$store.dispatch(v ? 'openTimerFinish' : 'closeTimerFinish');
+      }
+    },
+    titulo: function titulo() {
+      return (this.timer ? 'Terminar timer' : 'Iniciar timer') + ' (Alt+Shift+T)';
+    }
+  }),
+  watch: {
+    finishOpen: function finishOpen(open) {
+      if (open) this.prepareFinish();
+    }
+  },
+  mounted: function mounted() {
+    window.addEventListener('keydown', this.onKey);
+  },
+  beforeDestroy: function beforeDestroy() {
+    window.removeEventListener('keydown', this.onKey);
+  },
+  methods: {
+    onKey: function onKey(e) {
+      if (this.visible && e.altKey && e.shiftKey && (e.key === 'T' || e.key === 't')) {
+        e.preventDefault();
+        this.onFab();
+      }
+    },
+    onFab: function onFab() {
+      var _this = this;
+      if (this.busy) return;
+      if (this.timer) {
+        this.finishOpen = true;
+      } else {
+        this.busy = true;
+        this.$store.dispatch('startTimer', {})["finally"](function () {
+          _this.busy = false;
+        });
+      }
+    },
+    prepareFinish: function prepareFinish() {
+      var _this2 = this;
+      if (!this.timer) {
+        this.finishOpen = false;
+        return;
+      }
+      this.finish = {
+        errors: '',
+        cliente: null,
+        cliente_id: null,
+        gestion_id: null,
+        referencia: 'Temas Varios',
+        descripcion: this.timer.descripcion || ''
+      };
+      this.referencias = [];
+      _api__WEBPACK_IMPORTED_MODULE_2__["default"].combos('time/am-horas').then(function (resp) {
+        _this2.gestiones = resp.data.gestion;
+        var def = _.find(resp.data.gestion, function (g) {
+          return g.nombre === resp.data.gestion_default;
+        });
+        if (def && !_this2.finish.gestion_id) _this2.finish.gestion_id = def.id;
+      });
+      if (!this.clientes.length) {
+        _api__WEBPACK_IMPORTED_MODULE_2__["default"].combos('time/clientes/1').then(function (resp) {
+          return _this2.$store.dispatch('setTimeClientesData', resp.data);
+        });
+      }
+    },
+    onChangeCliente: function onChangeCliente(item) {
+      var _this3 = this;
+      this.finish.cliente = item || null;
+      this.finish.cliente_id = item ? item.id : null;
+      this.referencias = [];
+      if (item) {
+        _api__WEBPACK_IMPORTED_MODULE_2__["default"].combos('time/referencias/' + item.id).then(function (resp) {
+          _this3.referencias = resp.data.referencias;
+        });
+      }
+    },
+    stop: function stop(vincular) {
+      var _this4 = this;
+      var f = this.finish;
+      if (vincular && !(f.cliente_id && f.gestion_id && f.referencia)) {
+        f.errors = 'Para vincular completá cliente, gestión y referencia.';
+        return;
+      }
+      f.errors = '';
+      this.busy = true;
+      var data = {
+        descripcion: f.descripcion
+      };
+      // "Sin vincular" conserva lo que se haya completado; el servidor decide el estado
+      if (f.cliente_id) {
+        data = Object.assign(data, {
+          cliente_id: f.cliente_id,
+          gestion_id: f.gestion_id,
+          referencia: f.referencia
+        });
+      }
+      this.$store.dispatch('stopTimer', data).then(function () {
+        _this4.finishOpen = false;
+        _this4.$events.fire('time-timer:finished');
+      }, function (err) {
+        f.errors = err && err.message || 'No se pudo terminar el timer';
+      })["finally"](function () {
+        _this4.busy = false;
+      });
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=script&lang=js":
+/*!********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=script&lang=js ***!
+  \********************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _TimerMixin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TimerMixin */ "./resources/assets/js/components/views/Time/includes/TimerMixin.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: 'TimerWidget',
+  mixins: [_TimerMixin__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  computed: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)(['isTimeLevel'])), (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapState)(['authUser'])), {}, {
+    visible: function visible() {
+      return this.isTimeLevel(5) || this.isTimeLevel(1);
+    }
+  }),
+  watch: {
+    visible: {
+      immediate: true,
+      handler: function handler(v) {
+        if (v) this.$store.dispatch('loadTimer');
+      }
     }
   }
 });
@@ -12461,6 +12858,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash/debounce */ "./node_modules/lodash/debounce.js");
+/* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash_debounce__WEBPACK_IMPORTED_MODULE_0__);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -12470,14 +12870,23 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
   },
+  created: function created() {
+    this.debouncedFilter = lodash_debounce__WEBPACK_IMPORTED_MODULE_0___default()(this.doFilter, 400);
+  },
+  beforeDestroy: function beforeDestroy() {
+    this.debouncedFilter.cancel();
+  },
   methods: {
     doFilter: function doFilter() {
+      this.debouncedFilter.cancel();
       this.$emit('usuarios:filter-set', this.filter);
       //this.$events.fire('filter-set', this.filterText)
     },
     resetFilter: function resetFilter() {
-      this.filterText = '';
-      this.$emit('usuarios:filter-reset');
+      this.debouncedFilter.cancel();
+      this.filter.search = '';
+      this.filter.time = null;
+      this.doFilter();
       //this.$events.fire('filter-reset')
     }
   }
@@ -13114,7 +13523,14 @@ var render = function render() {
     }
   }, [_c("a", [_c("i", {}, [_vm._v(" ")]), _vm._v(" "), _c("span", {
     staticClass: "page"
-  }, [_vm._v("Horas")])])])] : _vm._e(), _vm._v(" "), _vm.canViewTimeImpresiones() ? [_c("li", {
+  }, [_vm._v("Horas")]), _vm._v(" "), _vm.timerPendientes > 0 ? _c("span", {
+    staticClass: "pull-right-container"
+  }, [_c("small", {
+    staticClass: "label pull-right bg-yellow",
+    attrs: {
+      title: "Cargas sin vincular (administradores: de todo el equipo)"
+    }
+  }, [_vm._v(_vm._s(_vm.timerPendientes))])]) : _vm._e()])])] : _vm._e(), _vm._v(" "), _vm.canViewTimeImpresiones() ? [_c("li", {
     staticClass: "treeview"
   }, [_vm._m(3), _vm._v(" "), _c("ul", {
     staticClass: "treeview-menu"
@@ -13524,7 +13940,7 @@ var render = function render() {
     staticClass: "navbar-custom-menu"
   }, [_c("ul", {
     staticClass: "nav navbar-nav"
-  }, [_vm.hasAnyPerm("avisos:R") ? _c("top-menu-avisos", {
+  }, [_c("timer-widget"), _vm._v(" "), _vm.hasAnyPerm("avisos:R") ? _c("top-menu-avisos", {
     attrs: {
       type: "avisos"
     }
@@ -13585,7 +14001,7 @@ var render = function render() {
     staticClass: "content"
   }, [_c("notification"), _vm._v(" "), _c("router-view")], 1)]), _vm._v(" "), _c("footer", {
     staticClass: "main-footer"
-  })], 1), _vm._v(" "), _c("modal", {
+  })], 1), _vm._v(" "), _c("timer-dock"), _vm._v(" "), _c("modal", {
     staticClass: "themis-modal",
     attrs: {
       effect: "fade",
@@ -13867,10 +14283,10 @@ var render = function render() {
         if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")) return null;
         return _vm.doFilter.apply(null, arguments);
       },
-      input: function input($event) {
+      input: [function ($event) {
         if ($event.target.composing) return;
         _vm.filterText = $event.target.value;
-      }
+      }, _vm.onInput]
     }
   }), _vm._v(" "), _c("div", {
     staticClass: "input-group-btn"
@@ -14225,7 +14641,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -24228,7 +24644,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -24524,7 +24940,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -24812,7 +25228,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -25015,7 +25431,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -25255,7 +25671,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t    " + _vm._s(option.nombre) + "\r\n\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t    " + _vm._s(option.nombre) + "\n\t\t\t\t  ")]);
   })], 2)])]), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
@@ -25397,7 +25813,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -25611,7 +26027,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -26097,7 +26513,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -26416,7 +26832,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t\t    " + _vm._s(option.name) + "\r\n\t\t\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t\t\t    " + _vm._s(option.name) + "\n\t\t\t\t\t\t\t  ")]);
   })], 2)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("label", {
@@ -26454,7 +26870,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\r\n\t\t\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\n\t\t\t\t\t\t\t  ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("label", {
@@ -26492,7 +26908,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\r\n\t\t\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\n\t\t\t\t\t\t\t  ")]);
   })], 2)]), _vm._v(" "), _vm.area.id === 1 ? _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("label", {
@@ -26530,7 +26946,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t\t   \t\t" + _vm._s(option.nombre) + "\r\n\t\t\t\t\t\t\t  \t")]);
+    }, [_vm._v("\n\t\t\t\t\t\t\t   \t\t" + _vm._s(option.nombre) + "\n\t\t\t\t\t\t\t  \t")]);
   })], 2)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("button-type", {
@@ -26602,7 +27018,7 @@ var render = function render() {
     attrs: {
       colspan: "4"
     }
-  }, [_c("strong", [_vm._v("Total benf. informados:")]), _vm._v(" " + _vm._s(_vm.list.data.total) + "\r\n\t\t\t\t\t\t")]) : _vm._e(), _vm._v(" "), _c("td", {
+  }, [_c("strong", [_vm._v("Total benf. informados:")]), _vm._v(" " + _vm._s(_vm.list.data.total) + "\n\t\t\t\t\t\t")]) : _vm._e(), _vm._v(" "), _c("td", {
     staticClass: "text-right",
     attrs: {
       colspan: "4"
@@ -26769,7 +27185,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t    " + _vm._s(option.name) + "\r\n\t\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t\t    " + _vm._s(option.name) + "\n\t\t\t\t\t\t  ")]);
   })], 2)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("label", {
@@ -26807,7 +27223,7 @@ var render = function render() {
   }, [_c("table", {
     staticClass: "table"
   }, [_c("tbody", [_c("tr", [_c("th", [_vm._v("Expediente")]), _vm._v(" "), _c("th", [_vm._v("Cliente")]), _vm._v(" "), _c("th", [_vm._v("Fecha")]), _vm._v(" "), _c("th", [_vm._v("Juzgado")]), _vm._v(" "), _vm.area.id === 2 ? _c("th", [_vm._v("Conciliación")]) : _vm._e()]), _vm._v(" "), _vm._l(_vm.list.data.data, function (item) {
-    return !_vm.list.loading ? _c("tr", [_c("td", [_vm._v(_vm._s(item.nro_expediente))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.tramite ? item.tramite.cliente.nombre_completo : "--"))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.fecha))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.juzgado.nombre))]), _vm._v(" "), _vm.area.id === 2 ? _c("td", [item.juicio_conciliado ? [_c("strong", [_vm._v("Nro: ")]), _vm._v(_vm._s(item.nro_conciliacion)), _c("br"), _vm._v(" "), _c("strong", [_vm._v("Fecha: ")]), _vm._v(_vm._s(item.fecha_conciliacion)), _c("br")] : [_vm._v("\r\n\t\t              \t\tNO\r\n\t\t              \t")]], 2) : _vm._e()]) : _vm._e();
+    return !_vm.list.loading ? _c("tr", [_c("td", [_vm._v(_vm._s(item.nro_expediente))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.tramite ? item.tramite.cliente.nombre_completo : "--"))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.fecha))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.juzgado.nombre))]), _vm._v(" "), _vm.area.id === 2 ? _c("td", [item.juicio_conciliado ? [_c("strong", [_vm._v("Nro: ")]), _vm._v(_vm._s(item.nro_conciliacion)), _c("br"), _vm._v(" "), _c("strong", [_vm._v("Fecha: ")]), _vm._v(_vm._s(item.fecha_conciliacion)), _c("br")] : [_vm._v("\n\t\t              \t\tNO\n\t\t              \t")]], 2) : _vm._e()]) : _vm._e();
   }), _vm._v(" "), !_vm.list.loading && _vm.list.data.length > 0 && _vm.list.data.data.length == 0 ? _c("tr", [_c("td", {
     attrs: {
       colspan: "5"
@@ -26824,7 +27240,7 @@ var render = function render() {
     attrs: {
       colspan: "2"
     }
-  }, [_c("strong", [_vm._v("Total exp. informados:")]), _vm._v(" " + _vm._s(_vm.list.data.total) + "\r\n\t\t\t\t\t\t")]) : _vm._e(), _vm._v(" "), _c("td", {
+  }, [_c("strong", [_vm._v("Total exp. informados:")]), _vm._v(" " + _vm._s(_vm.list.data.total) + "\n\t\t\t\t\t\t")]) : _vm._e(), _vm._v(" "), _c("td", {
     staticClass: "text-right",
     attrs: {
       colspan: "3"
@@ -26910,7 +27326,7 @@ var render = function render() {
     attrs: {
       colspan: "2"
     }
-  }, [_c("strong", [_vm._v("Total pensiones informadas:")]), _vm._v(" " + _vm._s(_vm.list.data.total) + "\r\n\t\t\t\t\t\t")]) : _vm._e(), _vm._v(" "), _c("td", {
+  }, [_c("strong", [_vm._v("Total pensiones informadas:")]), _vm._v(" " + _vm._s(_vm.list.data.total) + "\n\t\t\t\t\t\t")]) : _vm._e(), _vm._v(" "), _c("td", {
     staticClass: "text-right",
     attrs: {
       colspan: "4"
@@ -27072,7 +27488,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\r\n\t\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\n\t\t\t\t\t\t  ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("label", {
@@ -27110,7 +27526,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\r\n\t\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\n\t\t\t\t\t\t  ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "clearfix"
   }), _vm._v(" "), _c("div", {
@@ -27150,7 +27566,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\r\n\t\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\n\t\t\t\t\t\t  ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("label", {
@@ -27228,7 +27644,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t    " + _vm._s(option.name) + "\r\n\t\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t\t    " + _vm._s(option.name) + "\n\t\t\t\t\t\t  ")]);
   })], 2)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("label", {
@@ -27266,7 +27682,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t\t" + _vm._s(option.razon_social) + "\r\n\t\t\t\t\t\t")]);
+    }, [_vm._v("\n\t\t\t\t\t\t\t" + _vm._s(option.razon_social) + "\n\t\t\t\t\t\t")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("button-type", {
@@ -27332,7 +27748,7 @@ var render = function render() {
     attrs: {
       colspan: "2"
     }
-  }, [_c("strong", [_vm._v("Total req. informados:")]), _vm._v(" " + _vm._s(_vm.list.data.total) + "\r\n\t\t\t\t\t\t")]) : _vm._e(), _vm._v(" "), _c("td", {
+  }, [_c("strong", [_vm._v("Total req. informados:")]), _vm._v(" " + _vm._s(_vm.list.data.total) + "\n\t\t\t\t\t\t")]) : _vm._e(), _vm._v(" "), _c("td", {
     staticClass: "text-right",
     attrs: {
       colspan: "6"
@@ -27504,7 +27920,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t    " + _vm._s(option.name) + "\r\n\t\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t\t    " + _vm._s(option.name) + "\n\t\t\t\t\t\t  ")]);
   })], 2)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("label", {
@@ -27559,7 +27975,7 @@ var render = function render() {
     attrs: {
       colspan: "2"
     }
-  }, [_c("strong", [_vm._v("Total trámites informados:")]), _vm._v(" " + _vm._s(_vm.list.data.total) + "\r\n\t\t\t\t\t\t")]) : _vm._e(), _vm._v(" "), _c("td", {
+  }, [_c("strong", [_vm._v("Total trámites informados:")]), _vm._v(" " + _vm._s(_vm.list.data.total) + "\n\t\t\t\t\t\t")]) : _vm._e(), _vm._v(" "), _c("td", {
     staticClass: "text-right",
     attrs: {
       colspan: "6"
@@ -27733,7 +28149,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t\t    " + _vm._s(option.name) + "\r\n\t\t\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t\t\t    " + _vm._s(option.name) + "\n\t\t\t\t\t\t\t  ")]);
   })], 2)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("label", {
@@ -27771,7 +28187,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\r\n\t\t\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\n\t\t\t\t\t\t\t  ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("label", {
@@ -27809,7 +28225,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\r\n\t\t\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\n\t\t\t\t\t\t\t  ")]);
   })], 2)]), _vm._v(" "), _vm.area.id === 1 ? _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("label", {
@@ -27847,7 +28263,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t\t   \t\t" + _vm._s(option.nombre) + "\r\n\t\t\t\t\t\t\t  \t")]);
+    }, [_vm._v("\n\t\t\t\t\t\t\t   \t\t" + _vm._s(option.nombre) + "\n\t\t\t\t\t\t\t  \t")]);
   })], 2)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("button-type", {
@@ -27909,7 +28325,7 @@ var render = function render() {
     attrs: {
       colspan: "2"
     }
-  }, [_c("strong", [_vm._v("Total trámites informados:")]), _vm._v(" " + _vm._s(_vm.list.data.total) + "\r\n\t\t\t\t\t\t")]) : _vm._e(), _vm._v(" "), _c("td", {
+  }, [_c("strong", [_vm._v("Total trámites informados:")]), _vm._v(" " + _vm._s(_vm.list.data.total) + "\n\t\t\t\t\t\t")]) : _vm._e(), _vm._v(" "), _c("td", {
     staticClass: "text-right",
     attrs: {
       colspan: "8"
@@ -28151,7 +28567,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\r\n\t\t\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t\t\t    " + _vm._s(option.nombre) + "\n\t\t\t\t\t\t\t  ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("label", {
@@ -28226,7 +28642,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t\t\t    " + _vm._s(option.name) + "\r\n\t\t\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t\t\t    " + _vm._s(option.name) + "\n\t\t\t\t\t\t\t  ")]);
   })], 2)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-3"
   }, [_c("label", {
@@ -28363,7 +28779,7 @@ var render = function render() {
     attrs: {
       colspan: "2"
     }
-  }, [_c("strong", [_vm._v("Total trámites informados:")]), _vm._v(" " + _vm._s(_vm.list.data.total) + "\r\n\t\t\t\t\t\t\t")]) : _vm._e(), _vm._v(" "), _c("td", {
+  }, [_c("strong", [_vm._v("Total trámites informados:")]), _vm._v(" " + _vm._s(_vm.list.data.total) + "\n\t\t\t\t\t\t\t")]) : _vm._e(), _vm._v(" "), _c("td", {
     staticClass: "text-right",
     attrs: {
       colspan: "6"
@@ -28557,7 +28973,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -28667,7 +29083,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t    " + _vm._s(option.nombre) + "\r\n\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t    " + _vm._s(option.nombre) + "\n\t\t\t\t\t  ")]);
   }), 0), _vm._v(" "), _c("span", {
     directives: [{
       name: "show",
@@ -28822,7 +29238,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -29003,7 +29419,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -29184,7 +29600,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -29536,7 +29952,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -29636,7 +30052,7 @@ var render = function render() {
       domProps: {
         value: option
       }
-    }, [_vm._v("\r\n\t\t\t\t\t    " + _vm._s(option.nombre) + "\r\n\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t    " + _vm._s(option.nombre) + "\n\t\t\t\t\t  ")]);
   }), 0)]), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-6"
   }, _vm._l(_vm.info.acciones, function (acc) {
@@ -29783,7 +30199,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -29935,7 +30351,39 @@ var render = function render() {
       "time-horas:create": _vm.create,
       "time-horas:filter-set": _vm.doFilter
     }
-  }), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _vm.isTimeLevel(5) && _vm.filtros.estado === "pendiente" ? _c("div", {
+    staticClass: "box box-warning"
+  }, [_vm._m(0), _vm._v(" "), _c("div", {
+    staticClass: "box-body table-responsive no-padding"
+  }, [_c("table", {
+    staticClass: "table table-hover"
+  }, [_c("tbody", [_vm._m(1), _vm._v(" "), _vm._l(_vm.resumen, function (r) {
+    return _c("tr", {
+      staticStyle: {
+        cursor: "pointer"
+      },
+      on: {
+        click: function click($event) {
+          return _vm.filtrarUsuario(r.user_id);
+        }
+      }
+    }, [_c("td", [_vm._v(_vm._s(r.name))]), _vm._v(" "), _c("td", {
+      staticClass: "text-center"
+    }, [_vm._v(_vm._s(r.cantidad))]), _vm._v(" "), _c("td", {
+      staticClass: "text-center"
+    }, [_vm._v(_vm._s(r.minutos))]), _vm._v(" "), _c("td", {
+      staticClass: "text-center"
+    }, [_vm._v(_vm._s(_vm._f("dateFormat")(r.mas_antigua)))])]);
+  }), _vm._v(" "), _vm.resumen.length === 0 ? _c("tr", [_c("td", {
+    staticClass: "text-center",
+    attrs: {
+      colspan: "4"
+    }
+  }, [_vm._v("No hay cargas pendientes")])]) : _vm._e()], 2)])])]) : _vm._e(), _vm._v(" "), _vm.isTimeLevel(5) || _vm.isTimeLevel(1) ? _c("timer-bar", {
+    on: {
+      "show-pendientes": _vm.verPendientes
+    }
+  }) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "box"
   }, [_vm.firstFilter ? _c("div", {
     staticClass: "box-body table-responsive no-padding"
@@ -29950,7 +30398,9 @@ var render = function render() {
   }, [_vm._v("Editar")]) : _vm._e()]), _vm._v(" "), _vm._l(_vm.list.data.data, function (item, index) {
     return !_vm.list.loading ? _c("tr", [_c("td", {
       staticClass: "text-center"
-    }, [_vm._v(_vm._s(_vm._f("dateFormat")(item.fecha)))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.minutos))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.usuario.name))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.cliente.nombre_completo))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.gestion.nombre))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.referencia))]), _vm._v(" "), _c("td", {
+    }, [_vm._v(_vm._s(_vm._f("dateFormat")(item.fecha)))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.minutos))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.usuario ? item.usuario.name : ""))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.cliente ? item.cliente.nombre_completo : "")), item.estado === "pendiente" ? _c("span", {
+      staticClass: "label bg-yellow"
+    }, [_vm._v("Sin vincular")]) : _vm._e()]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.gestion ? item.gestion.nombre : ""))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(item.referencia))]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [_vm.isTimeLevel(5) ? _c("a", {
       staticStyle: {
@@ -30135,7 +30585,7 @@ var render = function render() {
     attrs: {
       type: "number",
       name: "minutos",
-      min: "10",
+      min: "5",
       step: "5",
       "data-vv-validate-on": "none"
     },
@@ -30184,6 +30634,71 @@ var render = function render() {
     }],
     staticClass: "help-block"
   }, [_vm._v(_vm._s(_vm.errors.first("cliente_id")))])], 1), _vm._v(" "), _c("div", {
+    staticClass: "clearfix"
+  }), _vm._v(" "), _c("div", {
+    staticClass: "form-group col-sm-3"
+  }, [_c("label", {
+    attrs: {
+      "for": "hora_inicio"
+    }
+  }, [_vm._v("Hora desde")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.selectedItem.hora_inicio,
+      expression: "selectedItem.hora_inicio"
+    }],
+    staticClass: "form-control input-sm",
+    attrs: {
+      type: "time",
+      name: "hora_inicio"
+    },
+    domProps: {
+      value: _vm.selectedItem.hora_inicio
+    },
+    on: {
+      change: _vm.onHoraChange,
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.selectedItem, "hora_inicio", $event.target.value);
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "form-group col-sm-3"
+  }, [_c("label", {
+    attrs: {
+      "for": "hora_fin"
+    }
+  }, [_vm._v("Hora hasta")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.selectedItem.hora_fin,
+      expression: "selectedItem.hora_fin"
+    }],
+    staticClass: "form-control input-sm",
+    attrs: {
+      type: "time",
+      name: "hora_fin"
+    },
+    domProps: {
+      value: _vm.selectedItem.hora_fin
+    },
+    on: {
+      change: _vm.onHoraChange,
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.selectedItem, "hora_fin", $event.target.value);
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "col-sm-6"
+  }, [_c("p", {
+    staticClass: "help-block",
+    staticStyle: {
+      "margin-top": "25px"
+    }
+  }, [_vm._v("Opcional: al indicar desde/hasta se calculan los minutos (redondeo a 5).")])]), _vm._v(" "), _c("div", {
     staticClass: "clearfix"
   }), _vm._v(" "), _c("div", {
     staticClass: "form-group col-sm-6",
@@ -30353,7 +30868,25 @@ var render = function render() {
     slot: "modal-footer"
   })]], 2)], 1);
 };
-var staticRenderFns = [];
+var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "box-header with-border"
+  }, [_c("h3", {
+    staticClass: "box-title"
+  }, [_vm._v("Pendientes de vincular por usuario")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("tr", [_c("th", [_vm._v("Usuario")]), _c("th", {
+    staticClass: "text-center"
+  }, [_vm._v("Cargas")]), _c("th", {
+    staticClass: "text-center"
+  }, [_vm._v("Minutos")]), _c("th", {
+    staticClass: "text-center"
+  }, [_vm._v("Más antigua")])]);
+}];
 render._withStripped = true;
 
 
@@ -30451,7 +30984,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -31761,6 +32294,45 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.errors.first("filtros.hasta")))])], 1), _vm._v(" "), _c("div", {
     staticClass: "form-group"
   }, [_c("label", {
+    staticStyle: {
+      display: "block"
+    },
+    attrs: {
+      "for": "estado"
+    }
+  }, [_vm._v("Estado")]), _vm._v(" "), _c("select", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filtros.estado,
+      expression: "filtros.estado"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      name: "estado"
+    },
+    on: {
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.$set(_vm.filtros, "estado", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
+      }
+    }
+  }, [_c("option", {
+    domProps: {
+      value: null
+    }
+  }, [_vm._v("Vinculadas")]), _vm._v(" "), _c("option", {
+    attrs: {
+      value: "pendiente"
+    }
+  }, [_vm._v("Sin vincular")])])]), _vm._v(" "), _c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
     staticClass: "hidden-xs",
     staticStyle: {
       display: "block"
@@ -31816,7 +32388,7 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "form-group",
     staticStyle: {
-      width: "250px"
+      width: "300px"
     }
   }, [_c("v-select", {
     attrs: {
@@ -31829,6 +32401,372 @@ var render = function render() {
       label: "nombre_completo"
     }
   })], 1)])]);
+};
+var staticRenderFns = [];
+render._withStripped = true;
+
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=template&id=d5c32eb0":
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=template&id=d5c32eb0 ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "box box-solid timer-bar"
+  }, [_c("div", {
+    staticClass: "box-body"
+  }, [_c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-sm-6 col-md-7"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.descripcion,
+      expression: "descripcion"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "¿En qué estás trabajando? (opcional)",
+      disabled: !!_vm.timer || _vm.busy
+    },
+    domProps: {
+      value: _vm.descripcion
+    },
+    on: {
+      keyup: function keyup($event) {
+        if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")) return null;
+        return _vm.start.apply(null, arguments);
+      },
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.descripcion = $event.target.value;
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "col-sm-6 col-md-5 text-right"
+  }, [_c("span", {
+    staticClass: "timer-clock",
+    "class": {
+      running: _vm.timer,
+      warn: _vm.excedido
+    }
+  }, [_vm._v(_vm._s(_vm.timer ? _vm.elapsedText : "00:00:00"))]), _vm._v(" "), !_vm.timer ? _c("button", {
+    staticClass: "btn btn-sm btn-flat bg-green",
+    attrs: {
+      disabled: _vm.busy
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.start.apply(null, arguments);
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fa fa-play"
+  }), _vm._v(" Iniciar")]) : [_c("button", {
+    staticClass: "btn btn-sm btn-flat bg-red",
+    attrs: {
+      disabled: _vm.busy
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.openFinish.apply(null, arguments);
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fa fa-stop"
+  }), _vm._v(" Terminar")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-sm btn-flat btn-default",
+    attrs: {
+      disabled: _vm.busy,
+      title: "Descartar"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.discard.apply(null, arguments);
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fa fa-trash"
+  })])]], 2)]), _vm._v(" "), _vm.pendientes > 0 ? _c("p", {
+    staticClass: "text-yellow",
+    staticStyle: {
+      margin: "8px 0 0"
+    }
+  }, [_c("i", {
+    staticClass: "fa fa-exclamation-triangle"
+  }), _vm._v(" Tenés " + _vm._s(_vm.pendientes) + " carga" + _vm._s(_vm.pendientes > 1 ? "s" : "") + " sin vincular.\n      "), _c("a", {
+    attrs: {
+      href: "javascript:void(0)"
+    },
+    on: {
+      click: function click($event) {
+        return _vm.$emit("show-pendientes");
+      }
+    }
+  }, [_vm._v("Ver")])]) : _vm._e()])]);
+};
+var staticRenderFns = [];
+render._withStripped = true;
+
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=template&id=a6ab1124":
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=template&id=a6ab1124 ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _vm.visible ? _c("div", [_c("button", {
+    staticClass: "timer-fab",
+    "class": {
+      running: _vm.timer,
+      warn: _vm.excedido
+    },
+    attrs: {
+      title: _vm.titulo
+    },
+    on: {
+      click: _vm.onFab
+    }
+  }, [_vm.timer ? [_c("i", {
+    staticClass: "fa fa-stop"
+  }), _vm._v(" "), _c("span", {
+    staticClass: "timer-fab-clock"
+  }, [_vm._v(_vm._s(_vm.elapsedText))])] : _c("i", {
+    staticClass: "fa fa-play"
+  })], 2), _vm._v(" "), _c("modal", {
+    staticClass: "themis-modal",
+    attrs: {
+      effect: "fade",
+      backdrop: false
+    },
+    model: {
+      value: _vm.finishOpen,
+      callback: function callback($$v) {
+        _vm.finishOpen = $$v;
+      },
+      expression: "finishOpen"
+    }
+  }, [_c("div", {
+    staticClass: "modal-header",
+    attrs: {
+      slot: "modal-header"
+    },
+    slot: "modal-header"
+  }, [_c("h4", {
+    staticClass: "modal-title"
+  }, [_vm._v("Terminar timer "), _c("small", [_vm._v("(" + _vm._s(_vm.elapsedText) + ")")])])]), _vm._v(" "), _c("div", {
+    staticClass: "modal-body",
+    attrs: {
+      slot: "modal-body"
+    },
+    on: {
+      keyup: function keyup($event) {
+        if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "esc", 27, $event.key, ["Esc", "Escape"])) return null;
+        _vm.finishOpen = false;
+      }
+    },
+    slot: "modal-body"
+  }, [_c("modal-errors", {
+    attrs: {
+      messages: _vm.finish.errors
+    }
+  }), _vm._v(" "), _c("p", {
+    staticClass: "text-muted"
+  }, [_vm._v("Podés vincularlo ahora o guardarlo sin vincular y completarlo más tarde.")]), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "form-group col-sm-12"
+  }, [_c("label", [_vm._v("Cliente")]), _vm._v(" "), _c("v-select", {
+    attrs: {
+      value: _vm.finish.cliente,
+      options: _vm.clientes,
+      "on-change": _vm.onChangeCliente,
+      placeholder: "Seleccioná cliente",
+      label: "nombre_completo"
+    }
+  })], 1), _vm._v(" "), _c("div", {
+    staticClass: "form-group col-sm-6"
+  }, [_c("label", [_vm._v("Gestión")]), _vm._v(" "), _c("select", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.finish.gestion_id,
+      expression: "finish.gestion_id"
+    }],
+    staticClass: "form-control",
+    on: {
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.$set(_vm.finish, "gestion_id", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
+      }
+    }
+  }, [_c("option", {
+    domProps: {
+      value: null
+    }
+  }), _vm._v(" "), _vm._l(_vm.gestiones, function (g) {
+    return _c("option", {
+      domProps: {
+        value: g.id
+      }
+    }, [_vm._v(_vm._s(g.nombre))]);
+  })], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "form-group col-sm-6"
+  }, [_c("label", [_vm._v("Referencia")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.finish.referencia,
+      expression: "finish.referencia"
+    }],
+    staticClass: "form-control input-sm",
+    attrs: {
+      type: "text",
+      list: "timer-referencias"
+    },
+    domProps: {
+      value: _vm.finish.referencia
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.finish, "referencia", $event.target.value);
+      }
+    }
+  }), _vm._v(" "), _c("datalist", {
+    attrs: {
+      id: "timer-referencias"
+    }
+  }, _vm._l(_vm.referencias, function (r) {
+    return _c("option", [_vm._v(_vm._s(r.nombre))]);
+  }), 0)]), _vm._v(" "), _c("div", {
+    staticClass: "form-group col-sm-12"
+  }, [_c("label", [_vm._v("Descripción")]), _vm._v(" "), _c("textarea", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.finish.descripcion,
+      expression: "finish.descripcion"
+    }],
+    staticClass: "form-control",
+    domProps: {
+      value: _vm.finish.descripcion
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.finish, "descripcion", $event.target.value);
+      }
+    }
+  })])])], 1), _vm._v(" "), _c("div", {
+    staticClass: "modal-footer",
+    attrs: {
+      slot: "modal-footer"
+    },
+    slot: "modal-footer"
+  }, [_c("button", {
+    staticClass: "btn btn-flat btn-default",
+    attrs: {
+      disabled: _vm.busy
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        _vm.finishOpen = false;
+      }
+    }
+  }, [_vm._v("Cancelar")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-flat btn-warning",
+    attrs: {
+      disabled: _vm.busy
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.stop(false);
+      }
+    }
+  }, [_vm._v("Guardar sin vincular")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-flat bg-purple",
+    attrs: {
+      disabled: _vm.busy
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.stop(true);
+      }
+    }
+  }, [_vm._v("Guardar y vincular")])])])], 1) : _vm._e();
+};
+var staticRenderFns = [];
+render._withStripped = true;
+
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=template&id=74ac7b82":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=template&id=74ac7b82 ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _vm.visible ? _c("li", {
+    staticClass: "timer-widget"
+  }, [_c("router-link", {
+    attrs: {
+      to: "/time/horas",
+      title: _vm.excedido ? "Timer corriendo hace mucho: ¿te olvidaste de terminarlo?" : _vm.timer ? "Timer en curso" : "Ir a Horas"
+    }
+  }, [_c("i", {
+    staticClass: "fa",
+    "class": _vm.timer ? _vm.excedido ? "fa-exclamation-triangle text-red" : "fa-circle text-green" : "fa-clock-o"
+  }), _vm._v(" "), _vm.timer ? _c("span", {
+    staticClass: "timer-widget-clock"
+  }, [_vm._v(_vm._s(_vm.elapsedText))]) : _vm._e()])], 1) : _vm._e();
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -31978,7 +32916,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -32113,7 +33051,7 @@ var render = function render() {
       staticClass: "fa fa-arrows handle pull-left"
     }), _vm._v(" "), _c("span", {
       staticClass: "badge pull-left"
-    }, [_vm._v(_vm._s(index + 1))]), _vm._v("\r\n                \t" + _vm._s(item.doc.nombre) + "\r\n                ")], 1);
+    }, [_vm._v(_vm._s(index + 1))]), _vm._v("\n                \t" + _vm._s(item.doc.nombre) + "\n                ")], 1);
   }), 0)], 1)])], 1) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "modal-footer",
     attrs: {
@@ -32214,7 +33152,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -32317,7 +33255,7 @@ var render = function render() {
       staticClass: "fa fa-arrows handle pull-left"
     }), _vm._v(" "), _c("span", {
       staticClass: "badge pull-left"
-    }, [_vm._v(_vm._s(index + 1))]), _vm._v("\r\n                \t" + _vm._s(item.doc.nombre) + "\r\n                ")], 1);
+    }, [_vm._v(_vm._s(index + 1))]), _vm._v("\n                \t" + _vm._s(item.doc.nombre) + "\n                ")], 1);
   }), 0)], 1)])], 1) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "modal-footer",
     attrs: {
@@ -32431,7 +33369,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -32612,7 +33550,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -32793,7 +33731,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t    \t" + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t    \t" + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -32900,7 +33838,7 @@ var render = function render() {
       domProps: {
         value: option.id
       }
-    }, [_vm._v("\r\n\t\t\t\t\t    " + _vm._s(option.nombre) + "\r\n\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t    " + _vm._s(option.nombre) + "\n\t\t\t\t\t  ")]);
   }), 0), _vm._v(" "), _c("span", {
     directives: [{
       name: "show",
@@ -32942,7 +33880,7 @@ var render = function render() {
       domProps: {
         value: option.value
       }
-    }, [_vm._v("\r\n\t\t\t\t    " + _vm._s(option.nombre) + "\r\n\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t    " + _vm._s(option.nombre) + "\n\t\t\t\t  ")]);
   }), 0)]), _vm._v(" "), _c("div", {
     staticClass: "clearfix"
   }), _vm._v(" "), _c("div", {
@@ -33043,7 +33981,7 @@ var render = function render() {
       staticClass: "fa fa-arrows handle pull-left"
     }), _vm._v(" "), _c("span", {
       staticClass: "badge pull-left"
-    }, [_vm._v(_vm._s(index + 1))]), _vm._v("\r\n                \t" + _vm._s(item.doc.nombre) + "\r\n                ")], 1);
+    }, [_vm._v(_vm._s(index + 1))]), _vm._v("\n                \t" + _vm._s(item.doc.nombre) + "\n                ")], 1);
   }), 0)], 1)])], 1) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "modal-footer",
     attrs: {
@@ -33190,7 +34128,7 @@ var render = function render() {
     slot: "modal-header"
   }, [_c("h4", {
     staticClass: "modal-title"
-  }, [_vm._v("\r\n\t      " + _vm._s(_vm.amModal.title) + "\r\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
+  }, [_vm._v("\n\t      " + _vm._s(_vm.amModal.title) + "\n\t    ")])]), _vm._v(" "), _vm.selectedItem ? _c("div", {
     staticClass: "modal-body",
     attrs: {
       slot: "modal-body"
@@ -33424,7 +34362,7 @@ var render = function render() {
       domProps: {
         value: option
       }
-    }, [_vm._v("\r\n\t\t\t\t\t    " + _vm._s(option.name) + "\r\n\t\t\t\t\t  ")]);
+    }, [_vm._v("\n\t\t\t\t\t    " + _vm._s(option.name) + "\n\t\t\t\t\t  ")]);
   }), 0), _vm._v(" "), _c("span", {
     directives: [{
       name: "show",
@@ -33861,10 +34799,10 @@ var render = function render() {
         if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")) return null;
         return _vm.doFilter.apply(null, arguments);
       },
-      input: function input($event) {
+      input: [function ($event) {
         if ($event.target.composing) return;
         _vm.$set(_vm.filter, "search", $event.target.value);
-      }
+      }, _vm.debouncedFilter]
     }
   })]), _vm._v(" "), _c("div", {
     staticClass: "form-group",
@@ -33884,7 +34822,7 @@ var render = function render() {
       placeholder: "Time"
     },
     on: {
-      change: function change($event) {
+      change: [function ($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -33892,7 +34830,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filter, "time", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }
+      }, _vm.doFilter]
     }
   }, [_c("option", {
     domProps: {
@@ -34284,6 +35222,76 @@ if (token) {
 //     broadcaster: 'pusher',
 //     key: 'your-pusher-key'
 // });
+
+/***/ }),
+
+/***/ "./resources/assets/js/components/views/Time/includes/TimerMixin.js":
+/*!**************************************************************************!*\
+  !*** ./resources/assets/js/components/views/Time/includes/TimerMixin.js ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
+// Cronometro compartido por la barra de horas y el widget del header
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      now: Date.now(),
+      ticker: null
+    };
+  },
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapState)({
+    timer: function timer(state) {
+      return state.timer.timer;
+    },
+    pendientes: function pendientes(state) {
+      return state.timer.pendientes;
+    },
+    timerOffset: function timerOffset(state) {
+      return state.timer.offset;
+    },
+    avisoHoras: function avisoHoras(state) {
+      return state.timer.avisoHoras;
+    }
+  })), {}, {
+    elapsedSeconds: function elapsedSeconds() {
+      if (!this.timer) return 0;
+      return Math.max(0, Math.floor((this.now + this.timerOffset - new Date(this.timer.inicio).getTime()) / 1000));
+    },
+    excedido: function excedido() {
+      return !!this.timer && this.avisoHoras > 0 && this.elapsedSeconds > this.avisoHoras * 3600;
+    },
+    elapsedText: function elapsedText() {
+      var s = this.elapsedSeconds;
+      var pad = function pad(n) {
+        return (n < 10 ? '0' : '') + n;
+      };
+      return pad(Math.floor(s / 3600)) + ':' + pad(Math.floor(s % 3600 / 60)) + ':' + pad(s % 60);
+    }
+  }),
+  mounted: function mounted() {
+    var _this = this;
+    this.ticker = setInterval(function () {
+      _this.now = Date.now();
+    }, 1000);
+  },
+  beforeDestroy: function beforeDestroy() {
+    clearInterval(this.ticker);
+  }
+});
 
 /***/ }),
 
@@ -35442,13 +36450,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _modules_general__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/general */ "./resources/assets/js/store/modules/general.js");
 /* harmony import */ var _modules_notification__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/notification */ "./resources/assets/js/store/modules/notification.js");
 /* harmony import */ var _modules_authorization__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/authorization */ "./resources/assets/js/store/modules/authorization.js");
 /* harmony import */ var _modules_auth_user__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/auth-user */ "./resources/assets/js/store/modules/auth-user.js");
 /* harmony import */ var _modules_login__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/login */ "./resources/assets/js/store/modules/login.js");
+/* harmony import */ var _modules_timer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/timer */ "./resources/assets/js/store/modules/timer.js");
+
 
 
 
@@ -35459,14 +36469,15 @@ __webpack_require__.r(__webpack_exports__);
 //import editProfile from "./modules/edit-profile";
 //import editPassword from "./modules/edit-password";
 
-vue__WEBPACK_IMPORTED_MODULE_5__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_6__["default"]);
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_6__["default"].Store({
+vue__WEBPACK_IMPORTED_MODULE_6__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_7__["default"]);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_7__["default"].Store({
   modules: {
     notification: _modules_notification__WEBPACK_IMPORTED_MODULE_1__["default"],
     authUser: _modules_auth_user__WEBPACK_IMPORTED_MODULE_3__["default"],
     login: _modules_login__WEBPACK_IMPORTED_MODULE_4__["default"],
     authorization: _modules_authorization__WEBPACK_IMPORTED_MODULE_2__["default"],
-    general: _modules_general__WEBPACK_IMPORTED_MODULE_0__["default"]
+    general: _modules_general__WEBPACK_IMPORTED_MODULE_0__["default"],
+    timer: _modules_timer__WEBPACK_IMPORTED_MODULE_5__["default"]
     //editProfile,
     //editPassword,
   },
@@ -36114,6 +37125,84 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
       commit({
         type: _mutation_types__WEBPACK_IMPORTED_MODULE_0__.HIDE_ALL_NOTIFICATION
       });
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/assets/js/store/modules/timer.js":
+/*!****************************************************!*\
+  !*** ./resources/assets/js/store/modules/timer.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../../api */ "./resources/assets/js/api/index.js");
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  state: {
+    timer: null,
+    pendientes: 0,
+    pendientesEquipo: null,
+    // solo administradores
+    avisoHoras: 0,
+    offset: 0,
+    // ms: hora del servidor - hora del navegador
+    finishOpen: false
+  },
+  mutations: {
+    SET_TIMER_STATE: function SET_TIMER_STATE(state, payload) {
+      state.timer = payload.timer;
+      state.pendientes = payload.pendientes;
+      state.pendientesEquipo = payload.pendientes_equipo;
+      state.avisoHoras = payload.aviso_horas || 0;
+      state.offset = payload.ahora ? new Date(payload.ahora).getTime() - Date.now() : 0;
+    },
+    SET_TIMER_FINISH_OPEN: function SET_TIMER_FINISH_OPEN(state, open) {
+      state.finishOpen = open;
+    }
+  },
+  actions: {
+    loadTimer: function loadTimer(_ref) {
+      var commit = _ref.commit,
+        dispatch = _ref.dispatch;
+      return _api__WEBPACK_IMPORTED_MODULE_0__["default"].get('time-horas/timer').then(function (resp) {
+        commit('SET_TIMER_STATE', resp.data);
+        if (resp.data.autocerrado) {
+          dispatch('showSuccessNotification', 'Un timer que quedó sin terminar se cerró automáticamente y está pendiente de vincular.');
+        }
+      });
+    },
+    startTimer: function startTimer(_ref2, data) {
+      var commit = _ref2.commit;
+      return _api__WEBPACK_IMPORTED_MODULE_0__["default"].post('time-horas/timer/iniciar', data || {}).then(function (resp) {
+        return commit('SET_TIMER_STATE', resp.data);
+      });
+    },
+    stopTimer: function stopTimer(_ref3, data) {
+      var commit = _ref3.commit;
+      return _api__WEBPACK_IMPORTED_MODULE_0__["default"].post('time-horas/timer/terminar', data || {}).then(function (resp) {
+        return commit('SET_TIMER_STATE', resp.data);
+      });
+    },
+    discardTimer: function discardTimer(_ref4) {
+      var commit = _ref4.commit;
+      return _api__WEBPACK_IMPORTED_MODULE_0__["default"].post('time-horas/timer/descartar', {}).then(function (resp) {
+        return commit('SET_TIMER_STATE', resp.data);
+      });
+    },
+    openTimerFinish: function openTimerFinish(_ref5) {
+      var commit = _ref5.commit;
+      commit('SET_TIMER_FINISH_OPEN', true);
+    },
+    closeTimerFinish: function closeTimerFinish(_ref6) {
+      var commit = _ref6.commit;
+      commit('SET_TIMER_FINISH_OPEN', false);
     }
   }
 });
@@ -52844,7 +53933,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.login-page {\r\n    background: #fff;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.login-page {\n    background: #fff;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -52868,7 +53957,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.login-page {\r\n    background: #fff;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.login-page {\n    background: #fff;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -53036,7 +54125,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.pagination {\r\n  margin: 0;\r\n  float: right;\n}\n.pagination a.page {\r\n  border: 1px solid lightgray;\r\n  border-radius: 3px;\r\n  padding: 5px 10px;\r\n  margin-right: 2px;\n}\n.pagination a.page.active {\r\n  color: white;\r\n  background-color: #337ab7;\r\n  border: 1px solid lightgray;\r\n  border-radius: 3px;\r\n  padding: 5px 10px;\r\n  margin-right: 2px;\n}\n.pagination a.btn-nav {\r\n  border: 1px solid lightgray;\r\n  border-radius: 3px;\r\n  padding: 5px 7px;\r\n  margin-right: 2px;\n}\n.pagination a.btn-nav.disabled {\r\n  color: lightgray;\r\n  border: 1px solid lightgray;\r\n  border-radius: 3px;\r\n  padding: 5px 7px;\r\n  margin-right: 2px;\r\n  cursor: not-allowed;\n}\n.pagination-info {\r\n  float: left;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.pagination {\n  margin: 0;\n  float: right;\n}\n.pagination a.page {\n  border: 1px solid lightgray;\n  border-radius: 3px;\n  padding: 5px 10px;\n  margin-right: 2px;\n}\n.pagination a.page.active {\n  color: white;\n  background-color: #337ab7;\n  border: 1px solid lightgray;\n  border-radius: 3px;\n  padding: 5px 10px;\n  margin-right: 2px;\n}\n.pagination a.btn-nav {\n  border: 1px solid lightgray;\n  border-radius: 3px;\n  padding: 5px 7px;\n  margin-right: 2px;\n}\n.pagination a.btn-nav.disabled {\n  color: lightgray;\n  border: 1px solid lightgray;\n  border-radius: 3px;\n  padding: 5px 7px;\n  margin-right: 2px;\n  cursor: not-allowed;\n}\n.pagination-info {\n  float: left;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -53300,7 +54389,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.info-box {\r\n  cursor: pointer;\n}\n.info-box-content {\r\n  text-align: center;\r\n  vertical-align: middle;\r\n  display: inherit;\n}\n.fullCanvas {\r\n  width: 100%;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.info-box {\n  cursor: pointer;\n}\n.info-box-content {\n  text-align: center;\n  vertical-align: middle;\n  display: inherit;\n}\n.fullCanvas {\n  width: 100%;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -53613,6 +54702,78 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, "\n.filter-bar {\n  display: inline-block;\n}\n", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=style&index=0&id=d5c32eb0&lang=css":
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=style&index=0&id=d5c32eb0&lang=css ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../node_modules/laravel-mix/node_modules/css-loader/dist/runtime/api.js */ "./node_modules/laravel-mix/node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "\n.timer-bar .timer-clock { font-size: 24px; font-variant-numeric: tabular-nums; margin-right: 12px; color: #999; vertical-align: middle;\n}\n.timer-bar .timer-clock.running { color: #00a65a;\n}\n.timer-bar .timer-clock.warn { color: #dd4b39;\n}\n", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=style&index=0&id=a6ab1124&lang=css":
+/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=style&index=0&id=a6ab1124&lang=css ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../node_modules/laravel-mix/node_modules/css-loader/dist/runtime/api.js */ "./node_modules/laravel-mix/node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "\n.timer-fab {\n  position: fixed; right: 24px; bottom: 24px; z-index: 1030;\n  min-width: 52px; height: 52px; padding: 0 16px; border: 0; border-radius: 26px;\n  background: #00a65a; color: #fff; font-size: 16px; box-shadow: 0 3px 10px rgba(0,0,0,.3);\n}\n.timer-fab.running { background: #dd4b39;\n}\n.timer-fab.warn { animation: timer-fab-pulse 1s infinite;\n}\n.timer-fab-clock { font-variant-numeric: tabular-nums; margin-left: 4px;\n}\n@keyframes timer-fab-pulse {\n50% { opacity: .6;\n}\n}\n", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=style&index=0&id=74ac7b82&lang=css":
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=style&index=0&id=74ac7b82&lang=css ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../../../node_modules/laravel-mix/node_modules/css-loader/dist/runtime/api.js */ "./node_modules/laravel-mix/node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "\n.timer-widget-clock { font-variant-numeric: tabular-nums; margin-left: 4px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -54428,6 +55589,559 @@ var LaravelVuePagination_component = normalizeComponent(
 
 /******/ })["default"];
 //# sourceMappingURL=laravel-vue-pagination.common.js.map
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_Symbol.js":
+/*!****************************************!*\
+  !*** ./node_modules/lodash/_Symbol.js ***!
+  \****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var root = __webpack_require__(/*! ./_root */ "./node_modules/lodash/_root.js");
+
+/** Built-in value references. */
+var Symbol = root.Symbol;
+
+module.exports = Symbol;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_baseGetTag.js":
+/*!********************************************!*\
+  !*** ./node_modules/lodash/_baseGetTag.js ***!
+  \********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var Symbol = __webpack_require__(/*! ./_Symbol */ "./node_modules/lodash/_Symbol.js"),
+    getRawTag = __webpack_require__(/*! ./_getRawTag */ "./node_modules/lodash/_getRawTag.js"),
+    objectToString = __webpack_require__(/*! ./_objectToString */ "./node_modules/lodash/_objectToString.js");
+
+/** `Object#toString` result references. */
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * The base implementation of `getTag` without fallbacks for buggy environments.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+function baseGetTag(value) {
+  if (value == null) {
+    return value === undefined ? undefinedTag : nullTag;
+  }
+  return (symToStringTag && symToStringTag in Object(value))
+    ? getRawTag(value)
+    : objectToString(value);
+}
+
+module.exports = baseGetTag;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_baseTrim.js":
+/*!******************************************!*\
+  !*** ./node_modules/lodash/_baseTrim.js ***!
+  \******************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var trimmedEndIndex = __webpack_require__(/*! ./_trimmedEndIndex */ "./node_modules/lodash/_trimmedEndIndex.js");
+
+/** Used to match leading whitespace. */
+var reTrimStart = /^\s+/;
+
+/**
+ * The base implementation of `_.trim`.
+ *
+ * @private
+ * @param {string} string The string to trim.
+ * @returns {string} Returns the trimmed string.
+ */
+function baseTrim(string) {
+  return string
+    ? string.slice(0, trimmedEndIndex(string) + 1).replace(reTrimStart, '')
+    : string;
+}
+
+module.exports = baseTrim;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_freeGlobal.js":
+/*!********************************************!*\
+  !*** ./node_modules/lodash/_freeGlobal.js ***!
+  \********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof __webpack_require__.g == 'object' && __webpack_require__.g && __webpack_require__.g.Object === Object && __webpack_require__.g;
+
+module.exports = freeGlobal;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_getRawTag.js":
+/*!*******************************************!*\
+  !*** ./node_modules/lodash/_getRawTag.js ***!
+  \*******************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var Symbol = __webpack_require__(/*! ./_Symbol */ "./node_modules/lodash/_Symbol.js");
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the raw `toStringTag`.
+ */
+function getRawTag(value) {
+  var isOwn = hasOwnProperty.call(value, symToStringTag),
+      tag = value[symToStringTag];
+
+  try {
+    value[symToStringTag] = undefined;
+    var unmasked = true;
+  } catch (e) {}
+
+  var result = nativeObjectToString.call(value);
+  if (unmasked) {
+    if (isOwn) {
+      value[symToStringTag] = tag;
+    } else {
+      delete value[symToStringTag];
+    }
+  }
+  return result;
+}
+
+module.exports = getRawTag;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_objectToString.js":
+/*!************************************************!*\
+  !*** ./node_modules/lodash/_objectToString.js ***!
+  \************************************************/
+/***/ ((module) => {
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/**
+ * Converts `value` to a string using `Object.prototype.toString`.
+ *
+ * @private
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
+ */
+function objectToString(value) {
+  return nativeObjectToString.call(value);
+}
+
+module.exports = objectToString;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_root.js":
+/*!**************************************!*\
+  !*** ./node_modules/lodash/_root.js ***!
+  \**************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var freeGlobal = __webpack_require__(/*! ./_freeGlobal */ "./node_modules/lodash/_freeGlobal.js");
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+module.exports = root;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_trimmedEndIndex.js":
+/*!*************************************************!*\
+  !*** ./node_modules/lodash/_trimmedEndIndex.js ***!
+  \*************************************************/
+/***/ ((module) => {
+
+/** Used to match a single whitespace character. */
+var reWhitespace = /\s/;
+
+/**
+ * Used by `_.trim` and `_.trimEnd` to get the index of the last non-whitespace
+ * character of `string`.
+ *
+ * @private
+ * @param {string} string The string to inspect.
+ * @returns {number} Returns the index of the last non-whitespace character.
+ */
+function trimmedEndIndex(string) {
+  var index = string.length;
+
+  while (index-- && reWhitespace.test(string.charAt(index))) {}
+  return index;
+}
+
+module.exports = trimmedEndIndex;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/debounce.js":
+/*!*****************************************!*\
+  !*** ./node_modules/lodash/debounce.js ***!
+  \*****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var isObject = __webpack_require__(/*! ./isObject */ "./node_modules/lodash/isObject.js"),
+    now = __webpack_require__(/*! ./now */ "./node_modules/lodash/now.js"),
+    toNumber = __webpack_require__(/*! ./toNumber */ "./node_modules/lodash/toNumber.js");
+
+/** Error message constants. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max,
+    nativeMin = Math.min;
+
+/**
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was
+ * invoked. The debounced function comes with a `cancel` method to cancel
+ * delayed `func` invocations and a `flush` method to immediately invoke them.
+ * Provide `options` to indicate whether `func` should be invoked on the
+ * leading and/or trailing edge of the `wait` timeout. The `func` is invoked
+ * with the last arguments provided to the debounced function. Subsequent
+ * calls to the debounced function return the result of the last `func`
+ * invocation.
+ *
+ * **Note:** If `leading` and `trailing` options are `true`, `func` is
+ * invoked on the trailing edge of the timeout only if the debounced function
+ * is invoked more than once during the `wait` timeout.
+ *
+ * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+ * until to the next tick, similar to `setTimeout` with a timeout of `0`.
+ *
+ * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
+ * for details over the differences between `_.debounce` and `_.throttle`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {Function} func The function to debounce.
+ * @param {number} [wait=0] The number of milliseconds to delay.
+ * @param {Object} [options={}] The options object.
+ * @param {boolean} [options.leading=false]
+ *  Specify invoking on the leading edge of the timeout.
+ * @param {number} [options.maxWait]
+ *  The maximum time `func` is allowed to be delayed before it's invoked.
+ * @param {boolean} [options.trailing=true]
+ *  Specify invoking on the trailing edge of the timeout.
+ * @returns {Function} Returns the new debounced function.
+ * @example
+ *
+ * // Avoid costly calculations while the window size is in flux.
+ * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
+ *
+ * // Invoke `sendMail` when clicked, debouncing subsequent calls.
+ * jQuery(element).on('click', _.debounce(sendMail, 300, {
+ *   'leading': true,
+ *   'trailing': false
+ * }));
+ *
+ * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
+ * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
+ * var source = new EventSource('/stream');
+ * jQuery(source).on('message', debounced);
+ *
+ * // Cancel the trailing debounced invocation.
+ * jQuery(window).on('popstate', debounced.cancel);
+ */
+function debounce(func, wait, options) {
+  var lastArgs,
+      lastThis,
+      maxWait,
+      result,
+      timerId,
+      lastCallTime,
+      lastInvokeTime = 0,
+      leading = false,
+      maxing = false,
+      trailing = true;
+
+  if (typeof func != 'function') {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  wait = toNumber(wait) || 0;
+  if (isObject(options)) {
+    leading = !!options.leading;
+    maxing = 'maxWait' in options;
+    maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
+    trailing = 'trailing' in options ? !!options.trailing : trailing;
+  }
+
+  function invokeFunc(time) {
+    var args = lastArgs,
+        thisArg = lastThis;
+
+    lastArgs = lastThis = undefined;
+    lastInvokeTime = time;
+    result = func.apply(thisArg, args);
+    return result;
+  }
+
+  function leadingEdge(time) {
+    // Reset any `maxWait` timer.
+    lastInvokeTime = time;
+    // Start the timer for the trailing edge.
+    timerId = setTimeout(timerExpired, wait);
+    // Invoke the leading edge.
+    return leading ? invokeFunc(time) : result;
+  }
+
+  function remainingWait(time) {
+    var timeSinceLastCall = time - lastCallTime,
+        timeSinceLastInvoke = time - lastInvokeTime,
+        timeWaiting = wait - timeSinceLastCall;
+
+    return maxing
+      ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke)
+      : timeWaiting;
+  }
+
+  function shouldInvoke(time) {
+    var timeSinceLastCall = time - lastCallTime,
+        timeSinceLastInvoke = time - lastInvokeTime;
+
+    // Either this is the first call, activity has stopped and we're at the
+    // trailing edge, the system time has gone backwards and we're treating
+    // it as the trailing edge, or we've hit the `maxWait` limit.
+    return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
+      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
+  }
+
+  function timerExpired() {
+    var time = now();
+    if (shouldInvoke(time)) {
+      return trailingEdge(time);
+    }
+    // Restart the timer.
+    timerId = setTimeout(timerExpired, remainingWait(time));
+  }
+
+  function trailingEdge(time) {
+    timerId = undefined;
+
+    // Only invoke if we have `lastArgs` which means `func` has been
+    // debounced at least once.
+    if (trailing && lastArgs) {
+      return invokeFunc(time);
+    }
+    lastArgs = lastThis = undefined;
+    return result;
+  }
+
+  function cancel() {
+    if (timerId !== undefined) {
+      clearTimeout(timerId);
+    }
+    lastInvokeTime = 0;
+    lastArgs = lastCallTime = lastThis = timerId = undefined;
+  }
+
+  function flush() {
+    return timerId === undefined ? result : trailingEdge(now());
+  }
+
+  function debounced() {
+    var time = now(),
+        isInvoking = shouldInvoke(time);
+
+    lastArgs = arguments;
+    lastThis = this;
+    lastCallTime = time;
+
+    if (isInvoking) {
+      if (timerId === undefined) {
+        return leadingEdge(lastCallTime);
+      }
+      if (maxing) {
+        // Handle invocations in a tight loop.
+        clearTimeout(timerId);
+        timerId = setTimeout(timerExpired, wait);
+        return invokeFunc(lastCallTime);
+      }
+    }
+    if (timerId === undefined) {
+      timerId = setTimeout(timerExpired, wait);
+    }
+    return result;
+  }
+  debounced.cancel = cancel;
+  debounced.flush = flush;
+  return debounced;
+}
+
+module.exports = debounce;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/isObject.js":
+/*!*****************************************!*\
+  !*** ./node_modules/lodash/isObject.js ***!
+  \*****************************************/
+/***/ ((module) => {
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return value != null && (type == 'object' || type == 'function');
+}
+
+module.exports = isObject;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/isObjectLike.js":
+/*!*********************************************!*\
+  !*** ./node_modules/lodash/isObjectLike.js ***!
+  \*********************************************/
+/***/ ((module) => {
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return value != null && typeof value == 'object';
+}
+
+module.exports = isObjectLike;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/isSymbol.js":
+/*!*****************************************!*\
+  !*** ./node_modules/lodash/isSymbol.js ***!
+  \*****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var baseGetTag = __webpack_require__(/*! ./_baseGetTag */ "./node_modules/lodash/_baseGetTag.js"),
+    isObjectLike = __webpack_require__(/*! ./isObjectLike */ "./node_modules/lodash/isObjectLike.js");
+
+/** `Object#toString` result references. */
+var symbolTag = '[object Symbol]';
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && baseGetTag(value) == symbolTag);
+}
+
+module.exports = isSymbol;
+
 
 /***/ }),
 
@@ -71689,6 +73403,113 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
   // Check for `exports` after `define` in case a build optimizer adds it.
   else {}
 }.call(this));
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/now.js":
+/*!************************************!*\
+  !*** ./node_modules/lodash/now.js ***!
+  \************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var root = __webpack_require__(/*! ./_root */ "./node_modules/lodash/_root.js");
+
+/**
+ * Gets the timestamp of the number of milliseconds that have elapsed since
+ * the Unix epoch (1 January 1970 00:00:00 UTC).
+ *
+ * @static
+ * @memberOf _
+ * @since 2.4.0
+ * @category Date
+ * @returns {number} Returns the timestamp.
+ * @example
+ *
+ * _.defer(function(stamp) {
+ *   console.log(_.now() - stamp);
+ * }, _.now());
+ * // => Logs the number of milliseconds it took for the deferred invocation.
+ */
+var now = function() {
+  return root.Date.now();
+};
+
+module.exports = now;
+
+
+/***/ }),
+
+/***/ "./node_modules/lodash/toNumber.js":
+/*!*****************************************!*\
+  !*** ./node_modules/lodash/toNumber.js ***!
+  \*****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var baseTrim = __webpack_require__(/*! ./_baseTrim */ "./node_modules/lodash/_baseTrim.js"),
+    isObject = __webpack_require__(/*! ./isObject */ "./node_modules/lodash/isObject.js"),
+    isSymbol = __webpack_require__(/*! ./isSymbol */ "./node_modules/lodash/isSymbol.js");
+
+/** Used as references for various `Number` constants. */
+var NAN = 0 / 0;
+
+/** Used to detect bad signed hexadecimal string values. */
+var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
+/** Used to detect binary string values. */
+var reIsBinary = /^0b[01]+$/i;
+
+/** Used to detect octal string values. */
+var reIsOctal = /^0o[0-7]+$/i;
+
+/** Built-in method references without a dependency on `root`. */
+var freeParseInt = parseInt;
+
+/**
+ * Converts `value` to a number.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {number} Returns the number.
+ * @example
+ *
+ * _.toNumber(3.2);
+ * // => 3.2
+ *
+ * _.toNumber(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toNumber(Infinity);
+ * // => Infinity
+ *
+ * _.toNumber('3.2');
+ * // => 3.2
+ */
+function toNumber(value) {
+  if (typeof value == 'number') {
+    return value;
+  }
+  if (isSymbol(value)) {
+    return NAN;
+  }
+  if (isObject(value)) {
+    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
+    value = isObject(other) ? (other + '') : other;
+  }
+  if (typeof value != 'string') {
+    return value === 0 ? value : +value;
+  }
+  value = baseTrim(value);
+  var isBinary = reIsBinary.test(value);
+  return (isBinary || reIsOctal.test(value))
+    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+    : (reIsBadHex.test(value) ? NAN : +value);
+}
+
+module.exports = toNumber;
 
 
 /***/ }),
@@ -118694,6 +120515,96 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=style&index=0&id=d5c32eb0&lang=css":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=style&index=0&id=d5c32eb0&lang=css ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerBar_vue_vue_type_style_index_0_id_d5c32eb0_lang_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../../../../node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TimerBar.vue?vue&type=style&index=0&id=d5c32eb0&lang=css */ "./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=style&index=0&id=d5c32eb0&lang=css");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerBar_vue_vue_type_style_index_0_id_d5c32eb0_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"], options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerBar_vue_vue_type_style_index_0_id_d5c32eb0_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=style&index=0&id=a6ab1124&lang=css":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=style&index=0&id=a6ab1124&lang=css ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerDock_vue_vue_type_style_index_0_id_a6ab1124_lang_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../../../../node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TimerDock.vue?vue&type=style&index=0&id=a6ab1124&lang=css */ "./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=style&index=0&id=a6ab1124&lang=css");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerDock_vue_vue_type_style_index_0_id_a6ab1124_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"], options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerDock_vue_vue_type_style_index_0_id_a6ab1124_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=style&index=0&id=74ac7b82&lang=css":
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=style&index=0&id=74ac7b82&lang=css ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerWidget_vue_vue_type_style_index_0_id_74ac7b82_lang_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../../../../node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TimerWidget.vue?vue&type=style&index=0&id=74ac7b82&lang=css */ "./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=style&index=0&id=74ac7b82&lang=css");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerWidget_vue_vue_type_style_index_0_id_74ac7b82_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"], options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerWidget_vue_vue_type_style_index_0_id_74ac7b82_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TopActionsGestion.vue?vue&type=style&index=0&id=0e3246b7&lang=css":
 /*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TopActionsGestion.vue?vue&type=style&index=0&id=0e3246b7&lang=css ***!
@@ -135717,6 +137628,129 @@ component.options.__file = "resources/assets/js/components/views/Time/includes/F
 
 /***/ }),
 
+/***/ "./resources/assets/js/components/views/Time/includes/TimerBar.vue":
+/*!*************************************************************************!*\
+  !*** ./resources/assets/js/components/views/Time/includes/TimerBar.vue ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _TimerBar_vue_vue_type_template_id_d5c32eb0__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TimerBar.vue?vue&type=template&id=d5c32eb0 */ "./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=template&id=d5c32eb0");
+/* harmony import */ var _TimerBar_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TimerBar.vue?vue&type=script&lang=js */ "./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=script&lang=js");
+/* harmony import */ var _TimerBar_vue_vue_type_style_index_0_id_d5c32eb0_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TimerBar.vue?vue&type=style&index=0&id=d5c32eb0&lang=css */ "./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=style&index=0&id=d5c32eb0&lang=css");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+;
+
+
+/* normalize component */
+
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _TimerBar_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"],
+  _TimerBar_vue_vue_type_template_id_d5c32eb0__WEBPACK_IMPORTED_MODULE_0__.render,
+  _TimerBar_vue_vue_type_template_id_d5c32eb0__WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/assets/js/components/views/Time/includes/TimerBar.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/assets/js/components/views/Time/includes/TimerDock.vue":
+/*!**************************************************************************!*\
+  !*** ./resources/assets/js/components/views/Time/includes/TimerDock.vue ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _TimerDock_vue_vue_type_template_id_a6ab1124__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TimerDock.vue?vue&type=template&id=a6ab1124 */ "./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=template&id=a6ab1124");
+/* harmony import */ var _TimerDock_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TimerDock.vue?vue&type=script&lang=js */ "./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=script&lang=js");
+/* harmony import */ var _TimerDock_vue_vue_type_style_index_0_id_a6ab1124_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TimerDock.vue?vue&type=style&index=0&id=a6ab1124&lang=css */ "./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=style&index=0&id=a6ab1124&lang=css");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+;
+
+
+/* normalize component */
+
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _TimerDock_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"],
+  _TimerDock_vue_vue_type_template_id_a6ab1124__WEBPACK_IMPORTED_MODULE_0__.render,
+  _TimerDock_vue_vue_type_template_id_a6ab1124__WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/assets/js/components/views/Time/includes/TimerDock.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/assets/js/components/views/Time/includes/TimerWidget.vue":
+/*!****************************************************************************!*\
+  !*** ./resources/assets/js/components/views/Time/includes/TimerWidget.vue ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _TimerWidget_vue_vue_type_template_id_74ac7b82__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TimerWidget.vue?vue&type=template&id=74ac7b82 */ "./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=template&id=74ac7b82");
+/* harmony import */ var _TimerWidget_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TimerWidget.vue?vue&type=script&lang=js */ "./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=script&lang=js");
+/* harmony import */ var _TimerWidget_vue_vue_type_style_index_0_id_74ac7b82_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TimerWidget.vue?vue&type=style&index=0&id=74ac7b82&lang=css */ "./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=style&index=0&id=74ac7b82&lang=css");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+;
+
+
+/* normalize component */
+
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _TimerWidget_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"],
+  _TimerWidget_vue_vue_type_template_id_74ac7b82__WEBPACK_IMPORTED_MODULE_0__.render,
+  _TimerWidget_vue_vue_type_template_id_74ac7b82__WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/assets/js/components/views/Time/includes/TimerWidget.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/assets/js/components/views/Time/includes/TopActionsGestion.vue":
 /*!**********************************************************************************!*\
   !*** ./resources/assets/js/components/views/Time/includes/TopActionsGestion.vue ***!
@@ -137255,6 +139289,54 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=script&lang=js":
+/*!*************************************************************************************************!*\
+  !*** ./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=script&lang=js ***!
+  \*************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerBar_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TimerBar.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=script&lang=js");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerBar_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=script&lang=js":
+/*!**************************************************************************************************!*\
+  !*** ./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=script&lang=js ***!
+  \**************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerDock_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TimerDock.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=script&lang=js");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerDock_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=script&lang=js":
+/*!****************************************************************************************************!*\
+  !*** ./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=script&lang=js ***!
+  \****************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerWidget_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TimerWidget.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=script&lang=js");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerWidget_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/assets/js/components/views/Time/includes/TopActionsGestion.vue?vue&type=script&lang=js":
 /*!**********************************************************************************************************!*\
   !*** ./resources/assets/js/components/views/Time/includes/TopActionsGestion.vue?vue&type=script&lang=js ***!
@@ -138588,6 +140670,57 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=template&id=d5c32eb0":
+/*!*******************************************************************************************************!*\
+  !*** ./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=template&id=d5c32eb0 ***!
+  \*******************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerBar_vue_vue_type_template_id_d5c32eb0__WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerBar_vue_vue_type_template_id_d5c32eb0__WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerBar_vue_vue_type_template_id_d5c32eb0__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TimerBar.vue?vue&type=template&id=d5c32eb0 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=template&id=d5c32eb0");
+
+
+/***/ }),
+
+/***/ "./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=template&id=a6ab1124":
+/*!********************************************************************************************************!*\
+  !*** ./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=template&id=a6ab1124 ***!
+  \********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerDock_vue_vue_type_template_id_a6ab1124__WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerDock_vue_vue_type_template_id_a6ab1124__WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerDock_vue_vue_type_template_id_a6ab1124__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TimerDock.vue?vue&type=template&id=a6ab1124 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=template&id=a6ab1124");
+
+
+/***/ }),
+
+/***/ "./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=template&id=74ac7b82":
+/*!**********************************************************************************************************!*\
+  !*** ./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=template&id=74ac7b82 ***!
+  \**********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerWidget_vue_vue_type_template_id_74ac7b82__WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerWidget_vue_vue_type_template_id_74ac7b82__WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerWidget_vue_vue_type_template_id_74ac7b82__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TimerWidget.vue?vue&type=template&id=74ac7b82 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=template&id=74ac7b82");
+
+
+/***/ }),
+
 /***/ "./resources/assets/js/components/views/Time/includes/TopActionsGestion.vue?vue&type=template&id=0e3246b7":
 /*!****************************************************************************************************************!*\
   !*** ./resources/assets/js/components/views/Time/includes/TopActionsGestion.vue?vue&type=template&id=0e3246b7 ***!
@@ -139235,6 +141368,45 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_FilterBarReferencias_vue_vue_type_style_index_0_id_89a12b40_lang_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/style-loader/dist/cjs.js!../../../../../../../node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./FilterBarReferencias.vue?vue&type=style&index=0&id=89a12b40&lang=css */ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/FilterBarReferencias.vue?vue&type=style&index=0&id=89a12b40&lang=css");
+
+
+/***/ }),
+
+/***/ "./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=style&index=0&id=d5c32eb0&lang=css":
+/*!*********************************************************************************************************************!*\
+  !*** ./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=style&index=0&id=d5c32eb0&lang=css ***!
+  \*********************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerBar_vue_vue_type_style_index_0_id_d5c32eb0_lang_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/style-loader/dist/cjs.js!../../../../../../../node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TimerBar.vue?vue&type=style&index=0&id=d5c32eb0&lang=css */ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerBar.vue?vue&type=style&index=0&id=d5c32eb0&lang=css");
+
+
+/***/ }),
+
+/***/ "./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=style&index=0&id=a6ab1124&lang=css":
+/*!**********************************************************************************************************************!*\
+  !*** ./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=style&index=0&id=a6ab1124&lang=css ***!
+  \**********************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerDock_vue_vue_type_style_index_0_id_a6ab1124_lang_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/style-loader/dist/cjs.js!../../../../../../../node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TimerDock.vue?vue&type=style&index=0&id=a6ab1124&lang=css */ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerDock.vue?vue&type=style&index=0&id=a6ab1124&lang=css");
+
+
+/***/ }),
+
+/***/ "./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=style&index=0&id=74ac7b82&lang=css":
+/*!************************************************************************************************************************!*\
+  !*** ./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=style&index=0&id=74ac7b82&lang=css ***!
+  \************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TimerWidget_vue_vue_type_style_index_0_id_74ac7b82_lang_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/style-loader/dist/cjs.js!../../../../../../../node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TimerWidget.vue?vue&type=style&index=0&id=74ac7b82&lang=css */ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/views/Time/includes/TimerWidget.vue?vue&type=style&index=0&id=74ac7b82&lang=css");
 
 
 /***/ }),

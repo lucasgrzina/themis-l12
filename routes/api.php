@@ -2,6 +2,7 @@
 Route::post('upload/docs', 'UploadsApiController@docs');
 
 Route::post('authenticate', 'AuthenticateController@authenticate');
+Route::post('authenticate/refresh', 'AuthenticateController@refresh');
 Route::post('forgot-password', 'ForgotPasswordAPIController@forgot');
 
 Route::get('general-data','GeneralDataAPIController@index');
@@ -185,6 +186,12 @@ Route::group(['middleware' => ['jwt.auth']], function()
     Route::delete('time-referencias/eliminar-seleccion', 'TimeReferenciaAPIController@removeSelected');
     Route::resource('time-referencias', 'TimeReferenciaAPIController');
 
+    Route::get('time-horas/pendientes-resumen', 'TimeHoraAPIController@pendientesResumen');
+    Route::get('time-horas/timer', 'TimeHoraAPIController@timerActual');
+    Route::post('time-horas/timer/iniciar', 'TimeHoraAPIController@timerIniciar');
+    Route::post('time-horas/timer/terminar', 'TimeHoraAPIController@timerTerminar');
+    Route::post('time-horas/timer/descartar', 'TimeHoraAPIController@timerDescartar');
+    Route::post('time-horas/{id}/vincular', 'TimeHoraAPIController@vincular');
     Route::delete('time-horas/eliminar-seleccion', 'TimeHoraAPIController@removeSelected');
     Route::post('time-horas/facturar', 'TimeHoraAPIController@facturar');
     Route::post('time-horas/filtrar', 'TimeHoraAPIController@index');

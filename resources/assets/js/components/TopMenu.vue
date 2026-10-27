@@ -41,6 +41,7 @@
             </li-->
             <!-- /.messages-menu -->
   
+            <timer-widget></timer-widget>
             <top-menu-avisos :type="'avisos'" v-if="hasAnyPerm('avisos:R')"></top-menu-avisos>
             <top-menu-avisos :type="'vencimientos'" v-if="hasAnyPerm('avisos:R')"></top-menu-avisos>
             <!-- Tasks Menu -->
@@ -156,6 +157,7 @@
         <a href="javascript:;">CoPilot</a>.</strong> All rights reserved.-->
     </footer>
   </div>
+    <timer-dock></timer-dock>
     <modal v-model="profileModal.show" class="themis-modal" effect="fade" :backdrop="false">
       <div slot="modal-header" class="modal-header">
         <h4 class="modal-title">
@@ -181,6 +183,8 @@ import { modal } from 'vue-strap'
 import Profile from './views/Usuarios/Profile.vue'
 import VueEvents from 'vue-events'
 import TopMenuAvisos from './includes/TopMenuAvisos.vue'
+import TimerWidget from './views/Time/includes/TimerWidget.vue'
+import TimerDock from './views/Time/includes/TimerDock.vue'
 //import 'hideseek'
 
 export default {
@@ -190,7 +194,9 @@ export default {
     Notification,
     modal,
     Profile,
-    TopMenuAvisos
+    TopMenuAvisos,
+    TimerWidget,
+    TimerDock
   },
   created () {
     this.$events.$on('close-edit-profile',this.closeProfileModal)

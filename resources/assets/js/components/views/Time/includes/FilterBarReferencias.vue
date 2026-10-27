@@ -1,7 +1,7 @@
 <template>
   <div class="filter-bar">
       <form class="form-inline">
-              <div class="form-group" style="width:250px;">
+              <div class="form-group" style="width:300px;">
                 <v-select
                   :value="info.clientes.selected"
                   :clearSearchOnSelect="true"
@@ -59,6 +59,9 @@ export default {
         loading(true)
         Api.combos('time/clientes?search=' + search).then(resp => {
            vm.info.clientes.data = resp.data
+           loading(false)
+        }).catch(() => {
+           vm.info.clientes.data = []
            loading(false)
         })
     }, 500), 

@@ -52,7 +52,7 @@ class TimeHoraAPIController extends AppBaseController
             'gestion' => function($q) {
                 $q->select('nombre','id');
             },                                  
-        ])->orderBy('fecha','asc')->paginate($request->get('per_page',50));
+        ])->orderBy('fecha','asc')->orderBy('id','asc')->paginate($request->get('per_page',50));
 
         return $this->sendResponse($collection->toArray(), trans('api.success'));
     }
@@ -67,13 +67,15 @@ class TimeHoraAPIController extends AppBaseController
      */
     public function store(CreateUpdateTimeHoraAPIRequest $request)
     {
-        $input = $request->except(['gestion','cliente','usuario']);
+        $input = $request->except(['gestion','cliente','usuario','estado','inicio','fin','hora_inicio','hora_fin']);
 
         try
         {
             DB::beginTransaction();
             $input['fecha'] = Carbon::createFromFormat('Y-m-d',\Illuminate\Support\Str::limit($input['fecha_dp'],10,''))->format('Y-m-d');
             $input['user_id'] = request()->user()->id;
+            $input['estado'] = 'vinculada';
+            $input = array_merge($input, $this->inicioFin($input['fecha'], $request->get('hora_inicio'), $request->get('hora_fin')));
             $model = $this->repository->create($input);
             DB::commit();
             return $this->sendResponse($model->toArray(), trans('api.success'));
@@ -115,7 +117,7 @@ class TimeHoraAPIController extends AppBaseController
      */
     public function update($id, CreateUpdateTimeHoraAPIRequest $request)
     {
-        $input = $request->except(['gestion','cliente','usuario']);
+        $input = $request->except(['gestion','cliente','usuario','estado','inicio','fin','hora_inicio','hora_fin']);
 
         try
         {
@@ -128,6 +130,8 @@ class TimeHoraAPIController extends AppBaseController
                 throw new \Exception(trans('api.not_found'), 1);
             }
 
+            $input['estado'] = 'vinculada';
+            $input = array_merge($input, $this->inicioFin($input['fecha'], $request->get('hora_inicio'), $request->get('hora_fin')));
             $model = $this->repository->update($input, $id);
 
             DB::commit();
@@ -195,5 +199,189 @@ class TimeHoraAPIController extends AppBaseController
             DB::rollback();
             return $this->sendError($e->getMessage());
         }
-    }    
+    }
+
+    /**
+     * Timer en curso del usuario + cantidad de cargas sin vincular.
+     */
+    public function timerActual()
+    {
+        $user = request()->user();
+        $autocerrado = $this->autocerrarOlvidado($user->id);
+        $timer = TimeHora::where('user_id', $user->id)->where('estado', 'corriendo')->first();
+        $esAdmin = $user->time_level === 5;
+
+        return $this->sendResponse([
+            'timer' => $timer ? $timer->toArray() : null,
+            'pendientes' => TimeHora::where('user_id', $user->id)->where('estado', 'pendiente')->count(),
+            'pendientes_equipo' => $esAdmin ? TimeHora::where('estado', 'pendiente')->count() : null,
+            'ahora' => Carbon::now()->toIso8601String(),
+            'aviso_horas' => config('themis.time.timer_aviso_horas'),
+            'autocerrado' => $autocerrado,
+        ], trans('api.success'));
+    }
+
+    /**
+     * Pendientes de vincular agrupados por usuario (solo administradores).
+     */
+    public function pendientesResumen()
+    {
+        if (request()->user()->time_level !== 5) {
+            return $this->sendError('No autorizado', 403);
+        }
+
+        $rows = TimeHora::where('estado', 'pendiente')
+            ->join('users', 'users.id', '=', 'time_horas.user_id')
+            ->groupBy('time_horas.user_id', 'users.name')
+            ->orderBy('users.name')
+            ->get([
+                'time_horas.user_id',
+                'users.name',
+                DB::raw('count(*) as cantidad'),
+                DB::raw('sum(time_horas.minutos) as minutos'),
+                DB::raw('min(time_horas.fecha) as mas_antigua'),
+            ]);
+
+        return $this->sendResponse($rows->toArray(), trans('api.success'));
+    }
+
+    /**
+     * Inicia un timer. Si ya hay uno corriendo, lo cierra (queda pendiente).
+     */
+    public function timerIniciar(Request $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+            $user = request()->user();
+
+            $corriendo = TimeHora::where('user_id', $user->id)->where('estado', 'corriendo')->first();
+            if ($corriendo) {
+                $this->cerrarTimer($corriendo, []);
+            }
+
+            $ahora = Carbon::now();
+            TimeHora::create([
+                'user_id' => $user->id,
+                'fecha' => $ahora->format('Y-m-d'),
+                'minutos' => 0,
+                'estado' => 'corriendo',
+                'inicio' => $ahora,
+                'descripcion' => $request->get('descripcion'),
+            ]);
+            DB::commit();
+        }
+        catch(\Exception $e)
+        {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->timerActual();
+    }
+
+    /**
+     * Termina el timer en curso. Si llegan cliente, gestion y referencia queda
+     * vinculada; si no, queda pendiente de vincular.
+     */
+    public function timerTerminar(Request $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+            $timer = TimeHora::where('user_id', request()->user()->id)->where('estado', 'corriendo')->first();
+            if (!$timer) {
+                throw new \Exception('No hay un timer en curso');
+            }
+            $this->cerrarTimer($timer, $request->only(['cliente_id', 'gestion_id', 'referencia', 'descripcion']));
+            DB::commit();
+        }
+        catch(\Exception $e)
+        {
+            DB::rollback();
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->timerActual();
+    }
+
+    public function timerDescartar()
+    {
+        TimeHora::where('user_id', request()->user()->id)->where('estado', 'corriendo')->delete();
+        return $this->timerActual();
+    }
+
+    /**
+     * Vincula una carga pendiente a cliente/gestion/referencia.
+     */
+    public function vincular($id, Request $request)
+    {
+        $this->validate($request, [
+            'cliente_id' => 'required',
+            'gestion_id' => 'required',
+            'referencia' => 'required',
+        ]);
+
+        $model = TimeHora::where('user_id', request()->user()->id)->where('estado', 'pendiente')->find($id);
+        if (!$model) {
+            return $this->sendError(trans('api.not_found'));
+        }
+
+        $model->fill($request->only(['cliente_id', 'gestion_id', 'referencia', 'descripcion']));
+        $model->estado = 'vinculada';
+        $model->save();
+
+        return $this->sendResponse($model->toArray(), trans('api.success'));
+    }
+
+    private function cerrarTimer(TimeHora $timer, array $datos, $fin = null)
+    {
+        $fin = $fin ?: Carbon::now();
+        $segundos = max(0, $fin->diffInSeconds($timer->inicio, true));
+        // Redondeo hacia arriba a multiplos de 5, minimo 5
+        $minutos = max(5, (int) (ceil($segundos / 60 / 5) * 5));
+
+        $timer->fill(array_filter($datos, function ($v) { return $v !== null && $v !== ''; }));
+        $timer->fin = $fin;
+        $timer->minutos = $minutos;
+        $timer->estado = ($timer->cliente_id && $timer->gestion_id && $timer->referencia) ? 'vinculada' : 'pendiente';
+        $timer->save();
+    }
+
+    /**
+     * Cierra el timer si lleva mas de timer_max_horas corriendo (se olvido de terminarlo).
+     */
+    private function autocerrarOlvidado($userId)
+    {
+        $timer = TimeHora::where('user_id', $userId)->where('estado', 'corriendo')->first();
+        $max = (float) config('themis.time.timer_max_horas');
+        if (!$timer || $max <= 0) {
+            return false;
+        }
+
+        $limite = $timer->inicio->copy()->addMinutes((int) round($max * 60));
+        if ($limite->isFuture()) {
+            return false;
+        }
+
+        $timer->descripcion = trim($timer->descripcion . ' [Cerrado automaticamente: timer sin terminar]');
+        $this->cerrarTimer($timer, [], $limite);
+        return true;
+    }
+
+    private function inicioFin($fecha, $horaInicio, $horaFin)
+    {
+        if (!$horaInicio || !$horaFin) {
+            return ['inicio' => null, 'fin' => null];
+        }
+
+        // La hora se ingresa en horario local (config themis.time.tz); se convierte
+        // al instante UTC que se almacena, para que al mostrarla vuelva a verse igual.
+        $tz = config('themis.time.tz', 'America/Argentina/Buenos_Aires');
+
+        return [
+            'inicio' => Carbon::createFromFormat('Y-m-d H:i', $fecha . ' ' . $horaInicio, $tz)->setTimezone('UTC'),
+            'fin' => Carbon::createFromFormat('Y-m-d H:i', $fecha . ' ' . $horaFin, $tz)->setTimezone('UTC'),
+        ];
+    }
 }

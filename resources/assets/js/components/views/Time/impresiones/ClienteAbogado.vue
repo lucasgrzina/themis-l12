@@ -258,6 +258,9 @@ export default {
 	        Api.combos('time/clientes?search=' + search).then(resp => {
 	           vm.info.clientes.data = resp.data
 	           loading(false)
+	        }).catch(() => {
+	           vm.info.clientes.data = []
+	           loading(false)
 	        })
 	    }, 500), 
 	    onChangeCliente(item) {

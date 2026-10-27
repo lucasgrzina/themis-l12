@@ -6,6 +6,7 @@ import notification from "./modules/notification";
 import authorization from "./modules/authorization";
 import authUser from "./modules/auth-user";
 import login from "./modules/login";
+import timer from "./modules/timer";
 //import editProfile from "./modules/edit-profile";
 //import editPassword from "./modules/edit-password";
 
@@ -17,7 +18,8 @@ export default new Vuex.Store({
         authUser,
         login,
         authorization,
-        general
+        general,
+        timer
         //editProfile,
         //editPassword,
     },

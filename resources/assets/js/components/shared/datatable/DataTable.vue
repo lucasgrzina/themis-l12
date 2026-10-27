@@ -59,6 +59,10 @@ export default {
         return true
       }
     },    
+    liveSearch: {
+      type: Boolean,
+      default: true
+    },
     actionPerm: {
       type: String,
       required: true
@@ -90,6 +94,9 @@ export default {
                 [
                   (this.$slots['slot-filter-bar'] ? this.$slots['slot-filter-bar'] : 
                   h('filter-bar',{
+                    props: {
+                      live: this.liveSearch
+                    },
                     on: {
                       'vuetable:filter-set': this.onFilterSet,
                       'vuetable:filter-reset': this.onFilterReset,

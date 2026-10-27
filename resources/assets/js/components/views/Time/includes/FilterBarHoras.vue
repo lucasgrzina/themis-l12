@@ -38,6 +38,13 @@
                       <span class="help-block" v-show="errors.has('filtros.hasta')">{{ errors.first('filtros.hasta') }}</span>
                     </div>              
                     <div class="form-group">
+                      <label for="estado" style="display:block;">Estado</label>
+                      <select v-model="filtros.estado" class="form-control" name="estado">
+                        <option :value="null">Vinculadas</option>
+                        <option value="pendiente">Sin vincular</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
                       <label class="hidden-xs" style="display:block;">&nbsp;</label>
                       <button class="btn btn-sm btn-flat bg-purple" @click.prevent="doFilter"><i class="fa fa-search"></i> Filtrar</button>        
                     </div>
@@ -131,6 +138,9 @@ export default {
         loading(true)
         Api.combos('time/clientes?search=' + search).then(resp => {
            vm.info.clientes.data = resp.data
+           loading(false)
+        }).catch(() => {
+           vm.info.clientes.data = []
            loading(false)
         })
     }, 500), 
