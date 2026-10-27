@@ -34,5 +34,12 @@ class PermissionsSeeder extends Seeder
         		]);
         	}
         }
+
+        // Operaciones extra (no CRUD estandar).
+        // "Destruir carpeta" sobre Tramites: gatea la marca manual de carpeta destruida.
+        Permission::firstOrCreate(
+            ['name' => 'tramites:DC', 'guard_name' => 'web'],
+            ['display_name' => 'Destruir carpeta Tramites']
+        );
     }
 }

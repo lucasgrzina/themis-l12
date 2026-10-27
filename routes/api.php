@@ -214,7 +214,8 @@ Route::group(['middleware' => ['jwt.auth']], function()
         Route::post('beneficios','InformesAPIController@beneficios');    
         Route::post('tramites','InformesAPIController@tramites');    
         Route::post('pensiones','InformesAPIController@pensiones');  
-        Route::post('tramites-historicos','InformesAPIController@tramitesHistoricos');      
+        Route::post('tramites-historicos','InformesAPIController@tramitesHistoricos');
+        Route::post('tramites-historicos/{id}/destruir','InformesAPIController@destruirCarpeta');
         Route::post('requerimientos-empresas','InformesAPIController@requerimientosEmpresas');      
         Route::post('ucadep','InformesAPIController@ucadep');      
     });

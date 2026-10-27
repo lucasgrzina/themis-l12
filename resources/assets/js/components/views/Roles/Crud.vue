@@ -51,7 +51,7 @@
 				  </select>
 			</div>
 			<div class="form-group col-sm-6">
-				<div v-if="amModal.accionControlada" v-for="acc in info.acciones">
+				<div v-if="amModal.accionControlada" v-for="acc in accionesVisibles">
 				  <input type="checkbox" :value="amModal.accionControlada.nombre_permiso+':'+acc.oper" v-model="selectedItem.permissions">
 				  <label>{{ acc.name.toUpperCase() }}</label>
 				</div>				
@@ -146,12 +146,23 @@ export default {
 		apiUrl: config.serverURI + 'usuarios/roles',
 	}
   },  
+  computed: {
+	// Operaciones a mostrar para la accion controlada seleccionada.
+	// "Tramites" tiene una operacion extra DC (Destruir carpeta) ademas del CRUD.
+	accionesVisibles () {
+		let acciones = this.info.acciones.slice();
+		if (this.amModal.accionControlada && this.amModal.accionControlada.nombre_permiso === 'tramites') {
+			acciones.push({oper: 'DC', name: 'Destruir carpeta'});
+		}
+		return acciones;
+	}
+  },
   mounted () {
   	Api.combos('acciones').then((resp) => {
   		this.info.accionesControladas = resp.data;
 	});
 
-  },  
+  },
   methods: {
     onAction (action, data, index) {
     	this.$store.dispatch('hideSuccessNotification')

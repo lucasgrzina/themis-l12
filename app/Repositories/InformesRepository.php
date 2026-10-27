@@ -422,7 +422,10 @@ class InformesRepository extends BaseRepository
                         'c.categoria',
                         'e.razon_social as empresas_referencia',
                         't.fecha_archivo as fecha_archivo',
-                        'u.name as usuario_archivo'
+                        'u.name as usuario_archivo',
+                        't.carpeta_destruida',
+                        't.fecha_destruccion as fecha_destruccion',
+                        'ud.name as usuario_destruccion'
                 ];
                 break;
             case 2:
@@ -449,7 +452,10 @@ class InformesRepository extends BaseRepository
                         'c.categoria',
                         'e.razon_social as empresas_referencia',
                         't.fecha_archivo as fecha_archivo',
-                        'u.name as usuario_archivo'
+                        'u.name as usuario_archivo',
+                        't.carpeta_destruida',
+                        't.fecha_destruccion as fecha_destruccion',
+                        'ud.name as usuario_destruccion'
                 ];
                 break;
         }
@@ -461,16 +467,17 @@ class InformesRepository extends BaseRepository
             ->leftJoin('tipo_tramites as tt','tt.id','=','r.tipo_tramite_id')
             ->leftJoin('empresas_referencia as e','e.id','=','c.empresa_referencia_id')
             ->leftJoin('users as u','t.usuario_archivo_id','=','u.id')
+            ->leftJoin('users as ud','t.usuario_destruccion_id','=','ud.id')
             ->leftJoin(\DB::raw("(SELECT requerimiento_id, GROUP_CONCAT(u.name) responsables
-                                FROM responsable_requerimientos rr 
+                                FROM responsable_requerimientos rr
                                 INNER JOIN users u ON rr.user_id = u.id AND u.deleted_at IS NULL
                                 WHERE rr.deleted_at is null
-                                GROUP BY requerimiento_id) resp"), 
+                                GROUP BY requerimiento_id) resp"),
             function($join)
             {
                $join->on('resp.requerimiento_id', '=', 't.requerimiento_id');
-            }) 
-            ->whereNull('c.deleted_at')                   
+            })
+            ->whereNull('c.deleted_at')
             ->whereNull('t.deleted_at')
             ->whereNull('r.deleted_at')
             ->whereNull('u.deleted_at')
@@ -487,18 +494,25 @@ class InformesRepository extends BaseRepository
             $query->where('t.fecha_inicio','<=',\Carbon\Carbon::createFromFormat('d/m/Y',$hasta)->format('Y-m-d'));
         }
 
+        // Solo archivadas cuya carpeta fisica aun NO fue destruida.
+        if (filter_var($filtros->get('solo_no_destruidas',false),FILTER_VALIDATE_BOOLEAN)) {
+            $query->where(function($q){
+                $q->whereNull('t.carpeta_destruida')->orWhere('t.carpeta_destruida',0);
+            });
+        }
+
         if (!$responsableArea) {
-            $responsableId = $userId;   
-            $query->whereRaw("EXISTS(SELECT 1 FROM responsable_requerimientos WHERE deleted_at is null and requerimiento_id = t.requerimiento_id AND user_id IN (".$responsableId.") LIMIT 0,1) ");                                                       
+            $responsableId = $userId;
+            $query->whereRaw("EXISTS(SELECT 1 FROM responsable_requerimientos WHERE deleted_at is null and requerimiento_id = t.requerimiento_id AND user_id IN (".$responsableId.") LIMIT 0,1) ");
         } else {
-            $responsableId = $filtros->get('responsable_id',0);  
+            $responsableId = $filtros->get('responsable_id',0);
             if ($responsableId != 0) {
-                $query->whereRaw("EXISTS(SELECT 1 FROM responsable_requerimientos WHERE deleted_at is null and requerimiento_id = t.requerimiento_id AND user_id IN (".$responsableId.") LIMIT 0,1) ");                              
-            }  
+                $query->whereRaw("EXISTS(SELECT 1 FROM responsable_requerimientos WHERE deleted_at is null and requerimiento_id = t.requerimiento_id AND user_id IN (".$responsableId.") LIMIT 0,1) ");
+            }
         }
 
         return ($offset ? $query->paginate($offset) : $query->get());
-    }      
+    }
 
     public function requerimientosEmpresas($filtros,$offset=false) {
         $desde = $filtros->get('desde','');

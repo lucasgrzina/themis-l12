@@ -44,7 +44,10 @@
 				</div-->											      	
 	            <div class="form-group col-sm-3">
 	            	<label style="display:block;" class="hidden-xs">&nbsp;</label>
-	            	<button-type type="filter" @click="doFilter" :disabled="!canFilter"/>
+	            	<span class="checkbox" style="display:block;margin:0 0 10px;">
+		            		<label><input type="checkbox" v-model="filtros.solo_no_destruidas"> Sólo archivadas sin destruir</label>
+		            	</span>
+		            	<button-type type="filter" @click="doFilter" :disabled="!canFilter"/>
 	            </div>
 		      </form>       
 		    </fieldset>      	
@@ -75,6 +78,7 @@
 						<th>Tipo Tramite</th>
 						<th>Fecha Archivo</th>
 						<th>Usuario Archivo</th>
+						<th class="text-center">Carpeta destruida</th>
 		            </tr>
 		            <tr v-for="item in list.data.data" v-if="!list.loading">
 						<template v-if="area.id === 1">
@@ -87,13 +91,19 @@
 						<td>{{ item.tipo_tramite }}</td>
 						<td>{{ item.fecha_archivo | dateFormat }}</td>
 						<td>{{ item.usuario_archivo }}</td>
+						<td class="text-center">
+							<i v-if="item.carpeta_destruida" class="fa fa-check text-green" :title="destruidaTitle(item)" style="font-size:16px;"></i>
+							<button v-else v-can="['tramites:DC']" type="button" class="btn btn-xs btn-default" title="Marcar carpeta como destruida" @click="destruir(item)">
+								<i class="fa fa-square-o"></i>
+							</button>
+						</td>
 		            </tr>
 
 		            <tr v-if="!list.loading && list.data.length > 0 && list.data.data.length == 0">
-		            	<td colspan="8">No se encontraron resultados</td>
+		            	<td colspan="9">No se encontraron resultados</td>
 		            </tr>
 		        	<tr v-if="list.loading">
-		        		<td colspan="8">
+		        		<td colspan="9">
 		        			<pulse-loader :loading="list.loading"></pulse-loader>
 		        		</td>
 		        	</tr>            
@@ -103,7 +113,7 @@
 						<td colspan="2" v-if="list.data && list.data.total > 1">
 							<strong>Total trámites informados:</strong> {{ list.data.total }}
 						</td>							
-						<td colspan="6" class="text-right">
+						<td colspan="7" class="text-right">
 							<pagination v-if="list.data.data.length > 0" :limit="5" :data="list.data" @pagination-change-page="changePage"></pagination>
 						</td>
 					</tr>	
@@ -154,6 +164,7 @@ export default {
 				user_id: 0, 
 				responsable_area: false,
 				responsable_id: 0,
+				solo_no_destruidas: false,
 				page: 1
 			},
 			list: {
@@ -258,6 +269,33 @@ export default {
 			
 			document.location = Laravel.webDomain.concat('/informes/tramites-historicos/?').concat(queryString);
 		},		
+		destruidaTitle(item) {
+			let t = 'Carpeta destruida';
+			if (item.fecha_destruccion) {
+				t += ' el ' + moment(item.fecha_destruccion).format('DD/MM/YYYY');
+			}
+			if (item.usuario_destruccion) {
+				t += ' por ' + item.usuario_destruccion;
+			}
+			return t;
+		},
+		destruir(item) {
+			this.$dialog.confirm('La destrucción de la carpeta física es DEFINITIVA y no se puede deshacer.<br><br>¿Confirma que desea marcar esta carpeta como destruida?', {loader: true, html: true})
+				.then((dialog) => {
+					Api.post(this.uri + '/' + item.tramite_id + '/destruir').then((result) => {
+						item.carpeta_destruida = true;
+						item.fecha_destruccion = result.data.fecha_destruccion;
+						item.usuario_destruccion = result.data.usuario_destruccion;
+						dialog.close();
+					}, (error) => {
+						dialog.close();
+						let msg = (error.response && error.response.data && error.response.data.message)
+							? error.response.data.message
+							: 'No se pudo marcar la carpeta como destruida.';
+						alert(msg);
+					});
+				});
+		},
 		soyResponsable() {
 			let res = this.isResponsableArea(this.area.id);
 			if (res) {

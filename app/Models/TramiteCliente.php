@@ -36,7 +36,7 @@ class TramiteCliente extends Model
     public $table = 'tramite_clientes';
     
 
-    protected $dates = ['deleted_at','fecha_archivo'];
+    protected $dates = ['deleted_at','fecha_archivo','fecha_destruccion'];
 
 
     public $fillable = [
@@ -58,6 +58,9 @@ class TramiteCliente extends Model
         'archivar',
         'fecha_archivo',
         'usuario_archivo_id',
+        'carpeta_destruida',
+        'fecha_destruccion',
+        'usuario_destruccion_id',
         'fecha_ingreso',
         'fecha_egreso',
         'tramite_ant_id',
@@ -93,6 +96,9 @@ class TramiteCliente extends Model
         'archivar' => 'boolean',
         'fecha_archivo' => 'date',
         'usuario_archivo_id' => 'integer',
+        'carpeta_destruida' => 'boolean',
+        'fecha_destruccion' => 'date',
+        'usuario_destruccion_id' => 'integer',
         'fecha_ingreso' => 'date',
         'fecha_egreso' => 'date',
         'tramite_ant_id' => 'integer',
@@ -128,6 +134,12 @@ class TramiteCliente extends Model
     public function scopeActuales($query) {
         return $query->where(function($query) {
             $query->whereNull('archivar')->orWhere('archivar',false);
+        });
+    }
+    // Archivadas cuya carpeta fisica aun NO fue destruida.
+    public function scopeNoDestruidas($query) {
+        return $query->where(function($query) {
+            $query->whereNull('carpeta_destruida')->orWhere('carpeta_destruida',false);
         });
     }
 
