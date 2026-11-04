@@ -83,6 +83,23 @@
 				              	<span style="text-transform:uppercase;font-weight:bold;">{{ item.minutos | minutesToHours }}</span>
 				              </td>
 				              <td class="text-center" style="background:#eee;border-color: #eee;">{{ item.movimientos }} movimiento(s)</td>
+					            </tr>
+					            <tr v-if="item.por_abogado && item.por_abogado.length">
+					              <td colspan="6" style="background: #cac8f3;">
+					              	<span style="text-transform:uppercase;font-weight:bold;">Total por abogado</span>
+					              </td>
+					            </tr>
+					            <tr v-if="item.por_abogado && item.por_abogado.length">
+					              <th colspan="3">Abogado</th>
+					              <th class="text-center">Movimientos</th>
+					              <th class="text-center">Minutos</th>
+					              <th class="text-center" style="background:#eee;border-color: #eee;">Horas</th>
+					            </tr>
+					            <tr v-for="pa in (item.por_abogado || [])" :key="pa.abogado">
+					              <td colspan="3">{{ pa.abogado }}</td>
+					              <td class="text-center">{{ pa.movimientos }}</td>
+					              <td class="text-center">{{ pa.minutos }}</td>
+					              <td class="text-center" style="background:#eee;border-color: #eee;font-weight:bold;">{{ pa.minutos | minutesToHours }}</td>
 				            </tr>	
 			            </template>		            		            
 			            <tr v-if="item.id">

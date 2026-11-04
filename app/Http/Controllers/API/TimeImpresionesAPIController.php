@@ -40,4 +40,14 @@ class TimeImpresionesAPIController extends AppBaseController
         $collection = $this->repository->impresionesAbogadoResumen($request,$this->offset);
         return $this->sendResponse($collection, trans('api.success'));
     }
+
+    public function liquidacion(Request $request, \App\Services\LiquidacionService $service)
+    {
+        $data = $service->calcular(
+            $request->get('desde'),
+            $request->get('hasta'),
+            $request->get('cliente_id', null)
+        );
+        return $this->sendResponse($data, trans('api.success'));
+    }
 }

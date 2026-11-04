@@ -96,6 +96,8 @@ class Cliente extends Model
         'nro_correlativo',
         'clave_seguridad_social',
         'clave_fiscal',
+        'modelo_facturacion',
+        'aplica_iva',
     ];
 
     /**
@@ -150,8 +152,25 @@ class Cliente extends Model
         'fecha_enviudez' => 'date',
         'hijos_comun' => 'integer',
         'anios_convivencia' => 'integer',
-        'nro_correlativo' => 'string'              
+        'nro_correlativo' => 'string',
+        'modelo_facturacion' => 'string',
+        'aplica_iva' => 'boolean'
     ];
+
+    public function tarifas()
+    {
+        return $this->hasMany('App\Models\TimeTarifa','cliente_id');
+    }
+
+    public function participaciones()
+    {
+        return $this->hasMany('App\Models\TimeParticipacion','cliente_id');
+    }
+
+    public function presupuestos()
+    {
+        return $this->hasMany('App\Models\TimePresupuesto','cliente_id');
+    }
 
     /**
      * Validation rules

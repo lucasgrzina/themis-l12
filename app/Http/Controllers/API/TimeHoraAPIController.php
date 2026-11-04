@@ -73,7 +73,12 @@ class TimeHoraAPIController extends AppBaseController
         {
             DB::beginTransaction();
             $input['fecha'] = Carbon::createFromFormat('Y-m-d',\Illuminate\Support\Str::limit($input['fecha_dp'],10,''))->format('Y-m-d');
-            $input['user_id'] = request()->user()->id;
+            // Solo el administrador del Time (nivel 5) puede cargar horas en nombre
+            // de otro usuario (ej. el usuario "Director"). El resto carga a su nombre.
+            $esAdminTime = (int) request()->user()->time_level === 5;
+            $input['user_id'] = ($esAdminTime && $request->filled('user_id'))
+                ? (int) $request->get('user_id')
+                : request()->user()->id;
             $input['estado'] = 'vinculada';
             $input = array_merge($input, $this->inicioFin($input['fecha'], $request->get('hora_inicio'), $request->get('hora_fin')));
             $model = $this->repository->create($input);
@@ -131,6 +136,10 @@ class TimeHoraAPIController extends AppBaseController
             }
 
             $input['estado'] = 'vinculada';
+            // Solo el administrador del Time (nivel 5) puede reasignar el autor de la hora.
+            if ((int) request()->user()->time_level !== 5) {
+                unset($input['user_id']);
+            }
             $input = array_merge($input, $this->inicioFin($input['fecha'], $request->get('hora_inicio'), $request->get('hora_fin')));
             $model = $this->repository->update($input, $id);
 

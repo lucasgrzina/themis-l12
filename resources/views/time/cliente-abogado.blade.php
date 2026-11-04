@@ -84,9 +84,31 @@
           	<span style="text-transform:uppercase;font-weight:bold;">{{ minutosToHoras($row['minutos']) }}</span>
           </td>
           <td class="text-center" style="background:#eee;border-color: #eee;text-align:center;width: 150px;">{{ $row['movimientos'] }} movimiento(s)</td>
-        </tr>	
+        </tr>
         </tbody>
 	</table>
+	@if (!empty($row['por_abogado']))
+		<br>
+		<h2 style="text-transform:uppercase;font-weight:bold;font-size: 14px;">Total por abogado</h2>
+		<table class="table" cellspacing="0" style="width: 100%">
+			<tbody>
+				<tr>
+					<th style="text-align:left;">Abogado</th>
+					<th style="width: 80px;text-align:center;">Movimientos</th>
+					<th style="width: 80px;text-align:center;">Minutos</th>
+					<th style="width: 80px;text-align:center;">Horas</th>
+				</tr>
+				@foreach($row['por_abogado'] as $pa)
+					<tr class="items">
+						<td>{{ $pa['abogado'] }}</td>
+						<td style="text-align:center;">{{ $pa['movimientos'] }}</td>
+						<td style="text-align:center;">{{ $pa['minutos'] }}</td>
+						<td style="background:#eee;border-color:#eee;text-align:center;font-weight:bold;">{{ minutosToHoras($pa['minutos']) }}</td>
+					</tr>
+				@endforeach
+			</tbody>
+		</table>
+	@endif
     @endif
     @if (isset($row['id']))
 	    <tr class="tr-items">

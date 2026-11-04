@@ -144,6 +144,38 @@ class ImprimirController extends Controller
         
     }
 
+    public function timeImpLiquidacion(Request $request, \App\Services\LiquidacionService $service)
+    {
+        try
+        {
+            $data = $service->calcular($request->get('desde'), $request->get('hasta'), $request->get('cliente_id', null));
+            $contents = view('time.liquidacion', ['data' => $data])->render();
+
+            $pdf = \PDF::loadHtml($contents);
+            $pdf->setPaper('a4', 'landscape');
+
+            return $pdf->stream("liquidacion.pdf", array("Attachment" => false));
+            exit(0);
+        }
+        catch (\Exception $e)
+        {
+            die($e->getMessage());
+        }
+    }
+
+    public function timeExpLiquidacion(Request $request, \App\Services\LiquidacionService $service)
+    {
+        try
+        {
+            $data = $service->calcular($request->get('desde'), $request->get('hasta'), $request->get('cliente_id', null));
+            return \Excel::download(new \App\Exports\InformeLiquidacion($data), 'liquidacion.xlsx');
+        }
+        catch (\Exception $e)
+        {
+            die($e->getMessage());
+        }
+    }
+
     public function informeExpJud(Request $request,InformesRepository $informesRepo)
     {
 

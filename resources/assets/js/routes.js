@@ -43,6 +43,11 @@ import VistaTimeHoras from './components/views/Time/CrudHoras.vue'
 import VistaTimeImpresionesCA from './components/views/Time/impresiones/ClienteAbogado.vue'
 import VistaTimeImpresionesAC from './components/views/Time/impresiones/AbogadoCliente.vue'
 import VistaTimeImpresionesAR from './components/views/Time/impresiones/AbogadoResumen.vue'
+import VistaTimeImpresionesLiq from './components/views/Time/impresiones/Liquidacion.vue'
+import VistaTimeParamCliente from './components/views/Time/parametros/ParametrosCliente.vue'
+import VistaTimeParamTiposCambio from './components/views/Time/parametros/TiposCambio.vue'
+import VistaTimeParamRetenciones from './components/views/Time/parametros/Retenciones.vue'
+import VistaTimeParamCategorias from './components/views/Time/parametros/CategoriasAbogados.vue'
 
 import VistaInformeReqEmp from './components/views/Informes/ReqEmp/Listado.vue'
 import VistaInformeExpJud from './components/views/Informes/ExpJud/Listado.vue'
@@ -337,8 +342,43 @@ const router = new VueRouter({
               name: 'Time: Impresiones por Abogado (Resumen)',
               meta: { requiresAuth: true,description: ''}
             },
+            {
+              path: '/time/impresiones/liquidacion',
+              alias: 'time.impresiones.liquidacion',
+              component: VistaTimeImpresionesLiq,
+              name: 'Time: Liquidación Cliente / Abogado',
+              meta: { requiresAuth: true,description: ''}
+            },
+            {
+              path: '/time/parametros/cliente',
+              alias: 'time.parametros.cliente',
+              component: VistaTimeParamCliente,
+              name: 'Time: Parámetros por Cliente',
+              meta: { requiresAuth: true,description: ''}
+            },
+            {
+              path: '/time/parametros/tipo-cambio',
+              alias: 'time.parametros.tipo-cambio',
+              component: VistaTimeParamTiposCambio,
+              name: 'Time: Tipo de Cambio',
+              meta: { requiresAuth: true,description: ''}
+            },
+            {
+              path: '/time/parametros/retenciones',
+              alias: 'time.parametros.retenciones',
+              component: VistaTimeParamRetenciones,
+              name: 'Time: Retenciones',
+              meta: { requiresAuth: true,description: ''}
+            },
+            {
+              path: '/time/parametros/categorias-abogados',
+              alias: 'time.parametros.categorias-abogados',
+              component: VistaTimeParamCategorias,
+              name: 'Time: Categorías de Abogados',
+              meta: { requiresAuth: true,description: ''}
+            },
           ]
-        }, 
+        },
         {
             path: '/login',
             alias: 'login',

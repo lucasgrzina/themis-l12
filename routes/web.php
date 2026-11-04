@@ -40,6 +40,8 @@ Route::group(['prefix' => 'imprimir'],function(){
 	Route::get('/time/imp-abogado-resumen','ImprimirController@timeImpAbogadoResumen');
 	Route::get('/time/imp-cliente-abogado','ImprimirController@timeImpClienteAbogado');
 	Route::get('/time/imp-abogado-cliente','ImprimirController@timeImpAbogadoCliente');
+	Route::get('/time/imp-liquidacion','ImprimirController@timeImpLiquidacion');
+	Route::get('/time/exp-liquidacion','ImprimirController@timeExpLiquidacion');
 });
 Route::get('download/doc-cliente/{id}','DownloadController@docCliente')->name('download.doc_cliente');
 Route::any('{all}', function () {

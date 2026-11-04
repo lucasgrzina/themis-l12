@@ -234,6 +234,26 @@ class ClienteAPIController extends AppBaseController
     }
 
     /**
+     * Actualiza solo el modelo de facturacion del cliente (para el informe de
+     * liquidacion del Time), sin disparar la validacion completa del cliente.
+     * PUT /clientes/{id}/facturacion
+     */
+    public function updateFacturacion($id, Request $request)
+    {
+        $model = $this->repository->findWithoutFail($id);
+
+        if (empty($model)) {
+            return $this->sendError(trans('api.not_found'));
+        }
+
+        $model->modelo_facturacion = $request->get('modelo_facturacion', 'horas');
+        $model->aplica_iva = (bool) $request->get('aplica_iva', false);
+        $model->save();
+
+        return $this->sendResponse($model->toArray(), trans('api.success'));
+    }
+
+    /**
      * Remove the specified Cliente from storage.
      * DELETE /clientes/{id}
      *

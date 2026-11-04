@@ -422,8 +422,8 @@ class CombosAPIController extends AppBaseController
                         ->whereVisible(true)
                         ->whereResponsable(true)
                         ->whereIn('time_level',[1,5])
-                        ->orderBy('name','asc'); 
-        })->all(['id','name']);        
+                        ->orderBy('name','asc');
+        })->all(['id','name','categoria_abogado']);
 
 
         return $this->sendResponse($data, 'La operacion finalizo con exito');

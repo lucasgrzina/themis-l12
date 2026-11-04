@@ -98,11 +98,25 @@ class TimeHoraRepository extends BaseRepository
                 ];
             }            
         }
+        $totalesAbogado = (clone $query)->reorder()
+            ->selectRaw('user_id, SUM(minutos) as minutos, COUNT(*) as movimientos')
+            ->groupBy('user_id')
+            ->get();
+        $nombres = \App\User::whereIn('id', $totalesAbogado->pluck('user_id'))->pluck('name', 'id');
+        $porAbogado = $totalesAbogado->map(function ($t) use ($nombres) {
+            return [
+                'abogado' => $nombres[$t->user_id] ?? '',
+                'minutos' => (int) $t->minutos,
+                'movimientos' => (int) $t->movimientos,
+            ];
+        })->sortBy('abogado')->values()->all();
+
         $data[] = [
             'tipo' => 'TOTAL',
             'minutos' => $query->sum('minutos'),
             'movimientos' => $query->count(),
-        ];        
+            'por_abogado' => $porAbogado,
+        ];
         $resultados['data'] = $data;
 
         //\Log::info(json_encode($resultados, JSON_PRETTY_PRINT));

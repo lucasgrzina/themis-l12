@@ -164,7 +164,26 @@ class UserController extends AppBaseController
         return $this->sendResponse($model->toArray(), 'La operacion finalizo con exito');
     }
 
-    public function updateProfile($id, Request $request) 
+    /**
+     * Actualiza solo la categoria de abogado (para el informe de liquidacion
+     * del Time), sin disparar la validacion completa del usuario.
+     * PUT /usuarios/{id}/categoria-abogado
+     */
+    public function updateCategoriaAbogado($id, Request $request)
+    {
+        $model = $this->repository->findWithoutFail($id);
+
+        if (empty($model)) {
+            return $this->sendError('No se encontro el registro');
+        }
+
+        $model->categoria_abogado = $request->get('categoria_abogado', null);
+        $model->save();
+
+        return $this->sendResponse($model->toArray(), 'La operacion finalizo con exito');
+    }
+
+    public function updateProfile($id, Request $request)
     {
         $input = $request->except('password');
 

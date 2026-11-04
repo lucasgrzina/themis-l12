@@ -213,9 +213,39 @@
                   <span class="page">Por Abogado (Resumen)</span>
                 </a>
               </router-link>
-            </ul>         
-          </li> 
-        </template>  
+              <router-link tag="li" class="pageLink" to="/time/impresiones/liquidacion">
+                <a>
+                  <i class="">&nbsp;</i>
+                  <span class="page">Liquidación Cliente/Abogado</span>
+                </a>
+              </router-link>
+            </ul>
+          </li>
+        </template>
+        <template v-if="canViewTimeGestion()">
+          <li class="treeview">
+            <a href="#">
+              <span>Parámetros</span>
+              <span class="pull-right-container">
+                <i class="fa fa-angle-left fa-fw pull-right"></i>
+              </span>
+            </a>
+            <ul class="treeview-menu">
+              <router-link tag="li" class="pageLink" to="/time/parametros/cliente">
+                <a><i class="">&nbsp;</i><span class="page">Por Cliente</span></a>
+              </router-link>
+              <router-link tag="li" class="pageLink" to="/time/parametros/categorias-abogados">
+                <a><i class="">&nbsp;</i><span class="page">Categorías de Abogados</span></a>
+              </router-link>
+              <router-link tag="li" class="pageLink" to="/time/parametros/tipo-cambio">
+                <a><i class="">&nbsp;</i><span class="page">Tipo de Cambio</span></a>
+              </router-link>
+              <router-link tag="li" class="pageLink" to="/time/parametros/retenciones">
+                <a><i class="">&nbsp;</i><span class="page">Retenciones</span></a>
+              </router-link>
+            </ul>
+          </li>
+        </template>
       </ul>
     </li>
 

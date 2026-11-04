@@ -91,6 +91,15 @@
 	  <template v-if="amModal.loaded">
 		  <div slot="modal-body" class="modal-body" v-if="selectedItem" @keyup.enter="save()" @keyup.esc="closeAmModal()">
 		  	<modal-errors :messages="amModal.errors"/>
+		  	<div class="row" v-if="isTimeLevel(5)">
+				<div class="form-group col-sm-6">
+					<label for="user_id">Abogado (cargar en nombre de)</label>
+					<select name="user_id" v-model="selectedItem.user_id" class="form-control">
+						<option v-for="ab in info.abogados" :value="ab.id">{{ ab.name }}</option>
+					</select>
+					<span class="help-block" style="margin-bottom:0;">Por defecto, usted. Cambielo para cargar horas de otro usuario (ej. Director).</span>
+				</div>
+		  	</div>
 		  	<div class="row">
 				<div class="form-group col-sm-3" :class="{'has-error': errors.has('fecha')}">
 					<label for="fecha">Fecha</label>
@@ -227,8 +236,9 @@ export default {
 			}, 
 			gestion: [],
 			referencias: [],
-			responsables: []
-		},		
+			responsables: [],
+			abogados: []
+		},
 		uri: 'time-horas/',
 		actionPerm: 'time-horas',
 		apiUrl: '',
@@ -415,6 +425,12 @@ export default {
 	      	hora_fin: item.fin ? moment(item.fin).format('HH:mm') : null
 	    },item);
 	    if (!_this.selectedItem.referencia) _this.selectedItem.referencia = 'Temas Varios';
+	    // Autor por defecto: el propio usuario (salvo edicion, que conserva el suyo)
+	    if (!_this.selectedItem.user_id) _this.selectedItem.user_id = _this.authUser.id;
+	    // El admin del Time puede elegir cargar en nombre de otro abogado
+	    if (_this.isTimeLevel(5) && !_this.info.abogados.length) {
+	    	Api.combos('time/abogados').then(resp => { _this.info.abogados = resp.data })
+	    }
 
 	    this.clearErrors()
 	    this.amModal.loaded = false;
