@@ -57,12 +57,25 @@ if (!function_exists('xfecha')) { function xfecha($d) { return $d ? \Carbon\Carb
                     <td></td><td></td><td></td>
                 </tr>
                 @endforeach
+                <?php
+                    $extSub = array_filter($c['participaciones_externas'] ?? [], fn($p) => $p['base'] === 'subtotal');
+                    $extNeto = array_filter($c['participaciones_externas'] ?? [], fn($p) => $p['base'] === 'subtotal_neto');
+                ?>
                 <tr><td colspan="6">Subtotal $</td><td>{{ xf($c['subtotal']) }}</td></tr>
                 <tr><td colspan="6">Con IVA</td><td>{{ xf($c['con_iva']) }}</td></tr>
                 <tr><td colspan="6">Imp. al cto y dto</td><td>{{ xf(-$c['imp_cto_dto']) }}</td></tr>
                 <tr><td colspan="6">SIRCREB</td><td>{{ xf(-$c['sircreb']) }}</td></tr>
                 <tr><td colspan="6">IVA</td><td>{{ xf(-$c['iva_ret']) }}</td></tr>
                 <tr><td colspan="6">Ret. Ganancias</td><td>{{ xf(-$c['ret_gcias']) }}</td></tr>
+                @foreach($extSub as $p)
+                <tr><td colspan="6">Part. {{ $p['nombre'] }} ({{ xf($p['porcentaje'] * 100) }}%)</td><td>{{ xf(-$p['monto']) }}</td></tr>
+                @endforeach
+                @if(count($extNeto))
+                <tr><td colspan="6"><strong>Subtotal neto</strong></td><td><strong>{{ xf($c['subtotal_neto']) }}</strong></td></tr>
+                @foreach($extNeto as $p)
+                <tr><td colspan="6">Part. {{ $p['nombre'] }} ({{ xf($p['porcentaje'] * 100) }}%)</td><td>{{ xf(-$p['monto']) }}</td></tr>
+                @endforeach
+                @endif
                 <tr><td colspan="6"><strong>NETO CVA</strong></td><td><strong>{{ xf($c['neto_cva']) }}</strong></td></tr>
             @endif
             <tr><td></td></tr>

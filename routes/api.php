@@ -200,26 +200,37 @@ Route::group(['middleware' => ['jwt.auth']], function()
     Route::post('time-impresiones/abogado-cliente', 'TimeImpresionesAPIController@abogadoCliente');
     Route::post('time-impresiones/abogado-resumen', 'TimeImpresionesAPIController@abogadoResumen');
     Route::post('time-impresiones/liquidacion', 'TimeImpresionesAPIController@liquidacion');
+    Route::post('time-impresiones/analisis', 'TimeImpresionesAPIController@analisis');
+    Route::post('time-impresiones/url-firmada', 'TimeImpresionesAPIController@urlFirmada');
+    Route::get('time-impresiones/analisis/gestiones', 'TimeImpresionesAPIController@gestiones');
 
-    // Parametrizacion del informe de liquidacion del Time
-    Route::delete('time-tarifas/eliminar-seleccion', 'TimeTarifaAPIController@removeSelected');
-    Route::resource('time-tarifas', 'TimeTarifaAPIController');
+    // Parametros de Time: permiso time-parametros:C/R/U/D segun el verbo (middleware permiso.crud)
+    Route::middleware('permiso.crud:time-parametros')->group(function () {
+        Route::delete('time-tarifas/eliminar-seleccion', 'TimeTarifaAPIController@removeSelected');
+        Route::resource('time-tarifas', 'TimeTarifaAPIController');
 
-    Route::delete('time-tipos-cambio/eliminar-seleccion', 'TimeTipoCambioAPIController@removeSelected');
-    Route::resource('time-tipos-cambio', 'TimeTipoCambioAPIController');
+        Route::delete('time-tipos-cambio/eliminar-seleccion', 'TimeTipoCambioAPIController@removeSelected');
+        Route::resource('time-tipos-cambio', 'TimeTipoCambioAPIController');
 
-    Route::delete('time-participaciones/eliminar-seleccion', 'TimeParticipacionAPIController@removeSelected');
-    Route::resource('time-participaciones', 'TimeParticipacionAPIController');
+        Route::delete('time-participaciones/eliminar-seleccion', 'TimeParticipacionAPIController@removeSelected');
+        Route::resource('time-participaciones', 'TimeParticipacionAPIController');
 
-    Route::delete('time-presupuestos/eliminar-seleccion', 'TimePresupuestoAPIController@removeSelected');
-    Route::resource('time-presupuestos', 'TimePresupuestoAPIController');
+        Route::delete('time-participaciones-externas/eliminar-seleccion', 'TimeParticipacionExternaAPIController@removeSelected');
+        Route::resource('time-participaciones-externas', 'TimeParticipacionExternaAPIController');
 
-    Route::delete('time-retenciones/eliminar-seleccion', 'TimeRetencionAPIController@removeSelected');
-    Route::resource('time-retenciones', 'TimeRetencionAPIController');
+        Route::delete('time-cliente-parametros/eliminar-seleccion', 'TimeClienteParametroAPIController@removeSelected');
+        Route::resource('time-cliente-parametros', 'TimeClienteParametroAPIController');
 
-    // Marcas livianas usadas por el panel de parametrizacion del Time
-    Route::put('clientes/{id}/facturacion', 'ClienteAPIController@updateFacturacion');
-    Route::put('usuarios/{id}/categoria-abogado', 'UserController@updateCategoriaAbogado');
+        Route::delete('time-presupuestos/eliminar-seleccion', 'TimePresupuestoAPIController@removeSelected');
+        Route::resource('time-presupuestos', 'TimePresupuestoAPIController');
+
+        Route::delete('time-retenciones/eliminar-seleccion', 'TimeRetencionAPIController@removeSelected');
+        Route::resource('time-retenciones', 'TimeRetencionAPIController');
+
+        // Marcas livianas usadas por el panel de parametrizacion del Time
+        Route::put('clientes/{id}/facturacion', 'ClienteAPIController@updateFacturacion');
+        Route::put('usuarios/{id}/categoria-abogado', 'UserController@updateCategoriaAbogado');
+    });
 
 
     Route::delete('usuarios/eliminar-seleccion', 'UserController@removeSelected');

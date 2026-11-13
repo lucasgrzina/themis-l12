@@ -3,8 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\Cliente;
+use App\Models\TimeGestion;
+use App\Models\TimeHora;
 use App\Models\TimeTarifa;
 use App\Models\TimeParticipacion;
+use App\Models\TimeParticipacionExterna;
 use App\Models\TimePresupuesto;
 use App\Models\TimeTipoCambio;
 use App\User;
@@ -19,8 +22,9 @@ use Illuminate\Support\Facades\Hash;
  *
  * Mapeo cliente->id confirmado contra time_horas de agosto 2026.
  * IRSA se omite: no existe como cliente en el sistema.
- * SOLUCIONES GRAFICAS (presupuesto): se carga monto/IVA; sus participaciones
- * (Rosenblat 20%, Colaborador CVA 10%) son a NO-usuarios y quedan pendientes.
+ * SOLUCIONES GRAFICAS (presupuesto): se carga monto/IVA y sus participaciones
+ * a colaboradores externos (Rosenblat 20% s/subtotal, Colaborador CVA 10% s/neto)
+ * via time_participaciones_externas.
  */
 class AgostoLiquidacionSeeder extends Seeder
 {
@@ -35,27 +39,6 @@ class AgostoLiquidacionSeeder extends Seeder
         $JUANA    = 581;
         $MARIANO  = 606;
         $DARIO    = 579;
-
-        // Usuario Director (se crea si no existe)
-        $director = User::firstOrCreate(
-            ['username' => 'director'],
-            [
-                'name' => 'Director',
-                'email' => 'director@nomail.com',
-                'password' => Hash::make(\Illuminate\Support\Str::random(16)),
-                'responsable' => true,
-                'visible' => true,
-                'time_level' => 1,
-            ]
-        );
-        $director->categoria_abogado = 'Director';
-        $director->visible = true;
-        $director->responsable = true;
-        if (!$director->time_level) {
-            $director->time_level = 1;
-        }
-        $director->save();
-        $DIRECTOR = $director->id;
 
         // Categorias de abogados
         User::where('id', $DARIO)->update(['categoria_abogado' => 'Sr']);
@@ -85,10 +68,10 @@ class AgostoLiquidacionSeeder extends Seeder
             [8960, 150, [], $base4],
             // SAVARY S.A.
             [8594, 180, ['Sr' => 200, 'Semi Sr' => 144],
-                array_merge($base4, [[$MARIANO, 0.10], [$DIRECTOR, 0.50]])],
+                array_merge($base4, [[$MARIANO, 0.10]])],
             // REMATES ZARATE SA
             [8939, 180, ['Sr' => 200, 'Semi Sr' => 144],
-                array_merge($base4, [[$MARIANO, 0.10], [$DIRECTOR, 0.50]])],
+                array_merge($base4, [[$MARIANO, 0.10]])],
         ];
 
         foreach ($clientes as [$cid, $valorBase, $extra, $parts]) {
@@ -122,6 +105,18 @@ class AgostoLiquidacionSeeder extends Seeder
             }
         }
 
+        // Horas de director y piso (ya no es un usuario): parametros del cliente con vigencia.
+        // SAVARY: piso de 4 hs + 2 hs director; REMATES: 3 hs director. Participacion director 50%.
+        \App\Models\TimeClienteParametro::whereIn('cliente_id', [8594, 8939])->forceDelete();
+        \App\Models\TimeClienteParametro::create([
+            'cliente_id' => 8594, 'vigencia_desde' => self::PERIODO,
+            'horas_director' => 2, 'pct_director' => 0.50, 'horas_piso' => 4,
+        ]);
+        \App\Models\TimeClienteParametro::create([
+            'cliente_id' => 8939, 'vigencia_desde' => self::PERIODO,
+            'horas_director' => 3, 'pct_director' => 0.50, 'horas_piso' => 0,
+        ]);
+
         // SOLUCIONES GRAFICAS S.A -> modelo presupuesto
         $sol = 8679;
         Cliente::where('id', $sol)->update([
@@ -137,6 +132,72 @@ class AgostoLiquidacionSeeder extends Seeder
             'aplica_iva' => true,
         ]);
 
-        $this->command->info('AgostoLiquidacionSeeder: parametrizacion de agosto 2026 cargada. Director id='.$DIRECTOR);
+        // Participaciones a colaboradores externos (no-usuarios) de SOLUCIONES GRAFICAS.
+        // Rosenblat 20% sobre el subtotal (se descuenta antes del subtotal neto).
+        // Colaborador CVA 10% sobre el subtotal neto (se descuenta despues).
+        // periodo null = por defecto (aplica a cualquier mes). Idempotente.
+        $partsExt = [
+            ['nombre' => 'Rosenblat', 'porcentaje' => 0.20, 'base' => 'subtotal', 'orden' => 1],
+            ['nombre' => 'Colaborador CVA', 'porcentaje' => 0.10, 'base' => 'subtotal_neto', 'orden' => 1],
+        ];
+        foreach ($partsExt as $pe) {
+            TimeParticipacionExterna::where('cliente_id', $sol)
+                ->where('nombre', $pe['nombre'])
+                ->where('base', $pe['base'])
+                ->whereNull('periodo')
+                ->forceDelete();
+            TimeParticipacionExterna::create([
+                'cliente_id' => $sol,
+                'nombre' => $pe['nombre'],
+                'porcentaje' => $pe['porcentaje'],
+                'base' => $pe['base'],
+                'orden' => $pe['orden'],
+                'periodo' => null,
+            ]);
+        }
+
+        // Horas de SAVARY agosto 2026 (tomadas del Excel de ejemplo).
+        // Solo este cliente: su informe quedo VALIDADO al centavo contra la planilla.
+        // El resto de los clientes conservan sus horas reales de produccion.
+        $this->seedHorasSavary([
+            $ARIANA => 30, $SANTIAGO => 25, $FELIX => 220,
+            $DARIO => 90, 617 /*cadeteria*/ => 25, $MARIANO => 20,
+        ]);
+
+        $this->command->info('AgostoLiquidacionSeeder: parametrizacion + horas SAVARY de agosto 2026 cargadas.');
+    }
+
+    /**
+     * Normaliza las horas de SAVARY (cliente 8594) de agosto 2026 segun el Excel.
+     * Idempotente: borra las horas de SAVARY del periodo y recrea el set exacto.
+     * Afecta UNICAMENTE a SAVARY/agosto; no toca horas de otros clientes.
+     *
+     * @param array $horas    [user_id => minutos]
+     */
+    private function seedHorasSavary(array $horas)
+    {
+        $savary = 8594;
+        $gestionId = TimeGestion::query()->orderBy('id')->value('id') ?: 1;
+
+        TimeHora::where('cliente_id', $savary)
+            ->whereBetween('fecha', ['2026-08-01', '2026-08-31'])
+            ->forceDelete();
+
+        foreach ($horas as $uid => $min) {
+            if ($min <= 0) {
+                continue;
+            }
+            TimeHora::create([
+                'user_id' => $uid,
+                'cliente_id' => $savary,
+                'gestion_id' => $gestionId,
+                'referencia' => 'Liquidacion agosto 2026',
+                'facturar' => true,
+                'descripcion' => 'Horas agosto 2026 (seed liquidacion)',
+                'fecha' => '2026-08-31',
+                'minutos' => $min,
+                'estado' => 'vinculada',
+            ]);
+        }
     }
 }

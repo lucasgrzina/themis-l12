@@ -146,6 +146,7 @@ class ImprimirController extends Controller
 
     public function timeImpLiquidacion(Request $request, \App\Services\LiquidacionService $service)
     {
+        \App\Services\TimePermisos::exigir($request->user(), \App\Services\TimePermisos::LIQUIDACION);
         try
         {
             $data = $service->calcular($request->get('desde'), $request->get('hasta'), $request->get('cliente_id', null));
@@ -163,12 +164,24 @@ class ImprimirController extends Controller
         }
     }
 
+    public function timeExpAnalisis(Request $request, \App\Services\TimeAnalisisService $service)
+    {
+        $data = $service->listado($request);
+        $nombre = 'horas_' . $data['desde']->format('Ymd') . '_' . $data['hasta']->format('Ymd') . '.xlsx';
+        return \Excel::download(new \App\Exports\InformeTimeAnalisis($data['rows']), $nombre);
+    }
+
     public function timeExpLiquidacion(Request $request, \App\Services\LiquidacionService $service)
     {
+        \App\Services\TimePermisos::exigir($request->user(), \App\Services\TimePermisos::LIQUIDACION);
         try
         {
             $data = $service->calcular($request->get('desde'), $request->get('hasta'), $request->get('cliente_id', null));
-            return \Excel::download(new \App\Exports\InformeLiquidacion($data), 'liquidacion.xlsx');
+            $spreadsheet = (new \App\Services\LiquidacionXlsx())->build($data);
+            $nombre = 'liquidacion_' . $data['desde'] . '_' . $data['hasta'] . '.xlsx';
+            return response()->streamDownload(function () use ($spreadsheet) {
+                (new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet))->save('php://output');
+            }, $nombre, ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']);
         }
         catch (\Exception $e)
         {

@@ -31,8 +31,29 @@ class TimeHoraRepository extends BaseRepository
         return TimeHora::class;
     }
 
+    /**
+     * Regla de permisos de las impresiones segun time_level:
+     * 5 (admin) y 1 ven todo el estudio, 2 solo sus propias horas, otros no acceden.
+     *
+     * @return int|null id de usuario al que se debe forzar el filtro (null = sin restriccion)
+     */
+    public static function usuarioForzado($request)
+    {
+        $user = $request->user();
+        $nivel = $user ? (int) $user->time_level : 0;
+
+        if (in_array($nivel, [1, 5], true)) {
+            return null;
+        }
+        if ($nivel === 2) {
+            return $user->id;
+        }
+        abort(403, 'No tiene permisos para ver informes de Time');
+    }
+
     public function impresionesClienteAbogado($filtros,$offset=50)
     {
+        $forzado = self::usuarioForzado($filtros);
         $desde = \Carbon\Carbon::createFromFormat('d/m/Y',$filtros->get('desde'))->format('Y-m-d');
         $hasta = \Carbon\Carbon::createFromFormat('d/m/Y',$filtros->get('hasta'))->format('Y-m-d');
         $cliente_id = $filtros->get('cliente_id',false);
@@ -50,7 +71,9 @@ class TimeHoraRepository extends BaseRepository
         ]);
 
         $query = $query->where('fecha','>=',$desde)->where('fecha','<=',$hasta)
+                 ->where('estado','!=','corriendo')
                  ->whereClienteId($cliente_id)
+                 ->when($forzado, function($q) use ($forzado) { $q->where('user_id',$forzado); })
                  ->orderBy('referencia')->orderBy('user_id')->orderBy('fecha')->orderBy('id');
 
 
@@ -130,7 +153,7 @@ class TimeHoraRepository extends BaseRepository
     {
         $desde = \Carbon\Carbon::createFromFormat('d/m/Y',$filtros->get('desde'))->format('Y-m-d');
         $hasta = \Carbon\Carbon::createFromFormat('d/m/Y',$filtros->get('hasta'))->format('Y-m-d');
-        $user_id = $filtros->get('user_id',null);
+        $user_id = self::usuarioForzado($filtros) ?: $filtros->get('user_id',null);
 
         $query = (new TimeHora())->newQuery()->with([
             'cliente' => function($q) {
@@ -153,6 +176,7 @@ class TimeHoraRepository extends BaseRepository
                 ->leftJoin('clientes', 'clientes.id', '=', 'time_horas.cliente_id')
                 ->where('fecha','>=',$desde)
                 ->where('fecha','<=',$hasta)
+                ->where('time_horas.estado','!=','corriendo')
                 ->orderByRaw('clientes.nombre_completo asc')
                 ->orderBy('referencia')
                 ->orderBy('fecha')
@@ -221,7 +245,7 @@ class TimeHoraRepository extends BaseRepository
         $desde = \Carbon\Carbon::createFromFormat('d/m/Y',$filtros->get('desde'))->format('Y-m-d');
         $hasta = \Carbon\Carbon::createFromFormat('d/m/Y',$filtros->get('hasta'))->format('Y-m-d');
         $cliente_id = $filtros->get('cliente_id',false);
-        $user_id = $filtros->get('user_id',false);
+        $user_id = self::usuarioForzado($filtros) ?: $filtros->get('user_id',false);
 
         $query = (new TimeHora())->newQuery()->with([
             'cliente' => function($q) {
@@ -236,6 +260,7 @@ class TimeHoraRepository extends BaseRepository
         ]);
 
         $query = $query->where('fecha','>=',$desde)->where('fecha','<=',$hasta)
+                 ->where('estado','!=','corriendo')
                  ->whereClienteId($cliente_id)
                  ->where(function($q) use ($user_id) {
                     if ($user_id) {

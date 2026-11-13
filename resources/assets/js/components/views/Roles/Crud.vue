@@ -151,6 +151,10 @@ export default {
 	// "Tramites" tiene una operacion extra DC (Destruir carpeta) ademas del CRUD.
 	accionesVisibles () {
 		let acciones = this.info.acciones.slice();
+		// Informes de Time: solo existe la operacion Consultar
+		if (this.amModal.accionControlada && ['time-analisis-de-horas', 'time-liquidacion'].indexOf(this.amModal.accionControlada.nombre_permiso) !== -1) {
+			return acciones.filter(a => a.oper === 'R');
+		}
 		if (this.amModal.accionControlada && this.amModal.accionControlada.nombre_permiso === 'tramites') {
 			acciones.push({oper: 'DC', name: 'Destruir carpeta'});
 		}

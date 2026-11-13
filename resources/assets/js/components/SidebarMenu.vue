@@ -186,7 +186,7 @@
             </a>
           </router-link>          
         </template>
-        <template v-if="canViewTimeImpresiones()">
+        <template v-if="canViewTimeImpresiones() || can('time-analisis-de-horas:R') || can('time-liquidacion:R')">
           <li class="treeview">
             <a href="#">
               <span>Impresiones</span>
@@ -194,26 +194,32 @@
                 <i class="fa fa-angle-left fa-fw pull-right"></i>
               </span>
             </a> 
-            <ul class="treeview-menu">   
-              <router-link tag="li" class="pageLink" to="/time/impresiones/cliente-abogado">
+            <ul class="treeview-menu">
+              <router-link v-if="can('time-analisis-de-horas:R')" tag="li" class="pageLink" to="/time/impresiones/analisis">
+                <a>
+                  <i class="">&nbsp;</i>
+                  <span class="page">Análisis de horas</span>
+                </a>
+              </router-link>
+              <router-link v-if="canViewTimeImpresiones()" tag="li" class="pageLink" to="/time/impresiones/cliente-abogado">
                 <a>
                   <i class="">&nbsp;</i>
                   <span class="page">Por Cliente/Abogado</span>
                 </a>
               </router-link>  
-              <router-link tag="li" class="pageLink" to="/time/impresiones/abogado-cliente">
+              <router-link v-if="canViewTimeImpresiones()" tag="li" class="pageLink" to="/time/impresiones/abogado-cliente">
                 <a>
                   <i class="">&nbsp;</i>
                   <span class="page">Por Abogado/Cliente</span>
                 </a>
               </router-link> 
-              <router-link tag="li" class="pageLink" to="/time/impresiones/abogado-resumen">
+              <router-link v-if="canViewTimeImpresiones()" tag="li" class="pageLink" to="/time/impresiones/abogado-resumen">
                 <a>
                   <i class="">&nbsp;</i>
                   <span class="page">Por Abogado (Resumen)</span>
                 </a>
               </router-link>
-              <router-link tag="li" class="pageLink" to="/time/impresiones/liquidacion">
+              <router-link v-if="can('time-liquidacion:R')" tag="li" class="pageLink" to="/time/impresiones/liquidacion">
                 <a>
                   <i class="">&nbsp;</i>
                   <span class="page">Liquidación Cliente/Abogado</span>
@@ -222,7 +228,7 @@
             </ul>
           </li>
         </template>
-        <template v-if="canViewTimeGestion()">
+        <template v-if="can('time-parametros:R')">
           <li class="treeview">
             <a href="#">
               <span>Parámetros</span>
@@ -466,7 +472,7 @@ export default {
   name: 'SidebarName',
   computed: {
     ...mapGetters([
-      'isMember','isTimeLevel'
+      'isMember','isTimeLevel','hasAnyPerm'
     ]),
     timerPendientes () {
       let t = this.$store.state.timer
@@ -474,8 +480,12 @@ export default {
     }
   },
   methods: {
+    can (perm) {
+      return !!this.hasAnyPerm(perm)
+    },
     canViewTime () {
-      return this.isTimeLevel(1) || this.isTimeLevel(2) || this.isTimeLevel(5)
+      return this.isTimeLevel(1) || this.isTimeLevel(2) || this.isTimeLevel(5) ||
+        this.can('time-parametros:R') || this.can('time-analisis-de-horas:R') || this.can('time-liquidacion:R')
     },
     canViewTimeGestion () {
       return this.isTimeLevel(5) || this.isTimeLevel(1)

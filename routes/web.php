@@ -37,11 +37,15 @@ Route::group(['prefix' => 'imprimir'],function(){
 	Route::get('/informes/tramites','ImprimirController@informeTramites');
 	Route::get('/informes/tramites-historicos','ImprimirController@informeTramitesHistoricos');
 	Route::get('/observaciones/{id}','ImprimirController@observacionesClientes');
-	Route::get('/time/imp-abogado-resumen','ImprimirController@timeImpAbogadoResumen');
-	Route::get('/time/imp-cliente-abogado','ImprimirController@timeImpClienteAbogado');
-	Route::get('/time/imp-abogado-cliente','ImprimirController@timeImpAbogadoCliente');
-	Route::get('/time/imp-liquidacion','ImprimirController@timeImpLiquidacion');
-	Route::get('/time/exp-liquidacion','ImprimirController@timeExpLiquidacion');
+	// Impresiones de Time: solo con URL firmada (ver TimeImpresionesAPIController@urlFirmada)
+	Route::middleware(['signed:relative','usuario.firmado'])->group(function(){
+		Route::get('/time/imp-abogado-resumen','ImprimirController@timeImpAbogadoResumen')->name('imprimir.time.imp-abogado-resumen');
+		Route::get('/time/imp-cliente-abogado','ImprimirController@timeImpClienteAbogado')->name('imprimir.time.imp-cliente-abogado');
+		Route::get('/time/imp-abogado-cliente','ImprimirController@timeImpAbogadoCliente')->name('imprimir.time.imp-abogado-cliente');
+		Route::get('/time/imp-liquidacion','ImprimirController@timeImpLiquidacion')->name('imprimir.time.imp-liquidacion');
+		Route::get('/time/exp-liquidacion','ImprimirController@timeExpLiquidacion')->name('imprimir.time.exp-liquidacion');
+		Route::get('/time/exp-analisis','ImprimirController@timeExpAnalisis')->name('imprimir.time.exp-analisis');
+	});
 });
 Route::get('download/doc-cliente/{id}','DownloadController@docCliente')->name('download.doc_cliente');
 Route::any('{all}', function () {

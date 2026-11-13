@@ -44,6 +44,7 @@ import VistaTimeImpresionesCA from './components/views/Time/impresiones/ClienteA
 import VistaTimeImpresionesAC from './components/views/Time/impresiones/AbogadoCliente.vue'
 import VistaTimeImpresionesAR from './components/views/Time/impresiones/AbogadoResumen.vue'
 import VistaTimeImpresionesLiq from './components/views/Time/impresiones/Liquidacion.vue'
+import VistaTimeImpresionesAnalisis from './components/views/Time/impresiones/Analisis.vue'
 import VistaTimeParamCliente from './components/views/Time/parametros/ParametrosCliente.vue'
 import VistaTimeParamTiposCambio from './components/views/Time/parametros/TiposCambio.vue'
 import VistaTimeParamRetenciones from './components/views/Time/parametros/Retenciones.vue'
@@ -321,6 +322,13 @@ const router = new VueRouter({
               name: 'Time: Horas',
               meta: { requiresAuth: true,description: ''}
             },  
+            {
+              path: '/time/impresiones/analisis',
+              alias: 'time.impresiones.analisis',
+              component: VistaTimeImpresionesAnalisis,
+              name: 'Time: Análisis de horas',
+              meta: { requiresAuth: true,description: ''}
+            },
             {
               path: '/time/impresiones/cliente-abogado',
               alias: 'time.impresiones.cliente-abogado',

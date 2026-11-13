@@ -149,6 +149,7 @@ import { mapGetters,mapState } from 'vuex'
 import { datepicker } from 'vue-strap'
 import config from '../../../../config'
 import Api from '../../../../api'
+import abrirFirmado from '../../../../helpers/abrirFirmado'
 import vSelect from "vue-select"
 import pagination from 'laravel-vue-pagination'
 import { currency} from '../../../../filters'
@@ -253,13 +254,7 @@ export default {
 	    	})			    		      	
 		},
 		print() {
-			let queryString = Object.keys(this.filtros).map((key) => {
-				if (this.filtros[key] != null) {
-			    	return encodeURIComponent(key) + '=' + encodeURIComponent(this.filtros[key]);
-			    }
-			}).join('&');
-			
-			window.open(Laravel.webDomain.concat('/time/imp-cliente-abogado?').concat(queryString));
+			abrirFirmado('imp-cliente-abogado', this.filtros)
 		},		
 	    getClientes (search, loading) {
 	      //this.searchClientes(search, loading, this);

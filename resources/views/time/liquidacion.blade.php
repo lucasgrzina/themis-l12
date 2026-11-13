@@ -37,8 +37,24 @@ if (!function_exists('ffecha')) { function ffecha($d) { return $d ? \Carbon\Carb
         @if($c['modelo'] == 'horas')
         <table class="det">
             <thead>
+                <tr><th>Concepto facturado</th><th class="num">Hs</th><th class="num">Min</th><th class="num">Valor hora U$S</th><th class="num">Subtotal U$S</th></tr>
+            </thead>
+            <tbody>
+                @foreach($c['lineas'] as $l)
                 <tr>
-                    <th>Abogado</th><th>Categoría</th><th class="num">Horas</th>
+                    <td>{{ $l['etiqueta'] }}</td>
+                    <td class="num">{{ intdiv($l['minutos'], 60) }}</td>
+                    <td class="num">{{ $l['minutos'] % 60 }}</td>
+                    <td class="num">{{ fmt($l['valor_hora']) }}</td>
+                    <td class="num">{{ fmt($l['minutos'] / 60 * $l['valor_hora']) }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <table class="det">
+            <thead>
+                <tr>
+                    <th>Abogado</th><th>Categoría</th><th class="num">Hs</th><th class="num">Min</th>
                     <th class="num">Valor hora</th><th class="num">Bruto U$S</th>
                     <th class="num">Part. %</th><th class="num">Participación $</th>
                 </tr>
@@ -48,7 +64,8 @@ if (!function_exists('ffecha')) { function ffecha($d) { return $d ? \Carbon\Carb
                 <tr>
                     <td>{{ $a['abogado'] }}</td>
                     <td>{{ $a['categoria'] ?: '—' }}</td>
-                    <td class="num">{{ fmt($a['horas']) }}</td>
+                    <td class="num">{{ intdiv($a['minutos'], 60) }}</td>
+                    <td class="num">{{ $a['minutos'] % 60 }}</td>
                     <td class="num">{{ fmt($a['valor_hora']) }}</td>
                     <td class="num">{{ fmt($a['bruto_usd']) }}</td>
                     <td class="num">{{ fmt($a['pct'] * 100) }}%</td>
@@ -84,6 +101,10 @@ if (!function_exists('ffecha')) { function ffecha($d) { return $d ? \Carbon\Carb
                 @endforeach
             </tbody>
         </table>
+        <?php
+            $extSub = array_filter($c['participaciones_externas'] ?? [], fn($p) => $p['base'] === 'subtotal');
+            $extNeto = array_filter($c['participaciones_externas'] ?? [], fn($p) => $p['base'] === 'subtotal_neto');
+        ?>
         <table class="tot">
             <tr><td class="lbl">Subtotal $</td><td class="val">{{ fmt($c['subtotal']) }}</td></tr>
             <tr><td class="lbl">Con IVA</td><td class="val">{{ fmt($c['con_iva']) }}</td></tr>
@@ -91,11 +112,20 @@ if (!function_exists('ffecha')) { function ffecha($d) { return $d ? \Carbon\Carb
             <tr><td class="lbl">SIRCREB</td><td class="val">-{{ fmt($c['sircreb']) }}</td></tr>
             <tr><td class="lbl">IVA</td><td class="val">-{{ fmt($c['iva_ret']) }}</td></tr>
             <tr><td class="lbl">Ret. Ganancias</td><td class="val">-{{ fmt($c['ret_gcias']) }}</td></tr>
+            @foreach($extSub as $p)
+            <tr><td class="lbl">Part. {{ $p['nombre'] }} ({{ fmt($p['porcentaje'] * 100) }}%)</td><td class="val">-{{ fmt($p['monto']) }}</td></tr>
+            @endforeach
+            @if(count($extNeto))
+            <tr><td class="lbl"><strong>Subtotal neto</strong></td><td class="val"><strong>{{ fmt($c['subtotal_neto']) }}</strong></td></tr>
+            @foreach($extNeto as $p)
+            <tr><td class="lbl">Part. {{ $p['nombre'] }} ({{ fmt($p['porcentaje'] * 100) }}%)</td><td class="val">-{{ fmt($p['monto']) }}</td></tr>
+            @endforeach
+            @endif
             <tr class="neto"><td class="lbl">NETO CVA</td><td class="val">{{ fmt($c['neto_cva']) }}</td></tr>
         </table>
         <div class="clear"></div>
         @if(!empty($c['participaciones_externas_pendiente']))
-        <div class="nota">* No incluye participaciones de colaboradores externos (pendiente de definir).</div>
+        <div class="nota">* Sin participaciones de colaboradores externos cargadas para este cliente/período.</div>
         @endif
         @endif
     </div>

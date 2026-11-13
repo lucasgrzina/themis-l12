@@ -47,17 +47,33 @@
 
           <table v-if="c.modelo === 'horas'" class="table table-condensed table-bordered">
             <thead>
+              <tr><th>Concepto facturado</th><th class="text-right">Hs</th><th class="text-right">Min</th><th class="text-right">Valor hora U$S</th><th class="text-right">Subtotal U$S</th></tr>
+            </thead>
+            <tbody>
+              <tr v-for="(l, i) in c.lineas" :key="'l' + i">
+                <td>{{ l.etiqueta }}</td>
+                <td class="text-right">{{ hs(l.minutos) }}</td>
+                <td class="text-right">{{ mn(l.minutos) }}</td>
+                <td class="text-right">{{ num(l.valor_hora) }}</td>
+                <td class="text-right">{{ num(l.minutos / 60 * l.valor_hora) }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table v-if="c.modelo === 'horas'" class="table table-condensed table-bordered">
+            <thead>
               <tr>
-                <th>Abogado</th><th>Categoría</th><th class="text-right">Horas</th>
+                <th>Abogado</th><th>Categoría</th><th class="text-right">Hs</th><th class="text-right">Min</th>
                 <th class="text-right">Valor hora</th><th class="text-right">Bruto U$S</th>
                 <th class="text-right">Part. %</th><th class="text-right">Participación $</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="a in c.abogados" :key="a.user_id">
+              <tr v-for="(a, i) in c.abogados" :key="'a' + i">
                 <td>{{ a.abogado }}</td>
                 <td>{{ a.categoria || '—' }}</td>
-                <td class="text-right">{{ num(a.horas) }}</td>
+                <td class="text-right">{{ hs(a.minutos) }}</td>
+                <td class="text-right">{{ mn(a.minutos) }}</td>
                 <td class="text-right">{{ num(a.valor_hora) }}</td>
                 <td class="text-right">{{ num(a.bruto_usd) }}</td>
                 <td class="text-right">{{ num(a.pct * 100) }}%</td>
@@ -87,21 +103,35 @@
                   <template v-if="c.modelo === 'horas'">
                     <tr><td>Total U$S</td><td class="text-right">{{ num(c.total_usd) }}</td></tr>
                     <tr><td>Total $ (x TC)</td><td class="text-right">{{ num(c.total_ars) }}</td></tr>
+                    <tr><td>Imp. al cto y dto</td><td class="text-right">-{{ num(c.imp_cto_dto) }}</td></tr>
+                    <tr><td>SIRCREB</td><td class="text-right">-{{ num(c.sircreb) }}</td></tr>
+                    <tr><td>Ret. Ganancias</td><td class="text-right">-{{ num(c.ret_gcias) }}</td></tr>
+                    <tr><td>Participaciones</td><td class="text-right">-{{ num(c.total_participaciones) }}</td></tr>
                   </template>
                   <template v-else>
                     <tr><td>Subtotal $</td><td class="text-right">{{ num(c.subtotal) }}</td></tr>
                     <tr><td>Con IVA</td><td class="text-right">{{ num(c.con_iva) }}</td></tr>
+                    <tr><td>Imp. al cto y dto</td><td class="text-right">-{{ num(c.imp_cto_dto) }}</td></tr>
+                    <tr><td>SIRCREB</td><td class="text-right">-{{ num(c.sircreb) }}</td></tr>
                     <tr><td>IVA</td><td class="text-right">-{{ num(c.iva_ret) }}</td></tr>
+                    <tr><td>Ret. Ganancias</td><td class="text-right">-{{ num(c.ret_gcias) }}</td></tr>
+                    <tr v-for="(p, i) in extSub(c)" :key="'es' + i">
+                      <td>Part. {{ p.nombre }} ({{ num(p.porcentaje * 100) }}%)</td>
+                      <td class="text-right">-{{ num(p.monto) }}</td>
+                    </tr>
+                    <template v-if="extNeto(c).length">
+                      <tr class="liq-subneto"><td>Subtotal neto</td><td class="text-right">{{ num(c.subtotal_neto) }}</td></tr>
+                      <tr v-for="(p, i) in extNeto(c)" :key="'en' + i">
+                        <td>Part. {{ p.nombre }} ({{ num(p.porcentaje * 100) }}%)</td>
+                        <td class="text-right">-{{ num(p.monto) }}</td>
+                      </tr>
+                    </template>
                   </template>
-                  <tr><td>Imp. al cto y dto</td><td class="text-right">-{{ num(c.imp_cto_dto) }}</td></tr>
-                  <tr><td>SIRCREB</td><td class="text-right">-{{ num(c.sircreb) }}</td></tr>
-                  <tr><td>Ret. Ganancias</td><td class="text-right">-{{ num(c.ret_gcias) }}</td></tr>
-                  <tr v-if="c.modelo === 'horas'"><td>Participaciones</td><td class="text-right">-{{ num(c.total_participaciones) }}</td></tr>
                   <tr class="liq-neto"><td>NETO CVA</td><td class="text-right">{{ num(c.neto_cva) }}</td></tr>
                 </tbody>
               </table>
-              <p v-if="c.participaciones_externas_pendiente" class="text-danger" style="font-size:11px;">
-                * No incluye participaciones de colaboradores externos (pendiente).
+              <p v-if="c.participaciones_externas_pendiente" class="text-muted" style="font-size:11px;">
+                * Sin participaciones de colaboradores externos cargadas para este cliente/período.
               </p>
             </div>
           </div>
@@ -121,6 +151,7 @@ import moment from 'moment'
 import { datepicker } from 'vue-strap'
 import vSelect from 'vue-select'
 import Api from '../../../../api'
+import abrirFirmado from '../../../../helpers/abrirFirmado'
 
 export default {
   name: 'TimeLiquidacion',
@@ -143,7 +174,11 @@ export default {
     Api.combos('time/clientes').then(resp => { this.clientes = resp.data })
   },
   methods: {
+    hs (min) { return Math.floor(min / 60) },
+    mn (min) { return min % 60 },
     num (v) { return parseFloat(v || 0).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+    extSub (c) { return (c.participaciones_externas || []).filter(p => p.base === 'subtotal') },
+    extNeto (c) { return (c.participaciones_externas || []).filter(p => p.base === 'subtotal_neto') },
     onChangeCliente (item) { this.filtros.cliente_id = item ? item.id : null },
     doFilter () {
       this.firstFilter = true
@@ -157,8 +192,8 @@ export default {
       return Object.keys(this.filtros).map(k => this.filtros[k] != null
         ? encodeURIComponent(k) + '=' + encodeURIComponent(this.filtros[k]) : '').filter(x => x).join('&')
     },
-    imprimir () { window.open(Laravel.webDomain.concat('/time/imp-liquidacion?').concat(this.queryString())) },
-    exportar () { window.open(Laravel.webDomain.concat('/time/exp-liquidacion?').concat(this.queryString())) }
+    imprimir () { abrirFirmado('imp-liquidacion', this.filtros) },
+    exportar () { abrirFirmado('exp-liquidacion', this.filtros, true) }
   },
   filters: {
     f (v) { return v ? moment(v, 'YYYY-MM-DD').format('DD/MM/YYYY') : '' }
@@ -171,4 +206,5 @@ export default {
 .liq-head { background: #2c3e50; color: #fff; padding: 8px 12px; margin: 0 0 10px 0; font-size: 15px; }
 .liq-tot td { padding: 4px 8px; }
 .liq-neto td { font-weight: bold; font-size: 15px; background: #eafaf1; border-top: 2px solid #27ae60; }
+.liq-subneto td { font-weight: bold; background: #f4f6f7; border-top: 1px solid #bdc3c7; }
 </style>
