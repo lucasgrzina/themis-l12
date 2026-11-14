@@ -67,6 +67,12 @@ class AppServiceProvider extends ServiceProvider
         Cliente::observe(ClienteObserver::class);
         EstadoAnses::observe(EstadoAnsesObserver::class);
         TimeGestion::observe(TimeGestionObserver::class);
+
+        // En local, ningun mail sale a sus destinatarios reales: todos van a una unica casilla
+        // (se reemplazan to/cc/bcc de cada mensaje, tambien los encolados).
+        if ($this->app->environment('local') && config('themis.mail_local_redirect')) {
+            \Illuminate\Support\Facades\Mail::alwaysTo(config('themis.mail_local_redirect'));
+        }
     }
 
     /**

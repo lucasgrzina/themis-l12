@@ -80,9 +80,7 @@ trait TramitesTrait
 
         try 
         {
-            if (env('APP_ENV','local') !== 'local') {
-                \Mail::queue(new \App\Mail\TramiteIniciado($model));
-            }
+            \Mail::queue(new \App\Mail\TramiteIniciado($model));
 
             if ($model->area_id == 1 &&$model->tipo_resolucion == 0 && $model->nro_beneficio) 
             {

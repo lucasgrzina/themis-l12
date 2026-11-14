@@ -1,6 +1,9 @@
 <template>
   <div class="top-actions">
-  <div class="dropdown" v-can="actionPerm + ':C'">
+  <button type="button" class="btn btn-sm bg-blue" v-can="actionPerm + ':C'" @click.prevent="$emit('vuetable:alta-rapida')" style="margin-right:5px;">
+    <i class="fa fa-bolt"></i> Alta rápida
+  </button>
+  <div class="dropdown" v-can="actionPerm + ':C'" style="display:inline-block;">
     <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm bg-green">
       <i class="fa fa-plus"></i> Nuevo
       <span class="caret"></span>

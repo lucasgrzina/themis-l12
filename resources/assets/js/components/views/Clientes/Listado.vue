@@ -17,13 +17,15 @@
       	<filter-bar @clientes:filter-set="onFilterSet"></filter-bar>
       </template-->
       <template slot="slot-top-actions">
-      	<top-actions @vuetable:create="create" @vuetable:remove-selected="removeSelected" :actionPerm="actionPerm"></top-actions>
+      	<top-actions @vuetable:create="create" @vuetable:alta-rapida="altaRapida.show = true" @vuetable:remove-selected="removeSelected" :actionPerm="actionPerm"></top-actions>
       </template>      
       <template slot="actions" slot-scope="props">
 			<button-type v-can="[actionPerm+':U',actionPerm+':C']" type="edit-list" @click="onAction('edit', props.rowData, props.rowIndex)"/>
 			<button-type v-can="actionPerm+':D'" type="remove-list" @click="onAction('remove', props.rowData, props.rowIndex)"/>
       </template>
     </data-table>
+
+    <alta-rapida v-model="altaRapida.show" @created="onAltaRapida" @open="abrirFichaAltaRapida"></alta-rapida>
 </div>
 </template>
 
@@ -36,6 +38,7 @@ import Api from '../../../api'
 import FilterBar from './FilterBar'
 import TopActions from './TopActions'
 import CUCliente from './includes/CU.vue'
+import AltaRapida from './AltaRapida.vue'
 import moment from 'moment'
 export default {
   name: 'ListadoClientes',
@@ -43,7 +46,8 @@ export default {
     DataTable,
     FilterBar,
     TopActions,
-    CUCliente
+    CUCliente,
+    AltaRapida
   },
   data () {
 	return {
@@ -103,6 +107,9 @@ export default {
 			show: false,
 			activeTab: 0,
 		},
+		altaRapida: {
+			show: false,
+		},
 		uri: 'clientes/',
 		actionPerm: 'clientes',
 		apiUrl: '',
@@ -136,6 +143,15 @@ export default {
     create (personeria) {
     	this.reset({personeria: personeria});
     	this.cu.show = true
+    },
+    onAltaRapida () {
+    	if (this.$refs.list && this.$refs.list.$refs.vuetable) {
+    		this.$refs.list.$refs.vuetable.refresh();
+    	}
+    },
+    // Abre la ficha completa del cliente recien creado para completar el resto de los datos.
+    abrirFichaAltaRapida (data) {
+    	this.onAction('edit', data, -1);
     },
     saved (data) {
     	this.$refs.list.$refs.vuetable.refresh();

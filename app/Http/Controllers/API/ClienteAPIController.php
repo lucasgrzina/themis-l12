@@ -442,14 +442,14 @@ class ClienteAPIController extends AppBaseController
 
         try
         {
-            if ($model->type === 'U' && env('APP_ENV','local') !== 'local')
+            if ($model->type === 'U')
             {
                 Mail::queue(new NuevoAviso($model));
             }
         }
-        catch(\Exception $ex) 
+        catch(\Exception $ex)
         {
-            \Log::info('Error en envio de email de nuevo aviso: '. $e->getMessage());
+            \Log::info('Error en envio de email de nuevo aviso: '. $ex->getMessage());
         }
         return $this->sendResponse($model->toArray(), trans('api.success'));
     }
@@ -522,9 +522,7 @@ class ClienteAPIController extends AppBaseController
                 return $this->sendError(trans('api.not_found'));
             }
             
-            if (env('APP_ENV','local') !== 'local') {
-                \Mail::queue(new \App\Mail\DocumentacionReq($model));
-            }
+            \Mail::queue(new \App\Mail\DocumentacionReq($model));
             
             //$contents = $this->getContenidoPorArea($model);
             //return $contents;
@@ -627,9 +625,7 @@ class ClienteAPIController extends AppBaseController
             if (count($resp_send_email) > 0) 
             {
                 try {
-                    if (env('APP_ENV','local') !== 'local') {
-                        \Mail::queue(new \App\Mail\AsignarRespReq($model,$resp_send_email));
-                    }
+                    \Mail::queue(new \App\Mail\AsignarRespReq($model,$resp_send_email));
                 } catch ( \Exception $ex ) {}
                 
             }
@@ -782,9 +778,7 @@ class ClienteAPIController extends AppBaseController
             if (count($resp_send_email) > 0) 
             {
                 try {
-                    if (env('APP_ENV','local') !== 'local') {
-                        \Mail::queue(new \App\Mail\AsignarRespReq($model,$resp_send_email));
-                    }
+                    \Mail::queue(new \App\Mail\AsignarRespReq($model,$resp_send_email));
                 } catch (\Exception $ex) {}
             }
 

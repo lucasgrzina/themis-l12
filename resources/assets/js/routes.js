@@ -24,6 +24,7 @@ import VistaAvisos from './components/views/Avisos/Listado.vue'
 import VistaVencimientos from './components/views/Avisos/Vencimientos.vue'
 import VistaTipoDocumentos from './components/views/TipoDocumentos/Crud.vue'
 import VistaTipoAportes from './components/views/TipoAportes/Crud.vue'
+import VistaCatalogoOpciones from './components/views/CatalogoOpciones/Crud.vue'
 import VistaTipoTramites from './components/views/TipoTramites/Crud.vue'
 import VistaTipoClientes from './components/views/TipoClientes/Crud.vue'
 import VistaEstadoReq from './components/views/EstadoRequerimientos/Crud.vue'
@@ -145,6 +146,13 @@ const router = new VueRouter({
               alias: 'sistema.tipo-aportes',
               component: VistaTipoAportes,
               name: 'tipos de aportes',
+              meta: { requiresAuth: true,description: ''}
+            },
+            {
+              path: '/sistema/opciones-alta',
+              alias: 'sistema.opciones-alta',
+              component: VistaCatalogoOpciones,
+              name: 'opciones de alta rápida',
               meta: { requiresAuth: true,description: ''}
             },
             {

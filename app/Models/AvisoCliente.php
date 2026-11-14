@@ -68,7 +68,10 @@ class AvisoCliente extends Model
     }
     public function setFechaAttribute($value)
     {
-        $this->attributes['fecha'] = ($value ? \Carbon\Carbon::createFromFormat('Y-m-d\TH:i:s.uO',$value)->format('Y-m-d H:i:s') : null);
+        // Se guarda SIEMPRE en UTC (app.timezone). Antes se guardaba la hora con el offset de
+        // origen: un valor con "Z" quedaba en UTC y uno elegido en el datepicker (-03:00) quedaba
+        // en hora local, y el getter (que asume UTC) lo mostraba 3hs antes.
+        $this->attributes['fecha'] = ($value ? \Carbon\Carbon::createFromFormat('Y-m-d\TH:i:s.uO',$value)->setTimezone('UTC')->format('Y-m-d H:i:s') : null);
     }    
     public function setTypeAttribute($value)
     {

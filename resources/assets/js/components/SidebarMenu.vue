@@ -76,6 +76,12 @@
             <span class="page">Tipos de aportes</span>
           </a>
         </router-link>
+        <router-link tag="li" class="pageLink" to="/sistema/opciones-alta">
+          <a>
+            <i class="">&nbsp;</i>
+            <span class="page">Opciones de alta rápida</span>
+          </a>
+        </router-link>
         <router-link tag="li" class="pageLink" to="/sistema/tipo-tramites">
           <a>
             <i class="">&nbsp;</i>

@@ -32,14 +32,10 @@ class DocumentacionReq extends Mailable
     public function build()
     {
         $emails = [];
-        if (env('APP_ENV','local') !== 'local') 
+        // En local AppServiceProvider redirige todos los mails a un unico destinatario (Mail::alwaysTo).
+        foreach ($this->req->cliente->emails as $row)
         {
-            foreach ($this->req->cliente->emails as $row) 
-            {
-                $emails[] = $row['val'];
-            }        
-        } else {
-            $emails[] = 'lucasgrzina@gmail.com';
+            $emails[] = $row['val'];
         }
         
         return $this->to($emails)

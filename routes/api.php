@@ -29,6 +29,7 @@ Route::group(['middleware' => ['jwt.auth']], function()
         Route::get('doc-requerida-tt/{ttId}','CombosAPIController@docRequeridaTT');
         Route::get('doc-requerida-ta/{ttId}','CombosAPIController@docRequeridaTA');
         Route::get('am-cliente','CombosAPIController@amCliente');
+        Route::get('alta-rapida','AltaRapidaClienteAPIController@combos');
         Route::get('solapa-requerimientos/{areaId}','CombosAPIController@solapaRequerimientos');
         Route::get('solapa-tramites/{areaId}','CombosAPIController@solapaTramites');
         Route::get('solapa-avisos','CombosAPIController@solapaAvisos');
@@ -119,8 +120,12 @@ Route::group(['middleware' => ['jwt.auth']], function()
 
     
     
+    Route::post('clientes/alta-rapida', 'AltaRapidaClienteAPIController@store');
     Route::resource('clientes', 'ClienteAPIController');
     Route::resource('tramites', 'TramiteClienteAPIController');
+
+    Route::delete('catalogo-opciones/eliminar-seleccion', 'CatalogoOpcionAPIController@removeSelected');
+    Route::resource('catalogo-opciones', 'CatalogoOpcionAPIController');
 
     Route::delete('provincias/eliminar-seleccion', 'ProvinciaAPIController@removeSelected');
     Route::resource('provincias', 'ProvinciaAPIController');   

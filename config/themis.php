@@ -39,6 +39,19 @@ return [
         ))),
     ],
 
+    // En APP_ENV=local TODOS los mails de la aplicacion se redirigen a esta direccion
+    // (Mail::alwaysTo en AppServiceProvider); en otros entornos no se toca nada.
+    'mail_local_redirect' => env('MAIL_LOCAL_REDIRECT', 'lucasgrzina@gmail.com'),
+
+    // Wizard de alta rapida de clientes.
+    'alta_rapida' => [
+        // Limites de los adjuntos (se envian por mail y quedan en la solapa Docs).
+        'max_adjuntos'      => (int) env('ALTA_RAPIDA_MAX_ADJUNTOS', 10),
+        'max_adjuntos_mb'   => (int) env('ALTA_RAPIDA_MAX_ADJUNTOS_MB', 20),
+        // Id del pais Argentina (default del domicilio).
+        'pais_default_id'   => 6,
+    ],
+
     'time' => [
         'gestion_default' => env('TIME_GESTION_DEFAULT', 'Actividades a clientes'),
         // Horas de timer corriendo a partir de las cuales se avisa / se cierra solo
