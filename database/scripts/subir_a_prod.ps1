@@ -86,7 +86,16 @@ export MYSQL_PWD="$(v DB_PASSWORD)"
 mysql -h"$(v DB_HOST)" -u"$(v DB_USERNAME)" "$(v DB_DATABASE)" -N -B -e 'SELECT COUNT(*) FROM users' >/dev/null 2>&1 && echo 'conexion MySQL: ok' || echo 'conexion MySQL: FALLA'
 df -h /tmp | tail -1
 '@
-    Invoke-Remote (($pre.Replace('__APP__', $RemotePath)) -replace "`r`n", "`n")
+    # Se sube como archivo (no por la linea de comandos): Windows PowerShell 5.1 pierde las comillas dobles.
+    $preId = [guid]::NewGuid().ToString('N')
+    $preLocal = Join-Path ([IO.Path]::GetTempPath()) "themis_pre_$preId.sh"
+    $preRemote = "/tmp/themis_pre_$preId.sh"
+    [IO.File]::WriteAllText($preLocal, (($pre.Replace('__APP__', $RemotePath)) -replace "`r`n", "`n"), (New-Object Text.UTF8Encoding($false)))
+    try {
+        Copy-Remote $preLocal $preRemote
+        if ($LASTEXITCODE -ne 0) { throw 'Fallo al subir el script de preflight' }
+        Invoke-Remote "bash '$preRemote'; rc=`$?; rm -f '$preRemote'; exit `$rc"
+    } finally { Remove-Item $preLocal -Force -ErrorAction SilentlyContinue }
     return
 }
 if (-not (Test-Path $Dump)) { throw "No existe el dump: $Dump (corre antes actualizar_desde_prod.ps1)" }
