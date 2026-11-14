@@ -11,7 +11,10 @@
 
   ATENCION: BORRA y recrea la base indicada (por defecto `themis`) antes de importar.
   Luego corre `php artisan migrate` (migraciones posteriores al script SQL) y al final
-  exporta un dump de la base resultante a database\bkp\.
+  exporta un dump de la base resultante SIEMPRE a public\adminer.sql (se sobrescribe).
+  Ese archivo NO va a git (esta en .gitignore): se lleva a prod con
+  .\database\scripts\subir_a_prod.ps1 (respalda prod, sube por SSH e importa).
+  IMPORTANTE: tiene datos reales; public\.htaccess bloquea su descarga por HTTP.
   El seeder del informe de liquidacion del Time
   (`php artisan db:seed --class=AgostoLiquidacionSeeder`) es OPCIONAL: solo se corre
   si se pasa el switch -SeedLiquidacion.
@@ -27,7 +30,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $mysqldump = Join-Path (Split-Path $MysqlBin) 'mysqldump.exe'
-$bkpDir = Join-Path $PSScriptRoot '..\bkp'
+$publicDir = Join-Path $PSScriptRoot '..\..\public'
 $estructura = Join-Path $PSScriptRoot 'aplicar_estructura_l12_a_themis.sql'
 
 if (-not (Test-Path $Dump))       { throw "No existe el dump: $Dump" }
@@ -85,9 +88,9 @@ if ($SeedLiquidacion) {
     Write-Host '5/6 Seeder de liquidacion OMITIDO (pasa -SeedLiquidacion para incluirlo).'
 }
 
-Write-Host '6/6 Exportando dump a database\bkp...'
-New-Item -ItemType Directory -Force $bkpDir | Out-Null
-$salida = Join-Path (Resolve-Path $bkpDir) ("{0}_l12_{1:yyyyMMdd_HHmm}.sql" -f $Database, (Get-Date))
+Write-Host '6/6 Exportando dump a public\adminer.sql...'
+New-Item -ItemType Directory -Force $publicDir | Out-Null
+$salida = Join-Path (Resolve-Path $publicDir) 'adminer.sql'
 cmd /c "`"$mysqldump`" -u$User --default-character-set=utf8mb4 --single-transaction --routines --triggers $Database > `"$salida`""
 if ($LASTEXITCODE -ne 0) { throw 'Fallo al exportar el dump' }
 

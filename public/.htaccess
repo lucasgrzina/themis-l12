@@ -1,3 +1,15 @@
+# El dump que genera database/scripts/actualizar_desde_prod.* (datos reales) queda en esta
+# carpeta (ignorado por git): NO se debe poder descargar por HTTP.
+<FilesMatch "^adminer\.sql$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes

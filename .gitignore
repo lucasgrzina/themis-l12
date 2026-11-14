@@ -26,3 +26,6 @@ Thumbs.db
 /database/bkp/*.sql
 /storage/*.sql
 /.codegraph
+
+# Dump de prod (datos reales): se lleva al servidor con database/scripts/subir_a_prod.ps1, no por git
+/public/adminer.sql

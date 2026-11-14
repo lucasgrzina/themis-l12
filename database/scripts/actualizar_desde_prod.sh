@@ -9,7 +9,9 @@
 #
 # ATENCION: BORRA y recrea la base indicada (por defecto `themis`) antes de importar.
 # Luego corre `php artisan migrate` y al final exporta un dump de la base
-# resultante a database/bkp/. El seeder del informe de liquidacion es OPCIONAL
+# resultante SIEMPRE a public/adminer.sql (se sobrescribe). Ese archivo NO va a git (esta en
+# .gitignore): se lleva a prod con database/scripts/subir_a_prod.ps1. Tiene datos reales:
+# public/.htaccess bloquea su descarga por HTTP. El seeder del informe de liquidacion es OPCIONAL
 # (solo con --seed-liquidacion).
 #
 set -euo pipefail
@@ -40,7 +42,7 @@ done
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-BKP_DIR="$SCRIPT_DIR/../bkp"
+PUBLIC_DIR="$PROJECT_ROOT/public"
 ESTRUCTURA="$SCRIPT_DIR/aplicar_estructura_l12_a_themis.sql"
 
 [[ -n "$DUMP" ]]        || { echo "Falta -d <dump.sql>"; usage; }
@@ -84,9 +86,9 @@ else
     echo "5/6 Seeder de liquidacion OMITIDO (pasa --seed-liquidacion para incluirlo)."
 fi
 
-echo "6/6 Exportando dump a database/bkp..."
-mkdir -p "$BKP_DIR"
-SALIDA="$(cd "$BKP_DIR" && pwd)/${DATABASE}_l12_$(date +%Y%m%d_%H%M).sql"
+echo "6/6 Exportando dump a public/adminer.sql..."
+mkdir -p "$PUBLIC_DIR"
+SALIDA="$PUBLIC_DIR/adminer.sql"
 "${MYSQLDUMP[@]}" "$DATABASE" > "$SALIDA"
 
 echo "Listo: '$DATABASE' tiene los datos de prod + estructura L12."
