@@ -22,8 +22,8 @@ trait FileUploadTrait
 		$thumbPath = $uploadPath.'/thumb';
         
         if (! file_exists($uploadPath)) {
-            mkdir($uploadPath, 0775);
-            mkdir($thumbPath, 0775);
+            mkdir($uploadPath, 0775, true);
+            mkdir($thumbPath, 0775, true);
         }
 
         $finalRequest = $request;
@@ -88,7 +88,7 @@ trait FileUploadTrait
         $uploadPath  = \FUHelper::path($path,self::$disk);
         
         if (! file_exists($uploadPath)) {
-            mkdir($uploadPath, 0775);
+            mkdir($uploadPath, 0775, true);
         }
 
         $filename = $request->get($inputName,'');
@@ -109,8 +109,8 @@ trait FileUploadTrait
         $thumbPath = $uploadPath.'/thumb';
         
         if (! file_exists($uploadPath)) {
-            mkdir($uploadPath, 0775);
-            mkdir($thumbPath, 0775);
+            mkdir($uploadPath, 0775, true);
+            mkdir($thumbPath, 0775, true);
         }
 
         $filename = $request->get($inputName,'');
