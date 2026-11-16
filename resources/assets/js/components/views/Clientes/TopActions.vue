@@ -1,6 +1,6 @@
 <template>
   <div class="top-actions">
-  <button type="button" class="btn btn-sm bg-blue" v-can="actionPerm + ':C'" @click.prevent="$emit('vuetable:alta-rapida')" style="margin-right:5px;">
+  <button type="button" class="btn btn-sm bg-blue" v-if="altaRapidaHabilitada" v-can="actionPerm + ':C'" @click.prevent="$emit('vuetable:alta-rapida')" style="margin-right:5px;">
     <i class="fa fa-bolt"></i> Alta rápida
   </button>
   <div class="dropdown" v-can="actionPerm + ':C'" style="display:inline-block;">
@@ -37,6 +37,11 @@ export default {
       type: String,
       required: true
     }    
+  },
+  computed: {
+    altaRapidaHabilitada () {
+      return !!(window.Laravel && window.Laravel.altaRapidaHabilitada)
+    }
   },
   methods: {
     doNew (personeria) {

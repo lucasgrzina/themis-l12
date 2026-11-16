@@ -45,6 +45,8 @@ return [
 
     // Wizard de alta rapida de clientes.
     'alta_rapida' => [
+        // Muestra/oculta el boton "Alta rapida" en el listado de clientes.
+        'habilitada'        => (bool) env('ALTA_RAPIDA_HABILITADA', true),
         // Limites de los adjuntos (se envian por mail y quedan en la solapa Docs).
         'max_adjuntos'      => (int) env('ALTA_RAPIDA_MAX_ADJUNTOS', 10),
         'max_adjuntos_mb'   => (int) env('ALTA_RAPIDA_MAX_ADJUNTOS_MB', 20),

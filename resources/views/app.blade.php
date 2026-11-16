@@ -58,6 +58,7 @@ $host = (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
                 'csrfToken' => csrf_token(),
                 'siteName'  => config('app.name'),
                 'apiDomain' => config('app.url').'/api',
+                'altaRapidaHabilitada' => (bool) config('themis.alta_rapida.habilitada'),
                 'webDomain' => str_replace('127.0.0.1:8000','themis.local',route('imprimir.index'))
             ]) !!}
         </script>
