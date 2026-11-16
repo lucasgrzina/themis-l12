@@ -27,13 +27,22 @@ class CustomDataTableCriteria implements CriteriaInterface
      */
     public function apply($model, \Prettus\Repository\Contracts\RepositoryInterface $repository)
     {
-        $sortOrder = explode('|',$this->request->get('sort', '|'));
-        $order = $sortOrder[0];
-        $sorted = $sortOrder[1];
+        // Vuetable con multiSort envia "campo|dir,campo2|dir2"
+        $orders = [];
+        $dirs = [];
+        foreach (explode(',', (string) $this->request->get('sort', '')) as $part) {
+            $pieces = explode('|', $part);
+            $field = trim($pieces[0]);
+            if ($field === '') {
+                continue;
+            }
+            $dir = strtolower(trim($pieces[1] ?? ''));
+            $orders[] = $field;
+            $dirs[] = in_array($dir, ['asc', 'desc']) ? $dir : 'desc';
+        }
 
-
-        $this->request['orderBy'] = $order;
-        $this->request['sortedBy'] = ($sorted ? $sorted : 'desc');
+        $this->request['orderBy'] = implode(';', $orders);
+        $this->request['sortedBy'] = $dirs ? implode(';', $dirs) : 'desc';
 
         return $model;
     }

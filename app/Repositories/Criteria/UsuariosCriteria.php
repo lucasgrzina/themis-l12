@@ -40,6 +40,41 @@ class UsuariosCriteria implements CriteriaInterface
                     break;                
             }
         }
+
+        if (request()->filled('role')) {
+            $roleId = request()->get('role');
+            $model = $model->whereHas('roles', function ($q) use ($roleId) {
+                $q->where('roles.id', $roleId);
+            });
+        }
+
+        // Orden por rol (relacion): se resuelve aca y se quita del orderBy generico
+        $orders = array_filter(explode(';', (string) request()->get('orderBy', '')));
+        $dirs = explode(';', (string) request()->get('sortedBy', 'asc'));
+        $keep = [];
+        $keepDirs = [];
+        foreach (array_values($orders) as $i => $field) {
+            $dir = $dirs[$i] ?? $dirs[0];
+            if ($field === 'roles') {
+                $pivot = config('permission.table_names.model_has_roles', 'model_has_roles');
+                $model = $model->orderBy(
+                    \DB::table('roles')
+                        ->join($pivot, $pivot . '.role_id', '=', 'roles.id')
+                        ->whereColumn($pivot . '.model_id', 'users.id')
+                        ->select('roles.name')
+                        ->limit(1),
+                    $dir === 'asc' ? 'asc' : 'desc'
+                );
+            } else {
+                $keep[] = $field;
+                $keepDirs[] = $dir;
+            }
+        }
+        request()->merge([
+            'orderBy' => implode(';', $keep),
+            'sortedBy' => $keepDirs ? implode(';', $keepDirs) : 'asc',
+        ]);
+
         return $model;
     }
 }

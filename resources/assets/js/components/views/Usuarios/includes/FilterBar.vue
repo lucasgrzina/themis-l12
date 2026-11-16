@@ -5,6 +5,12 @@
             <input type="text" v-model="filter.search" class="form-control input-sm pull-right" @keyup.enter="doFilter" @input="debouncedFilter">
           </div>        
           <div class="form-group" style="max-width: 250px;">
+            <select v-model="filter.role" class="form-control input-sm" name="role" @change="doFilter">
+              <option :value="null">Todos los roles</option>
+              <option v-for="r in roles" :key="r.id" :value="r.id">{{ r.name }}</option>
+            </select>
+          </div>
+          <div class="form-group" style="max-width: 250px;">
             <select v-model="filter.time" class="form-control input-sm" name="time" placeholder="Time" @change="doFilter">
               <option :value="null">Todos los usuarios</option>
               <optgroup label="Time">
@@ -28,11 +34,15 @@
 <script>
 import debounce from 'lodash/debounce'
 export default {
+  props: {
+    roles: { type: Array, default: () => [] }
+  },
   data () {
     return {
       filter: {
         search: '',
-        time: null
+        time: null,
+        role: null
       }
     }
   },
@@ -52,6 +62,7 @@ export default {
       this.debouncedFilter.cancel()
       this.filter.search = ''
       this.filter.time = null
+      this.filter.role = null
       this.doFilter()
       //this.$events.fire('filter-reset')
     }

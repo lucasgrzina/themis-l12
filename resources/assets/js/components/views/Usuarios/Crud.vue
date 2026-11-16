@@ -10,7 +10,7 @@
       :actionPerm="'usuarios'"
       @create="create">
       <template slot="slot-filter-bar">
-      	<filter-bar @usuarios:filter-set="onFilterSet"></filter-bar>
+      	<filter-bar :roles="info.roles" @usuarios:filter-set="onFilterSet"></filter-bar>
       </template>      
       <template slot="actions" slot-scope="props">
       		<button v-can="'usuarios:U'"  type="button" class="btn btn-xs bg-orange" @click="onAction('reset-pass', props.rowData, props.rowIndex)"><i class="fa fa-key"></i></button>
@@ -158,6 +158,7 @@ export default {
 			  	{
 			  		name: 'roles',
 			  		title: 'Rol',
+			  		sortField: 'roles',
 			  		callback: 'formatRole'
 			  	},	
 			  	{
@@ -224,6 +225,7 @@ export default {
   		//this.list.moreParams.search = this.$options.filters.jsonToSearcheable(_.assign({},filter));
   		this.list.moreParams.search = filter.search;
   		this.list.moreParams.time = filter.time;
+  		this.list.moreParams.role = filter.role;
   		
 		Vue.nextTick( () => {
 			if (this.$refs.list.$refs.vuetable) {
