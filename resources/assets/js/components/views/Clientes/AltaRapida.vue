@@ -4,7 +4,7 @@
     <h4 class="modal-title">Alta rápida de cliente</h4>
     <ul class="ar-steps" v-if="step <= 4">
       <li v-for="(s, i) in steps" :key="i" :class="{active: step === i + 1, done: step > i + 1}">
-        <span class="ar-badge">{{ i + 1 }}</span> {{ s }}
+        <span class="ar-badge"><i class="fa fa-check" v-if="step > i + 1"></i><template v-else>{{ i + 1 }}</template></span>{{ s }}
       </li>
     </ul>
   </div>
@@ -18,8 +18,10 @@
     <div v-show="step === 1">
       <div class="row">
         <div class="form-group col-sm-12">
-          <label class="radio-inline"><input type="radio" value="H" v-model="form.personeria"> Persona humana</label>
-          <label class="radio-inline"><input type="radio" value="J" v-model="form.personeria"> Persona jurídica</label>
+          <div class="ar-personeria">
+            <label class="ar-seg"><input type="radio" value="H" v-model="form.personeria"><i class="fa fa-user"></i> Persona humana</label>
+            <label class="ar-seg"><input type="radio" value="J" v-model="form.personeria"><i class="fa fa-building-o"></i> Persona jurídica</label>
+          </div>
         </div>
         <div class="form-group col-sm-8">
           <label>{{ form.personeria === 'J' ? 'Razón social' : 'Nombre completo' }}</label>
@@ -53,7 +55,7 @@
         </template>
       </div>
 
-      <label>Contactos <small class="text-muted">(al menos un teléfono o e-mail)</small></label>
+      <label class="ar-section-label">Contactos <small class="text-muted">(al menos un teléfono o e-mail)</small></label>
       <div class="row ar-contacto" v-for="(c, i) in form.contactos" :key="'c' + i">
         <div class="form-group col-sm-3">
           <select class="form-control" v-model="c.kind">
@@ -75,7 +77,7 @@
           <button type="button" class="btn btn-sm btn-default" @click="quitarContacto(i)" v-if="form.contactos.length > 1" title="Quitar"><i class="fa fa-trash"></i></button>
         </div>
       </div>
-      <button type="button" class="btn btn-sm btn-default" @click="agregarContacto"><i class="fa fa-plus"></i> Agregar contacto</button>
+      <button type="button" class="btn btn-sm ar-add" @click="agregarContacto"><i class="fa fa-plus"></i> Agregar contacto</button>
     </div>
 
     <!-- 2. Observación y aviso -->
@@ -85,7 +87,7 @@
         <textarea class="form-control" rows="3" v-model="form.observacion"></textarea>
       </div>
 
-      <label>Destinatarios del aviso y del e-mail <small class="text-muted">(opcional; se crea un aviso y un mail por destinatario)</small></label>
+      <label class="ar-section-label">Destinatarios del aviso y del e-mail <small class="text-muted">(opcional; se crea un aviso y un mail por destinatario)</small></label>
       <div class="ar-dest">
         <div class="ar-areas">
           <span class="text-muted">Agregar todos los de un área:</span>
@@ -320,7 +322,8 @@ export default {
       this.errores = []
       this.guardando = false
       this.resultado = null
-      this.aplicarTipoContactoDefault()
+      // El default del tipo de contacto ("Celular") se aplica recién en cargarCombos(),
+      // cuando el catálogo ya está disponible; fijarlo acá lo dejaría en "Otro".
     },
     cargarCombos () {
       if (this.cargado) {
@@ -334,21 +337,34 @@ export default {
         this.aplicarTipoContactoDefault()
       })
     },
+    tipoContactoDefault () {
+      // Por defecto "Celular"; si no existe en el catálogo, la primera opción.
+      const list = this.info.tipos_contacto || []
+      const cel = list.find(o => (o.nombre || '').trim().toLowerCase() === 'celular')
+      return cel ? cel.nombre : (list.length ? list[0].nombre : OTRO)
+    },
+    tipoDocDefaultDni () {
+      // Por defecto DNI (el catálogo lo tiene como "D.N.I"); se normaliza para matchear.
+      const list = this.info.tipo_doc || []
+      const norm = s => (s || '').toUpperCase().replace(/[^A-Z]/g, '')
+      const dni = list.find(o => norm(o.nombre) === 'DNI')
+      return dni ? dni.id : null
+    },
     aplicarTipoContactoDefault () {
-      const def = this.info.tipos_contacto.length ? this.info.tipos_contacto[0].nombre : OTRO
+      const def = this.tipoContactoDefault()
       this.form.contactos.forEach(c => { if (!c.tipo) c.tipo = def })
     },
     onSinCuit () {
       if (this.form.sinCuit) {
         this.form.cuit = ''
+        if (!this.form.tipo_doc_id) this.form.tipo_doc_id = this.tipoDocDefaultDni()
       } else {
         this.form.tipo_doc_id = null
         this.form.nro_doc = ''
       }
     },
     agregarContacto () {
-      const def = this.info.tipos_contacto.length ? this.info.tipos_contacto[0].nombre : OTRO
-      this.form.contactos.push({ kind: 'T', val: '', tipo: def, tipoOtro: '' })
+      this.form.contactos.push({ kind: 'T', val: '', tipo: this.tipoContactoDefault(), tipoOtro: '' })
     },
     quitarContacto (i) {
       this.form.contactos.splice(i, 1)
@@ -490,21 +506,166 @@ export default {
 </script>
 
 <style>
-.alta-rapida .ar-steps { list-style: none; margin: 10px 0 0; padding: 0; display: flex; gap: 6px; flex-wrap: wrap; }
-.alta-rapida .ar-steps li { color: #999; font-size: 13px; }
-.alta-rapida .ar-steps li.active { color: #0c4b95; font-weight: 600; }
-.alta-rapida .ar-steps li.done { color: #00a65a; }
-.alta-rapida .ar-steps li:not(:last-child)::after { content: '›'; margin-left: 8px; color: #ccc; }
-.alta-rapida .ar-badge { display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 50%; background: #ddd; color: #fff; font-size: 12px; }
-.alta-rapida .ar-steps li.active .ar-badge { background: #0c4b95; }
-.alta-rapida .ar-steps li.done .ar-badge { background: #00a65a; }
-.alta-rapida .ar-otro { margin-top: 5px; }
-.alta-rapida .ar-contacto { margin-bottom: 0; }
-.alta-rapida .ar-dest { border: 1px solid #ddd; border-radius: 3px; padding: 10px; }
-.alta-rapida .ar-areas { margin-bottom: 8px; }
-.alta-rapida .ar-areas .btn { margin: 0 4px 4px 0; }
-.alta-rapida .ar-lista { list-style: none; margin: 8px 0; padding: 0; max-height: 180px; overflow-y: auto; columns: 2; }
-.alta-rapida .ar-lista label { font-weight: normal; cursor: pointer; }
-.alta-rapida .ar-resumen dt { text-align: left; }
-@media (max-width: 767px) { .alta-rapida .ar-lista { columns: 1; } }
+/* ============================================================
+   Alta rápida de cliente — refresh visual (2026-11)
+   Respeta la paleta del sistema (primario #337ab7 / AdminLTE).
+   ============================================================ */
+.alta-rapida .modal-content {
+  border-radius: 10px;
+  border-top: none !important;
+  box-shadow: 0 16px 56px rgba(16, 42, 67, .24);
+  overflow: hidden;
+}
+
+/* --- Header + stepper --- */
+.alta-rapida .modal-header {
+  padding: 16px 22px !important;
+  background: linear-gradient(135deg, #3b86c4 0%, #2f6ea5 100%) !important;
+  border-bottom: none !important;
+}
+.alta-rapida .modal-header .modal-title { font-size: 16px !important; font-weight: 600; letter-spacing: .2px; }
+
+.alta-rapida .ar-steps {
+  list-style: none; margin: 16px 0 2px; padding: 0;
+  display: flex; align-items: center; flex-wrap: wrap;
+}
+.alta-rapida .ar-steps li {
+  display: flex; align-items: center;
+  color: rgba(255, 255, 255, .62); font-size: 13px; font-weight: 500;
+}
+.alta-rapida .ar-steps li.active { color: #fff; font-weight: 600; }
+.alta-rapida .ar-steps li.done { color: rgba(255, 255, 255, .92); }
+.alta-rapida .ar-steps li::after {
+  content: ''; width: 22px; height: 2px; margin: 0 10px;
+  background: rgba(255, 255, 255, .28); border-radius: 2px;
+}
+.alta-rapida .ar-steps li:last-child::after { display: none; }
+.alta-rapida .ar-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; margin-right: 8px; border-radius: 50%;
+  background: rgba(255, 255, 255, .22); color: #fff;
+  font-size: 12px; font-weight: 600; transition: all .2s ease;
+}
+.alta-rapida .ar-steps li.active .ar-badge {
+  background: #fff; color: #2f6ea5; box-shadow: 0 0 0 4px rgba(255, 255, 255, .18);
+}
+.alta-rapida .ar-steps li.done .ar-badge { background: rgba(255, 255, 255, .95); color: #2f6ea5; }
+
+/* --- Cuerpo --- */
+.alta-rapida .modal-body { padding: 24px 22px; }
+.alta-rapida .modal-body .alert-danger { border-radius: 8px; border: 1px solid #f1c7bc; }
+
+/* Etiquetas de campo y de sección */
+.alta-rapida .form-group > label,
+.alta-rapida .ar-section-label {
+  display: block; font-size: 12.5px; font-weight: 600;
+  color: #41505c; margin-bottom: 6px; letter-spacing: .2px;
+}
+.alta-rapida .ar-section-label { margin-top: 4px; }
+.alta-rapida .ar-section-label small,
+.alta-rapida .form-group > label small { font-weight: 500; color: #97a3ac; }
+
+/* Inputs y selects (bordes definidos: los grises no se pierden) */
+.alta-rapida .form-control {
+  height: 38px !important; line-height: 1.4 !important;
+  border: 1px solid #ccd6dd; border-radius: 7px;
+  padding: 6px 12px; color: #2d3a44; background-color: #fff;
+  box-shadow: none; transition: border-color .15s ease, box-shadow .15s ease;
+}
+.alta-rapida textarea.form-control { height: auto !important; }
+.alta-rapida .form-control:focus {
+  border-color: #337ab7; box-shadow: 0 0 0 3px rgba(51, 122, 183, .15);
+}
+.alta-rapida .form-control::-moz-placeholder { color: #9aa7b0; }
+.alta-rapida .form-control::-webkit-input-placeholder { color: #9aa7b0; }
+.alta-rapida .form-control:hover:not(:focus) { border-color: #b4c2cc; }
+
+/* Personería — control segmentado */
+.alta-rapida .ar-personeria { display: inline-flex; gap: 10px; flex-wrap: wrap; }
+.alta-rapida .ar-seg {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin: 0; padding: 10px 18px; font-weight: 500; color: #54636e;
+  border: 1px solid #ccd6dd; border-radius: 9px; background: #fff;
+  cursor: pointer; transition: all .15s ease;
+}
+.alta-rapida .ar-seg i { color: #8a99a3; transition: color .15s ease; }
+.alta-rapida .ar-seg input { position: absolute; opacity: 0; width: 0; height: 0; }
+.alta-rapida .ar-seg:hover { border-color: #9fb6c6; }
+.alta-rapida .ar-seg:has(input:checked) {
+  border-color: #337ab7; background: #eaf3fb; color: #2a6496;
+  font-weight: 600; box-shadow: inset 0 0 0 1px #337ab7;
+}
+.alta-rapida .ar-seg:has(input:checked) i { color: #337ab7; }
+.alta-rapida .ar-seg:has(input:focus-visible) { box-shadow: 0 0 0 3px rgba(51, 122, 183, .22); }
+
+/* Checkbox "No tiene CUIT" */
+.alta-rapida .checkbox { margin-top: 8px; }
+.alta-rapida .checkbox label { font-weight: 500; color: #54636e; }
+
+/* Contactos — tarjeta por fila */
+.alta-rapida .ar-contacto {
+  margin: 0 0 10px; padding: 12px 6px; align-items: flex-start;
+  background: #f6f9fb; border: 1px solid #e4ebf0; border-radius: 9px;
+}
+.alta-rapida .ar-contacto .form-group { margin-bottom: 0; }
+.alta-rapida .ar-contacto .btn-default {
+  margin-top: 2px; color: #b05a3c; background: #fff; border-color: #e0cac2;
+}
+.alta-rapida .ar-contacto .btn-default:hover { background: #fdf2ee; border-color: #d8a593; }
+.alta-rapida .ar-otro { margin-top: 8px; }
+
+/* Botón "Agregar contacto" */
+.alta-rapida .ar-add {
+  margin-top: 2px; padding: 8px 16px; font-weight: 600;
+  color: #337ab7; background: #fff; border: 1px dashed #9fb6c6; border-radius: 9px;
+  transition: all .15s ease;
+}
+.alta-rapida .ar-add:hover { background: #eaf3fb; border-color: #337ab7; color: #2a6496; }
+
+/* Destinatarios */
+.alta-rapida .ar-dest {
+  border: 1px solid #e0e7ec; border-radius: 9px; padding: 14px; background: #fafbfc;
+}
+.alta-rapida .ar-areas { margin-bottom: 10px; }
+.alta-rapida .ar-areas .text-muted { display: inline-block; margin-right: 4px; font-size: 12.5px; }
+.alta-rapida .ar-areas .btn {
+  margin: 0 5px 5px 0; border-radius: 20px; padding: 3px 12px;
+  background: #fff; border: 1px solid #ccd6dd; color: #4a5b66; font-size: 12px;
+}
+.alta-rapida .ar-areas .btn:hover { background: #eaf3fb; border-color: #337ab7; color: #2a6496; }
+.alta-rapida .ar-lista {
+  list-style: none; margin: 10px 0 6px; padding: 6px; max-height: 190px;
+  overflow-y: auto; columns: 2; background: #fff;
+  border: 1px solid #e4ebf0; border-radius: 7px;
+}
+.alta-rapida .ar-lista li { break-inside: avoid; padding: 2px 4px; border-radius: 5px; }
+.alta-rapida .ar-lista li:hover { background: #f2f6f9; }
+.alta-rapida .ar-lista label { font-weight: 500; color: #45535d; cursor: pointer; margin: 0; }
+
+/* Resumen (paso Confirmar) */
+.alta-rapida .ar-resumen {
+  margin: 0; padding: 16px 18px; background: #f7f9fb;
+  border: 1px solid #e4ebf0; border-radius: 9px;
+}
+.alta-rapida .ar-resumen dt { text-align: left; color: #7a8893; font-weight: 600; font-size: 12.5px; }
+.alta-rapida .ar-resumen dd { margin-bottom: 10px; color: #2d3a44; }
+
+/* Footer */
+.alta-rapida .modal-footer {
+  padding: 14px 22px !important; background: #fafbfc;
+  border-top: 1px solid #eef2f5 !important;
+}
+.alta-rapida .modal-footer .btn { border-radius: 7px; padding: 8px 18px; font-weight: 600; }
+.alta-rapida .modal-footer .btn-default { background: #fff; border-color: #ccd6dd; color: #54636e; }
+.alta-rapida .modal-footer .btn-default:hover { background: #f1f5f8; border-color: #b4c2cc; }
+.alta-rapida .modal-footer .btn-primary { background: #337ab7; border-color: #2f6ea5; }
+.alta-rapida .modal-footer .btn-primary:hover { background: #2f6ea5; border-color: #2a6496; }
+.alta-rapida .modal-footer .btn-success { background: #2ab27b; border-color: #25a06f; }
+.alta-rapida .modal-footer .btn-success:hover { background: #25a06f; }
+
+@media (max-width: 767px) {
+  .alta-rapida .ar-lista { columns: 1; }
+  .alta-rapida .ar-steps li:not(.active) { display: none; }
+  .alta-rapida .ar-steps li.active::after { display: none; }
+}
 </style>
