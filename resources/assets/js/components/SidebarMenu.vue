@@ -490,8 +490,10 @@ export default {
       return !!this.hasAnyPerm(perm)
     },
     canViewTime () {
-      return this.isTimeLevel(1) || this.isTimeLevel(2) || this.isTimeLevel(5) ||
-        this.can('time-parametros:R') || this.can('time-analisis-de-horas:R') || this.can('time-liquidacion:R')
+      // El menú Time solo aparece para quienes usan Time (tienen nivel).
+      // Los permisos de informes (parámetros/análisis/liquidación) filtran las
+      // opciones internas, pero no habilitan por sí solos el menú.
+      return this.isTimeLevel(1) || this.isTimeLevel(2) || this.isTimeLevel(5)
     },
     canViewTimeGestion () {
       return this.isTimeLevel(5) || this.isTimeLevel(1)

@@ -70,7 +70,7 @@
 				<label for="responsable">Abogado a cargo</label>
 				<radio-button-group v-model="selectedItem.responsable"></radio-button-group>
 			</div>
-			<div class="form-group col-sm-3">
+			<div class="form-group col-sm-3" v-if="canSetTimeLevel">
 				<label for="time_level">Time: Nivel</label>
 				<select v-model="selectedItem.time_level" class="form-control" name="time_level">
 					<option :value="null">No usa</option>
@@ -201,8 +201,14 @@ export default {
   computed: {
     ...mapState([
       'authUser'
-    ])
-  },  
+    ]),
+    // Solo quien tiene el permiso "Nivel en Time" (usuarios:NT) puede ver/editar
+    // el combo de nivel de Time. Sin permiso: en el alta queda null y en la
+    // modificacion se conserva el valor actual del usuario (no se envia cambiado).
+    canSetTimeLevel () {
+      return !!this.$store.getters.hasAnyPerm('usuarios:NT')
+    }
+  },
   mounted () {
   	this.apiUrl = config.serverURI + this.uri;
   	Api.combos('usuarios').then((resp) => {
@@ -326,6 +332,7 @@ export default {
 	      password: null,
 	      email: null,
 	      responsable: true,
+	      time_level: null,
 	      _areas: [],
 	      id: 0
 	    },item)

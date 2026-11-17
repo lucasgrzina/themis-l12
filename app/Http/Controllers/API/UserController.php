@@ -64,7 +64,13 @@ class UserController extends AppBaseController
         $this->validation($request);
 
         $input = $request->except('role','roles','password','areas','_areas');
-        
+
+        // Solo quien tiene el permiso "Nivel en Time" (usuarios:NT) puede setear
+        // el nivel. Sin permiso, el alta queda sin nivel (null).
+        if (!$request->user() || !$request->user()->can('usuarios:NT')) {
+            $input['time_level'] = null;
+        }
+
         if ($request->has('password'))
         {
             $input['password'] = Hash::make($request->get('password'));    
@@ -125,6 +131,12 @@ class UserController extends AppBaseController
         $this->validation($request);
 
         $input = $request->except('role','roles','password','_areas','areas');
+
+        // Sin el permiso "Nivel en Time" (usuarios:NT) no se toca el nivel:
+        // se conserva el valor actual del usuario.
+        if (!$request->user() || !$request->user()->can('usuarios:NT')) {
+            unset($input['time_level']);
+        }
 
         if ($request->has('password') && $request->get('password',null) !== null )
         {

@@ -158,6 +158,11 @@ export default {
 		if (this.amModal.accionControlada && this.amModal.accionControlada.nombre_permiso === 'tramites') {
 			acciones.push({oper: 'DC', name: 'Destruir carpeta'});
 		}
+		// Usuarios: operacion extra NT (Nivel en Time) ademas del CRUD.
+		// Habilita el combo "Time: Nivel" en el alta/modificacion de usuarios.
+		if (this.amModal.accionControlada && this.amModal.accionControlada.nombre_permiso === 'usuarios') {
+			acciones.push({oper: 'NT', name: 'Nivel en Time'});
+		}
 		return acciones;
 	}
   },
