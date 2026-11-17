@@ -192,7 +192,7 @@
             </a>
           </router-link>          
         </template>
-        <template v-if="canViewTimeImpresiones() || can('time-analisis-de-horas:R') || can('time-liquidacion:R')">
+        <template v-if="canViewTimeImpresiones()">
           <li class="treeview">
             <a href="#">
               <span>Impresiones</span>
@@ -201,7 +201,7 @@
               </span>
             </a> 
             <ul class="treeview-menu">
-              <router-link v-if="can('time-analisis-de-horas:R')" tag="li" class="pageLink" to="/time/impresiones/analisis">
+              <router-link v-if="isTimeLevel(5) && can('time-analisis-de-horas:R')" tag="li" class="pageLink" to="/time/impresiones/analisis">
                 <a>
                   <i class="">&nbsp;</i>
                   <span class="page">Análisis de horas</span>
@@ -225,7 +225,7 @@
                   <span class="page">Por Abogado (Resumen)</span>
                 </a>
               </router-link>
-              <router-link v-if="can('time-liquidacion:R')" tag="li" class="pageLink" to="/time/impresiones/liquidacion">
+              <router-link v-if="isTimeLevel(5) && can('time-liquidacion:R')" tag="li" class="pageLink" to="/time/impresiones/liquidacion">
                 <a>
                   <i class="">&nbsp;</i>
                   <span class="page">Liquidación Cliente/Abogado</span>
@@ -234,7 +234,7 @@
             </ul>
           </li>
         </template>
-        <template v-if="can('time-parametros:R')">
+        <template v-if="isTimeLevel(5) && can('time-parametros:R')">
           <li class="treeview">
             <a href="#">
               <span>Parámetros</span>
