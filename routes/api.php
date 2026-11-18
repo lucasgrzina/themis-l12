@@ -240,6 +240,7 @@ Route::group(['middleware' => ['jwt.auth']], function()
 
     Route::delete('usuarios/eliminar-seleccion', 'UserController@removeSelected');
     Route::put('usuarios/password/reset/{id}', 'UserController@resetPassword');
+    Route::put('usuarios/{id}/activo', 'UserController@setActivo');
     Route::put('usuarios/update-profile/{id}', 'UserController@updateProfile');
 
     Route::resource('usuarios', 'UserController');

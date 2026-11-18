@@ -908,7 +908,7 @@ export default {
 		},
 		getResponsables(search, loading) {
 			loading(true)
-			Api.combos('responsables/'+this.selectedItem.area_id+'/?search=' + search).then(resp => {
+			Api.combos('responsables/'+this.selectedItem.area_id+'/?solo_activos=1&search=' + search).then(resp => {
 				 this.info.responsables.data = resp.data
 				 loading(false)
 			})

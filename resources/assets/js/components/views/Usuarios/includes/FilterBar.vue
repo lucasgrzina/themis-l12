@@ -11,6 +11,13 @@
             </select>
           </div>
           <div class="form-group" style="max-width: 250px;">
+            <select v-model="filter.estado" class="form-control input-sm" name="estado" @change="doFilter">
+              <option :value="'activos'">Activos</option>
+              <option :value="'inactivos'">Inactivos</option>
+              <option :value="'todos'">Todos (activos e inactivos)</option>
+            </select>
+          </div>
+          <div class="form-group" style="max-width: 250px;">
             <select v-model="filter.time" class="form-control input-sm" name="time" placeholder="Time" @change="doFilter">
               <option :value="null">Todos los usuarios</option>
               <optgroup label="Time">
@@ -42,7 +49,8 @@ export default {
       filter: {
         search: '',
         time: null,
-        role: null
+        role: null,
+        estado: 'activos'
       }
     }
   },
@@ -63,6 +71,7 @@ export default {
       this.filter.search = ''
       this.filter.time = null
       this.filter.role = null
+      this.filter.estado = 'activos'
       this.doFilter()
       //this.$events.fire('filter-reset')
     }

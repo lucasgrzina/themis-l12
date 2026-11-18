@@ -41,6 +41,20 @@ class UsuariosCriteria implements CriteriaInterface
             }
         }
 
+        // Filtro por estado activo/inactivo. Por defecto solo activos.
+        // 'todos' muestra ambos; 'inactivos' solo los dados de baja.
+        switch (request()->get('estado', 'activos')) {
+            case 'todos':
+                break;
+            case 'inactivos':
+                $model = $model->where('activo', false);
+                break;
+            case 'activos':
+            default:
+                $model = $model->where('activo', true);
+                break;
+        }
+
         if (request()->filled('role')) {
             $roleId = request()->get('role');
             $model = $model->whereHas('roles', function ($q) use ($roleId) {

@@ -127,11 +127,19 @@ class CombosAPIController extends AppBaseController
     public function responsables($areaId,UsersRepository $repo,Request $request)
     {
         $repo->pushCriteria(new RequestCriteria($request));
-        $data =  $repo->scopeQuery(function($query) use($areaId){
-            return $query->whereVisible(true)->whereResponsable(true)->whereHas('areas', function($query) use($areaId){
+        // Al asignar responsables a nuevos requerimientos/tramites se envia
+        // solo_activos=1 para excluir a los usuarios dados de baja; los
+        // filtros de informes historicos NO lo envian y siguen viendo a todos.
+        $soloActivos = $request->boolean('solo_activos');
+        $data =  $repo->scopeQuery(function($query) use($areaId, $soloActivos){
+            $query = $query->whereVisible(true)->whereResponsable(true);
+            if ($soloActivos) {
+                $query = $query->where('activo', true);
+            }
+            return $query->whereHas('areas', function($query) use($areaId){
                 $query->whereAreaId($areaId);
-            })->orderBy('name','asc'); 
-        })->all(['id','name']);        
+            })->orderBy('name','asc');
+        })->all(['id','name']);
         /*$data = $repo->scopeQuery(function($query){
             return $query->whereResponsable(true)->orderBy('name','asc'); 
         })->all(['id','name']);*/
@@ -185,9 +193,9 @@ class CombosAPIController extends AppBaseController
             'responsables' => [
                 'selected' => null,
                 'data' => $userRepo->scopeQuery(function($query) use($areaId){
-                    return $query->whereVisible(true)->whereResponsable(true)->whereHas('areas', function($query) use($areaId){
+                    return $query->whereVisible(true)->whereResponsable(true)->where('activo', true)->whereHas('areas', function($query) use($areaId){
                         $query->whereAreaId($areaId);
-                    })->orderBy('name','asc'); 
+                    })->orderBy('name','asc');
                 })->all(['id','name'])
             ],              
             'estado_civil' => [['value' => '','name' => ''],['value' => 'CA','name' => 'Casado'],['value' => 'CO','name' => 'Conviviente']],

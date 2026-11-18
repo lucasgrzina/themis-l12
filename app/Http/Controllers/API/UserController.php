@@ -195,6 +195,24 @@ class UserController extends AppBaseController
         return $this->sendResponse($model->toArray(), 'La operacion finalizo con exito');
     }
 
+    /**
+     * Marca un usuario como activo/inactivo (baja logica), sin disparar la
+     * validacion completa del usuario. PUT /usuarios/{id}/activo
+     */
+    public function setActivo($id, Request $request)
+    {
+        $model = $this->repository->findWithoutFail($id);
+
+        if (empty($model)) {
+            return $this->sendError('No se encontro el registro');
+        }
+
+        $model->activo = $request->boolean('activo');
+        $model->save();
+
+        return $this->sendResponse($model->toArray(), 'La operacion finalizo con exito');
+    }
+
     public function updateProfile($id, Request $request)
     {
         $input = $request->except('password');

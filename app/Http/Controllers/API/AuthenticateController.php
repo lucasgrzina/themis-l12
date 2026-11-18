@@ -28,6 +28,14 @@ class AuthenticateController extends AppBaseController
             return response()->json(['error' => 'Could not create token'], 500);
         }
 
+        // Bloquea el acceso de usuarios dados de baja (activo = false): se valida
+        // despues de la clave para no revelar el estado a quien no la conoce.
+        $user = JWTAuth::user();
+        if ($user && ! $user->activo) {
+            JWTAuth::invalidate($token);
+            return response()->json(['error' => 'El usuario se encuentra inactivo. Contacte al administrador.'], 401);
+        }
+
         return response()->json(compact('token'));
     }
 
@@ -39,6 +47,13 @@ class AuthenticateController extends AppBaseController
     public function refresh()
     {
         try {
+            // Si el usuario fue dado de baja, no se le renueva la sesion.
+            $user = JWTAuth::parseToken()->authenticate();
+            if ($user && ! $user->activo) {
+                JWTAuth::invalidate(JWTAuth::getToken());
+                return response()->json(['error' => 'El usuario se encuentra inactivo.'], 401);
+            }
+
             $token = JWTAuth::parseToken()->refresh();
         } catch (JWTException $e) {
             return response()->json(['error' => 'Could not refresh token'], 401);

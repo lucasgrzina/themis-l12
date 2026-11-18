@@ -14,6 +14,7 @@
       </template>      
       <template slot="actions" slot-scope="props">
       		<button v-can="'usuarios:U'"  type="button" class="btn btn-xs bg-orange" @click="onAction('reset-pass', props.rowData, props.rowIndex)"><i class="fa fa-key"></i></button>
+			<button v-can="'usuarios:U'" type="button" class="btn btn-xs" :class="props.rowData.activo ? 'bg-red' : 'bg-green'" :title="props.rowData.activo ? 'Desactivar usuario' : 'Activar usuario'" @click="onAction('toggle-activo', props.rowData, props.rowIndex)"><i class="fa" :class="props.rowData.activo ? 'fa-user-times' : 'fa-user'"></i></button>
 			<button-type v-can="'usuarios:U'" type="edit-list" @click.native="onAction('edit', props.rowData, props.rowIndex)"/>
 			<button-type v-can="'usuarios:D'" type="remove-list" @click.native="onAction('remove', props.rowData, props.rowIndex)"/>
 
@@ -172,9 +173,17 @@ export default {
 			  		name: 'time_level',
 			  		title: 'Time: Nivel',
 			  		callback: 'tagAssoc|{"null":["No usa","bg-red"],"1":["Nivel 1","bg-purple disabled"],"2":["Nivel 2","bg-purple"],"5": ["Administrador","bg-purple-active"]}'
-			  	},				  					  			  	
+			  	},
 			  	{
-			  		name: '__slot:actions',	
+			  		name: 'activo',
+			  		title: 'Estado',
+				      titleClass: 'text-center',
+				      dataClass: 'text-center',
+			  		sortField: 'activo',
+			  		callback: 'tagAssoc|{"true":["Activo","bg-green"],"false":["Inactivo","bg-red"],"null":["Activo","bg-green"]}'
+			  	},
+			  	{
+			  		name: '__slot:actions',
 					titleClass: 'text-right',
 					dataClass: 'text-right'		  		
 			  	}
@@ -232,6 +241,7 @@ export default {
   		this.list.moreParams.search = filter.search;
   		this.list.moreParams.time = filter.time;
   		this.list.moreParams.role = filter.role;
+  		this.list.moreParams.estado = filter.estado;
   		
 		Vue.nextTick( () => {
 			if (this.$refs.list.$refs.vuetable) {
@@ -251,7 +261,10 @@ export default {
 				break;
 			case 'reset-pass':
 				this.resetPass(data);
-				break;      		
+				break;
+			case 'toggle-activo':
+				this.toggleActivo(data);
+				break;
 		}
     },  
     create () {
@@ -311,6 +324,22 @@ export default {
     		},() => {
     			dialog.close()
     		})
+    },
+    toggleActivo (data) {
+    	const nuevoEstado = !data.activo;
+    	const accion = nuevoEstado ? 'activar' : 'dar de baja';
+		this.$dialog.confirm('¿Desea ' + accion + ' al usuario ' + data.name + '?',{loader: true})
+			.then((dialog) => {
+	        	dialog.loading(true)
+	    		Api.request('PUT',this.uri.concat(data.id).concat('/activo'),{activo: nuevoEstado})
+	    			.then((resp) => {
+	    				dialog.close()
+	    				this.$store.dispatch('showSuccessNotification',resp.data.message)
+	    				this.$refs.list.$refs.vuetable.refresh();
+	    			},() => {
+		    			dialog.close()
+		    		});
+			})
     },
     resetPass (data) {
 		this.$dialog.confirm('¿Deséa resetear la clave de ' + data.name + '?',{loader: true})
