@@ -60,7 +60,7 @@
 					<label>Categoría abogado</label>
 					<select v-model="filtros.categoria_abogado" class="form-control">
 						<option value="">Todas</option>
-						<option v-for="c in categorias" :value="c">{{ c }}</option>
+						<option v-for="c in categorias" :value="c.id">{{ c.nombre }}</option>
 					</select>
 				</div>
 				<div class="form-group col-sm-3">
@@ -274,6 +274,7 @@ export default {
 				{ key: 'ult30', label: 'Últimos 30 días' }
 			],
 			info: { abogados: [], clientes: [], gestiones: [] },
+			categorias: [],
 			sel: { abogados: [], clientes: [], gestiones: [] },
 			filtros: {
 				desde: moment().startOf('month').format('DD/MM/YYYY'),
@@ -285,8 +286,7 @@ export default {
 	computed: {
 		soloPropio() { return false }, // el permiso time-analisis-de-horas:R da acceso a todo el estudio
 		clientes() { return _.sortBy(this.info.clientes, o => o.nombre_completo) },
-		categorias() { return _.uniq(this.info.abogados.map(a => a.categoria_abogado).filter(Boolean)) },
-		hayDrill() { return this.sel.abogados.length > 0 || this.sel.clientes.length > 0 },
+				hayDrill() { return this.sel.abogados.length > 0 || this.sel.clientes.length > 0 },
 		variacion() {
 			const t = this.res.totales
 			return t.minutos_prev > 0 ? Math.round((t.minutos - t.minutos_prev) * 100 / t.minutos_prev) : null
@@ -353,6 +353,7 @@ export default {
 	mounted() {
 		Promise.all([
 			Api.combos('time/abogados').then(r => { this.info.abogados = r.data }),
+			Api.combos('time/categorias-abogado').then(r => { this.categorias = r.data }),
 			Api.combos('time/clientes/1').then(r => { this.info.clientes = r.data }),
 			Api.request('GET', 'time-impresiones/analisis/gestiones').then(r => { this.info.gestiones = r.data })
 		]).then(() => { this.canFilter = true; this.doFilter() })

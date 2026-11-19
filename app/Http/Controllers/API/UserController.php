@@ -189,7 +189,8 @@ class UserController extends AppBaseController
             return $this->sendError('No se encontro el registro');
         }
 
-        $model->categoria_abogado = $request->get('categoria_abogado', null);
+        $this->validate($request, ['categoria_abogado_id' => 'nullable|exists:time_categorias_abogado,id']);
+        $model->categoria_abogado_id = $request->get('categoria_abogado_id', null) ?: null;
         $model->save();
 
         return $this->sendResponse($model->toArray(), 'La operacion finalizo con exito');

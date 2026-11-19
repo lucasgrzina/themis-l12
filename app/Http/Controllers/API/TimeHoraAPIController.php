@@ -302,7 +302,13 @@ class TimeHoraAPIController extends AppBaseController
             if (!$timer) {
                 throw new \Exception('No hay un timer en curso');
             }
-            $this->cerrarTimer($timer, $request->only(['cliente_id', 'gestion_id', 'referencia', 'descripcion']));
+            // Mientras el modal de terminar estuvo abierto el timer estuvo en pausa:
+            // ese tiempo no se computa (el cliente informa cuantos segundos pasaron).
+            $fin = Carbon::now()->subSeconds($this->segundosPausa($request));
+            if ($fin->lt($timer->inicio)) {
+                $fin = $timer->inicio->copy();
+            }
+            $this->cerrarTimer($timer, $request->only(['cliente_id', 'gestion_id', 'referencia', 'descripcion']), $fin);
             DB::commit();
         }
         catch(\Exception $e)
@@ -312,6 +318,28 @@ class TimeHoraAPIController extends AppBaseController
         }
 
         return $this->timerActual();
+    }
+
+    /**
+     * Reanuda un timer que estuvo en pausa (modal de terminar): corre el inicio
+     * hacia adelante tanto como duro la pausa, para no computar ese tiempo.
+     */
+    public function timerReanudar(Request $request)
+    {
+        $timer = TimeHora::where('user_id', request()->user()->id)->where('estado', 'corriendo')->first();
+        if ($timer) {
+            $ahora = Carbon::now();
+            $inicio = $timer->inicio->copy()->addSeconds($this->segundosPausa($request));
+            $timer->inicio = $inicio->gt($ahora) ? $ahora : $inicio;
+            $timer->save();
+        }
+        return $this->timerActual();
+    }
+
+    private function segundosPausa(Request $request)
+    {
+        // Tope de 24 hs para que un valor absurdo no desarme el registro
+        return min(86400, max(0, (int) $request->get('pausado_seg', 0)));
     }
 
     public function timerDescartar()

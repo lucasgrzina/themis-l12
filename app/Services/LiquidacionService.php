@@ -136,19 +136,19 @@ class LiquidacionService
 
     /**
      * Tarifa aplicable a una categoria de abogado (fallback a la base).
-     * Devuelve ['clave' => categoria en minusculas o '' si es la base, 'categoria' => ..., 'valor' => float].
+     * Devuelve ['clave' => id de categoria (string) o '' si es la base, 'categoria' => nombre, 'valor' => float].
      */
-    private function tarifaPara($categoria, $tarifas)
+    private function tarifaPara($categoriaId, $tarifas)
     {
-        if ($categoria) {
+        if ($categoriaId) {
             foreach ($tarifas as $t) {
-                if ($t->categoria !== null && mb_strtolower(trim($t->categoria)) === mb_strtolower(trim($categoria))) {
-                    return ['clave' => mb_strtolower(trim($t->categoria)), 'categoria' => $t->categoria, 'valor' => (float) $t->valor_hora];
+                if ($t->categoria_id !== null && (int) $t->categoria_id === (int) $categoriaId) {
+                    return ['clave' => (string) $t->categoria_id, 'categoria' => $t->categoriaAbogado ? $t->categoriaAbogado->nombre : null, 'valor' => (float) $t->valor_hora];
                 }
             }
         }
         foreach ($tarifas as $t) {
-            if ($t->categoria === null) {
+            if ($t->categoria_id === null) {
                 return ['clave' => '', 'categoria' => null, 'valor' => (float) $t->valor_hora];
             }
         }
@@ -177,17 +177,18 @@ class LiquidacionService
         $out = [];
         $vistas = [];
         foreach ($tarifas as $t) {
-            $clave = $t->categoria === null ? '' : mb_strtolower(trim($t->categoria));
+            $clave = $t->categoria_id === null ? '' : (string) $t->categoria_id;
+            $nombreCat = $t->categoriaAbogado ? $t->categoriaAbogado->nombre : null;
             if (isset($vistas[$clave])) {
                 continue; // ya tomamos la mas reciente
             }
             $vistas[$clave] = true;
             $out[] = [
                 'clave' => $clave,
-                'categoria' => $t->categoria,
+                'categoria' => $nombreCat,
                 'etiqueta' => $clave === ''
                     ? ($tienePiso ? 'HORA ABONO' : 'HORA')
-                    : 'HORA ' . mb_strtoupper(trim($t->categoria)),
+                    : 'HORA ' . mb_strtoupper(trim($nombreCat)),
                 'valor' => (float) $t->valor_hora,
             ];
         }
@@ -199,7 +200,7 @@ class LiquidacionService
     {
         // Solo tarifas vigentes al período (vigencia_desde <= desde, o sin vigencia).
         // Ordenadas desc para que tarifaPara() tome la más reciente aplicable.
-        $tarifas = TimeTarifa::where('cliente_id', $cliente->id)
+        $tarifas = TimeTarifa::with('categoriaAbogado')->where('cliente_id', $cliente->id)
             ->where(function ($q) use ($desde) {
                 $q->whereNull('vigencia_desde')->orWhere('vigencia_desde', '<=', $desde);
             })
@@ -241,13 +242,13 @@ class LiquidacionService
             }
         }
 
-        $usuarios = \App\User::whereIn('id', array_keys($minPorUser))
-            ->get(['id', 'name', 'categoria_abogado'])->keyBy('id');
+        $usuarios = \App\User::with('categoriaAbogado')->whereIn('id', array_keys($minPorUser))
+            ->get(['id', 'name', 'categoria_abogado_id'])->keyBy('id');
 
         // El Director ya no se carga como usuario: sus horas salen de los parametros del cliente.
         // Se ignora un eventual usuario legado con categoria 'Director' para no duplicarlo.
         foreach (array_keys($minPorUser) as $uid) {
-            $cat = isset($usuarios[$uid]) ? $usuarios[$uid]->categoria_abogado : null;
+            $cat = isset($usuarios[$uid]) && $usuarios[$uid]->categoriaAbogado ? $usuarios[$uid]->categoriaAbogado->nombre : null;
             if ($cat !== null && mb_strtolower(trim($cat)) === 'director') {
                 unset($minPorUser[$uid]);
             }
@@ -261,8 +262,8 @@ class LiquidacionService
         $minReales = 0;
 
         foreach ($minPorUser as $uid => $min) {
-            $categoria = isset($usuarios[$uid]) ? $usuarios[$uid]->categoria_abogado : null;
-            $tf = $this->tarifaPara($categoria, $tarifas);
+            $categoria = isset($usuarios[$uid]) && $usuarios[$uid]->categoriaAbogado ? $usuarios[$uid]->categoriaAbogado->nombre : null;
+            $tf = $this->tarifaPara(isset($usuarios[$uid]) ? $usuarios[$uid]->categoria_abogado_id : null, $tarifas);
             $horas = $min / 60.0;
             $brutoUsd = $horas * $tf['valor'];
             $baseParticipacion = $horas * ($tf['valor'] * $factorNeto) * $tc; // en $

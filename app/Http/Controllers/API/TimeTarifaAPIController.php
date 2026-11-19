@@ -25,11 +25,11 @@ class TimeTarifaAPIController extends AppBaseController
 
     public function index(Request $request)
     {
-        $query = (new TimeTarifa())->newQuery()->with(['cliente' => function($q){ $q->select('id','nombre_completo'); }]);
+        $query = (new TimeTarifa())->newQuery()->with(['categoriaAbogado:id,nombre', 'cliente' => function($q){ $q->select('id','nombre_completo'); }]);
         if ($request->filled('cliente_id')) {
             $query->where('cliente_id', $request->get('cliente_id'));
         }
-        $query->orderBy('cliente_id')->orderByRaw('categoria is null desc')->orderBy('categoria');
+        $query->orderBy('cliente_id')->orderByRaw('categoria_id is null desc')->orderBy('categoria_id');
 
         $collection = $query->paginate($request->get('per_page', 50));
 

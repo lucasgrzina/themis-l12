@@ -68,6 +68,12 @@ class AppServiceProvider extends ServiceProvider
         EstadoAnses::observe(EstadoAnsesObserver::class);
         TimeGestion::observe(TimeGestionObserver::class);
 
+        \Illuminate\Support\Facades\Mail::extend('graph', function (array $config) {
+            return new \App\Mail\Transport\GraphTransport(
+                $config['tenant_id'], $config['client_id'], $config['client_secret'], $config['sender']
+            );
+        });
+
         // En local, ningun mail sale a sus destinatarios reales: todos van a una unica casilla
         // (se reemplazan to/cc/bcc de cada mensaje, tambien los encolados).
         if ($this->app->environment('local') && config('themis.mail_local_redirect')) {

@@ -41,7 +41,7 @@ class AgostoLiquidacionSeeder extends Seeder
         $DARIO    = 579;
 
         // Categorias de abogados
-        User::where('id', $DARIO)->update(['categoria_abogado' => 'Sr']);
+        User::where('id', $DARIO)->update(['categoria_abogado_id' => \App\Models\TimeCategoriaAbogado::firstOrCreate(['nombre' => 'Sr'])->id]);
 
         // Tipo de cambio del periodo
         TimeTipoCambio::updateOrCreate(
@@ -83,13 +83,13 @@ class AgostoLiquidacionSeeder extends Seeder
             // Tarifas (idempotente: limpia y recrea)
             TimeTarifa::where('cliente_id', $cid)->forceDelete();
             TimeTarifa::create([
-                'cliente_id' => $cid, 'categoria' => null,
+                'cliente_id' => $cid, 'categoria_id' => null,
                 'valor_hora' => $valorBase, 'moneda' => 'USD',
                 'vigencia_desde' => self::PERIODO,
             ]);
             foreach ($extra as $cat => $valor) {
                 TimeTarifa::create([
-                    'cliente_id' => $cid, 'categoria' => $cat,
+                    'cliente_id' => $cid, 'categoria_id' => \App\Models\TimeCategoriaAbogado::firstOrCreate(['nombre' => $cat])->id,
                     'valor_hora' => $valor, 'moneda' => 'USD',
                     'vigencia_desde' => self::PERIODO,
                 ]);

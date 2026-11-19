@@ -42,6 +42,7 @@ Route::group(['middleware' => ['jwt.auth']], function()
         });
         Route::group(['prefix' => 'time'],function() {
             Route::get('abogados','CombosAPIController@timeAbogados');
+            Route::get('categorias-abogado','CombosAPIController@timeCategoriasAbogado');
             Route::get('clientes/{con_horas?}','CombosAPIController@timeClientes');
             Route::get('am-horas','CombosAPIController@timeAMHoras');
             Route::get('referencias/{cliente_id}','CombosAPIController@timeReferencias');
@@ -195,6 +196,7 @@ Route::group(['middleware' => ['jwt.auth']], function()
     Route::get('time-horas/timer', 'TimeHoraAPIController@timerActual');
     Route::post('time-horas/timer/iniciar', 'TimeHoraAPIController@timerIniciar');
     Route::post('time-horas/timer/terminar', 'TimeHoraAPIController@timerTerminar');
+    Route::post('time-horas/timer/reanudar', 'TimeHoraAPIController@timerReanudar');
     Route::post('time-horas/timer/descartar', 'TimeHoraAPIController@timerDescartar');
     Route::post('time-horas/{id}/vincular', 'TimeHoraAPIController@vincular');
     Route::delete('time-horas/eliminar-seleccion', 'TimeHoraAPIController@removeSelected');
@@ -228,6 +230,9 @@ Route::group(['middleware' => ['jwt.auth']], function()
 
         Route::delete('time-presupuestos/eliminar-seleccion', 'TimePresupuestoAPIController@removeSelected');
         Route::resource('time-presupuestos', 'TimePresupuestoAPIController');
+
+        Route::delete('time-categorias-abogado/eliminar-seleccion', 'TimeCategoriaAbogadoAPIController@removeSelected');
+        Route::resource('time-categorias-abogado', 'TimeCategoriaAbogadoAPIController');
 
         Route::delete('time-retenciones/eliminar-seleccion', 'TimeRetencionAPIController@removeSelected');
         Route::resource('time-retenciones', 'TimeRetencionAPIController');

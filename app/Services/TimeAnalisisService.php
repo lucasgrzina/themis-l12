@@ -156,7 +156,7 @@ class TimeAnalisisService
         }
         if ($f['categoria']) {
             $q->whereIn('h.user_id', function ($s) use ($f) {
-                $s->select('id')->from('users')->where('categoria_abogado', $f['categoria']);
+                $s->select('id')->from('users')->where('categoria_abogado_id', (int) $f['categoria']);
             });
         }
         if ($f['referencia'] !== '') {

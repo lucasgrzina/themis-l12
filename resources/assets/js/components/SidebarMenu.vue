@@ -52,6 +52,12 @@
             <span class="page">Tipos de documentos</span>
           </a>
         </router-link>
+        <router-link v-can="'time-categorias-abogados:R'" tag="li" class="pageLink" to="/sistema/categorias-abogados">
+          <a>
+            <i class="">&nbsp;</i>
+            <span class="page">Categorías de abogados (Time)</span>
+          </a>
+        </router-link>
         <router-link tag="li" class="pageLink" to="/sistema/paises">
           <a>
             <i class="">&nbsp;</i>

@@ -7,7 +7,8 @@ export default {
         pendientesEquipo: null, // solo administradores
         avisoHoras: 0,
         offset: 0, // ms: hora del servidor - hora del navegador
-        finishOpen: false
+        finishOpen: false,
+        pausedAt: null // ms (reloj del navegador) en que se abrio el modal de terminar; el cronometro queda congelado
     },
     mutations: {
         SET_TIMER_STATE (state, payload) {
@@ -19,6 +20,9 @@ export default {
         },
         SET_TIMER_FINISH_OPEN (state, open) {
             state.finishOpen = open;
+        },
+        SET_TIMER_PAUSED_AT (state, value) {
+            state.pausedAt = value;
         }
     },
     actions: {
@@ -33,17 +37,43 @@ export default {
         startTimer ({commit}, data) {
             return Api.post('time-horas/timer/iniciar', data || {}).then(resp => commit('SET_TIMER_STATE', resp.data));
         },
-        stopTimer ({commit}, data) {
-            return Api.post('time-horas/timer/terminar', data || {}).then(resp => commit('SET_TIMER_STATE', resp.data));
+        stopTimer ({commit, getters}, data) {
+            let payload = Object.assign({}, data, { pausado_seg: getters.timerPausedSeconds });
+            return Api.post('time-horas/timer/terminar', payload).then(resp => {
+                commit('SET_TIMER_PAUSED_AT', null);
+                commit('SET_TIMER_STATE', resp.data);
+            });
         },
         discardTimer ({commit}) {
             return Api.post('time-horas/timer/descartar', {}).then(resp => commit('SET_TIMER_STATE', resp.data));
         },
-        openTimerFinish ({commit}) {
+        // Cancela el timer en curso (sin guardar) y cierra el modal; queda listo para iniciar otro
+        cancelTimer ({commit}) {
+            return Api.post('time-horas/timer/descartar', {}).then(resp => {
+                commit('SET_TIMER_PAUSED_AT', null);
+                commit('SET_TIMER_FINISH_OPEN', false);
+                commit('SET_TIMER_STATE', resp.data);
+            });
+        },
+        // Abre el modal de terminar y congela el cronometro
+        openTimerFinish ({commit, state}) {
+            if (state.timer && !state.pausedAt) commit('SET_TIMER_PAUSED_AT', Date.now());
             commit('SET_TIMER_FINISH_OPEN', true);
         },
-        closeTimerFinish ({commit}) {
+        // Cierra el modal y, si estaba en pausa, reanuda el timer descontando la pausa
+        closeTimerFinish ({commit, state, getters}) {
             commit('SET_TIMER_FINISH_OPEN', false);
+            if (!state.pausedAt || !state.timer) {
+                commit('SET_TIMER_PAUSED_AT', null);
+                return Promise.resolve();
+            }
+            let segundos = getters.timerPausedSeconds;
+            return Api.post('time-horas/timer/reanudar', { pausado_seg: segundos })
+                .then(resp => commit('SET_TIMER_STATE', resp.data))
+                .finally(() => commit('SET_TIMER_PAUSED_AT', null));
         }
+    },
+    getters: {
+        timerPausedSeconds: state => state.pausedAt ? Math.max(0, Math.round((Date.now() - state.pausedAt) / 1000)) : 0
     }
 }

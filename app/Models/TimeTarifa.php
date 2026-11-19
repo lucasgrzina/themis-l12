@@ -27,7 +27,7 @@ class TimeTarifa extends Model
 
     public $fillable = [
         'cliente_id',
-        'categoria',
+        'categoria_id',
         'valor_hora',
         'moneda',
         'vigencia_desde',
@@ -35,7 +35,7 @@ class TimeTarifa extends Model
 
     protected $casts = [
         'cliente_id' => 'integer',
-        'categoria' => 'string',
+        'categoria_id' => 'integer',
         'valor_hora' => 'decimal:2',
         'moneda' => 'string',
     ];
@@ -43,7 +43,13 @@ class TimeTarifa extends Model
     public static $rules = [
         'cliente_id' => 'required',
         'valor_hora' => 'required|numeric',
+        'categoria_id' => 'nullable|exists:time_categorias_abogado,id',
     ];
+
+    public function categoriaAbogado()
+    {
+        return $this->belongsTo('App\Models\TimeCategoriaAbogado', 'categoria_id');
+    }
 
     public function cliente()
     {

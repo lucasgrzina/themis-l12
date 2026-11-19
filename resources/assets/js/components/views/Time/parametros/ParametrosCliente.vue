@@ -41,7 +41,10 @@
           </thead>
           <tbody>
             <tr v-if="tarifaForm">
-              <td><input type="text" class="form-control input-sm" v-model="tarifaForm.categoria" placeholder="(vacío = tarifa base)"></td>
+              <td><select class="form-control input-sm" v-model="tarifaForm.categoria_id">
+                  <option :value="null">(Base)</option>
+                  <option v-for="c in categorias" :value="c.id">{{ c.nombre }}</option>
+                </select></td>
               <td><input type="number" step="0.01" class="form-control input-sm text-right" v-model.number="tarifaForm.valor_hora"></td>
               <td>
                 <select class="form-control input-sm" v-model="tarifaForm.moneda">
@@ -55,7 +58,7 @@
               </td>
             </tr>
             <tr v-for="t in tarifas" :key="t.id">
-              <td>{{ t.categoria || '(Base)' }}</td>
+              <td>{{ t.categoria_abogado ? t.categoria_abogado.nombre : '(Base)' }}</td>
               <td class="text-right">{{ formatNum(t.valor_hora) }}</td>
               <td>{{ t.moneda }}</td>
               <td>{{ t.vigencia_desde | fecha }}</td>
@@ -272,6 +275,7 @@ export default {
     return {
       clientes: [],
       abogados: [],
+      categorias: [],
       clienteSel: null,
       cliente: null,
       tarifas: [],
@@ -289,6 +293,7 @@ export default {
   mounted () {
     Api.combos('time/clientes').then(resp => { this.clientes = resp.data })
     Api.combos('time/abogados').then(resp => { this.abogados = resp.data })
+    Api.combos('time/categorias-abogado').then(resp => { this.categorias = resp.data })
   },
   methods: {
     formatNum (v) {
@@ -335,14 +340,14 @@ export default {
     },
     // --- Tarifas ---
     nuevaTarifa () {
-      this.tarifaForm = { id: 0, cliente_id: this.cliente.id, categoria: null, valor_hora: null, moneda: 'USD', vigencia_desde: null }
+      this.tarifaForm = { id: 0, cliente_id: this.cliente.id, categoria_id: null, valor_hora: null, moneda: 'USD', vigencia_desde: null }
     },
     editarTarifa (t) {
-      this.tarifaForm = { id: t.id, cliente_id: this.cliente.id, categoria: t.categoria, valor_hora: parseFloat(t.valor_hora), moneda: t.moneda, vigencia_desde: t.vigencia_desde ? t.vigencia_desde.substring(0, 10) : null }
+      this.tarifaForm = { id: t.id, cliente_id: this.cliente.id, categoria_id: t.categoria_id, valor_hora: parseFloat(t.valor_hora), moneda: t.moneda, vigencia_desde: t.vigencia_desde ? t.vigencia_desde.substring(0, 10) : null }
     },
     guardarTarifa () {
       let data = Object.assign({}, this.tarifaForm)
-      if (data.categoria === '') data.categoria = null
+      if (data.categoria_id === '') data.categoria_id = null
       Api.store('time-tarifas/', data).then(r => {
         this.$store.dispatch('showSuccessNotification', r.data.message)
         this.tarifaForm = null

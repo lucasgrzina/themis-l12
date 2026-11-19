@@ -10,11 +10,14 @@ export default {
       timer: state => state.timer.timer,
       pendientes: state => state.timer.pendientes,
       timerOffset: state => state.timer.offset,
-      avisoHoras: state => state.timer.avisoHoras
+      avisoHoras: state => state.timer.avisoHoras,
+      pausedAt: state => state.timer.pausedAt
     }),
     elapsedSeconds () {
       if (!this.timer) return 0
-      return Math.max(0, Math.floor((this.now + this.timerOffset - new Date(this.timer.inicio).getTime()) / 1000))
+      // En pausa (modal de terminar abierto) el cronometro queda congelado
+      let ref = this.pausedAt || this.now
+      return Math.max(0, Math.floor((ref + this.timerOffset - new Date(this.timer.inicio).getTime()) / 1000))
     },
     excedido () {
       return !!this.timer && this.avisoHoras > 0 && this.elapsedSeconds > this.avisoHoras * 3600

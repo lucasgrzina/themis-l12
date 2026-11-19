@@ -23,6 +23,7 @@ import VistaAreas from './components/views/Areas/Crud.vue'
 import VistaAvisos from './components/views/Avisos/Listado.vue'
 import VistaVencimientos from './components/views/Avisos/Vencimientos.vue'
 import VistaTipoDocumentos from './components/views/TipoDocumentos/Crud.vue'
+import VistaTimeCategoriasAbogadoCrud from './components/views/Time/parametros/CategoriasAbogadoCrud.vue'
 import VistaTipoAportes from './components/views/TipoAportes/Crud.vue'
 import VistaCatalogoOpciones from './components/views/CatalogoOpciones/Crud.vue'
 import VistaTipoTramites from './components/views/TipoTramites/Crud.vue'
@@ -118,6 +119,13 @@ const router = new VueRouter({
               alias: 'sistema.tipo-documentos',
               component: VistaTipoDocumentos,
               name: 'tipos de documentos',
+              meta: { requiresAuth: true,description: ''}
+            },
+            {
+              path: '/sistema/categorias-abogados',
+              alias: 'sistema.categorias-abogados',
+              component: VistaTimeCategoriasAbogadoCrud,
+              name: 'Time: ABM de categorías de abogados',
               meta: { requiresAuth: true,description: ''}
             },
             {

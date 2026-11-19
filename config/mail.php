@@ -49,6 +49,14 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
+        'graph' => [
+            'transport' => 'graph',
+            'tenant_id' => env('MS_GRAPH_TENANT_ID'),
+            'client_id' => env('MS_GRAPH_CLIENT_ID'),
+            'client_secret' => env('MS_GRAPH_CLIENT_SECRET'),
+            'sender' => env('MAIL_FROM_ADDRESS'),
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],

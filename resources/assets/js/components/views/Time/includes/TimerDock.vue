@@ -13,7 +13,7 @@
       </div>
       <div slot="modal-body" class="modal-body" @keyup.esc="finishOpen = false">
         <modal-errors :messages="finish.errors"/>
-        <p class="text-muted">Podés vincularlo ahora o guardarlo sin vincular y completarlo más tarde.</p>
+        <p class="text-muted"><i class="fa fa-pause"></i> El timer está en pausa mientras esta ventana está abierta. Podés vincularlo ahora o guardarlo sin vincular y completarlo más tarde.</p>
         <div class="row">
           <div class="form-group col-sm-12">
             <label>Cliente</label>
@@ -37,10 +37,16 @@
           </div>
         </div>
       </div>
-      <div slot="modal-footer" class="modal-footer">
-        <button class="btn btn-flat btn-default" :disabled="busy" @click.prevent="finishOpen = false">Cancelar</button>
-        <button class="btn btn-flat btn-warning" :disabled="busy" @click.prevent="stop(false)">Guardar sin vincular</button>
-        <button class="btn btn-flat bg-purple" :disabled="busy" @click.prevent="stop(true)">Guardar y vincular</button>
+      <div slot="modal-footer" class="modal-footer timer-footer">
+        <button class="btn btn-flat btn-danger pull-left" :disabled="busy" @click.prevent="cancelar" title="Descarta el timer actual sin guardar nada"><i class="fa fa-times"></i> Cancelar</button>
+        <button class="btn btn-flat btn-default" :disabled="busy" @click.prevent="finishOpen = false" title="Cierra esta ventana y el timer sigue corriendo"><i class="fa fa-play"></i> Continuar</button>
+        <div class="btn-group dropup" :class="{open: saveMenu}">
+          <button class="btn btn-flat bg-purple" :disabled="busy" @click.prevent="saveMenu = false; stop(true)">Guardar y vincular</button>
+          <button class="btn btn-flat bg-purple dropdown-toggle" :disabled="busy" @click.prevent="saveMenu = !saveMenu"><span class="caret"></span></button>
+          <ul class="dropdown-menu dropdown-menu-right">
+            <li><a href="javascript:void(0)" @click="saveMenu = false; stop(false)">Guardar sin vincular</a></li>
+          </ul>
+        </div>
       </div>
     </modal>
   </div>
@@ -62,6 +68,7 @@ export default {
   data () {
     return {
       busy: false,
+      saveMenu: false,
       gestiones: [],
       referencias: [],
       finish: { errors: '', cliente: null, cliente_id: null, gestion_id: null, referencia: null, descripcion: '' }
@@ -85,6 +92,7 @@ export default {
   },
   watch: {
     finishOpen (open) {
+      this.saveMenu = false
       if (open) this.prepareFinish()
     }
   },
@@ -133,6 +141,12 @@ export default {
       if (item) {
         Api.combos('time/referencias/' + item.id).then(resp => { this.referencias = resp.data.referencias })
       }
+    },
+    cancelar () {
+      this.$dialog.confirm('¿Cancelar el timer en curso? No se guardará ningún registro.', { loader: true }).then(dialog => {
+        this.busy = true
+        this.$store.dispatch('cancelTimer').then(() => dialog.close(), () => dialog.close()).finally(() => { this.busy = false })
+      })
     },
     stop (vincular) {
       let f = this.finish

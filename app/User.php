@@ -20,9 +20,10 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','responsable','username','time_level','categoria_abogado','activo'
+        'name', 'email', 'password','responsable','username','time_level','categoria_abogado_id','activo'
     ];
     protected $casts = [
+        'categoria_abogado_id' => 'int',
         'time_level' => 'int',
         'activo' => 'boolean'
     ];
@@ -92,5 +93,10 @@ class User extends Authenticatable implements JWTSubject
         $tl = [1 => 'Nivel 1',2 => 'Nivel 2',5 => 'Administrador','' => 'No usa'];
         
         return isset($this->attributes['time_level']) ? $tl[$this->attributes['time_level']] : '';
+    }
+
+    public function categoriaAbogado()
+    {
+        return $this->belongsTo('App\Models\TimeCategoriaAbogado', 'categoria_abogado_id');
     }
 }

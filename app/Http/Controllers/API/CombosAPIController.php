@@ -423,18 +423,31 @@ class CombosAPIController extends AppBaseController
         return $this->sendResponse($data, 'La operacion finalizo con exito');
     }     
 
-    public function timeAbogados(UsersRepository $userRepo)
+    public function timeAbogados(UsersRepository $userRepo, Request $request)
     {
-        $data =  $userRepo->scopeQuery(function($query){
+        // ?estado=activos|inactivos filtra por baja logica; sin el parametro (o 'todos') trae a todos
+        $estado = $request->get('estado');
+        $data =  $userRepo->scopeQuery(function($query) use ($estado){
+            if ($estado === 'activos') {
+                $query = $query->where('activo', true);
+            } elseif ($estado === 'inactivos') {
+                $query = $query->where('activo', false);
+            }
             return $query
                         ->whereVisible(true)
                         ->whereResponsable(true)
                         ->whereIn('time_level',[1,5])
                         ->orderBy('name','asc');
-        })->all(['id','name','categoria_abogado']);
+        })->all(['id','name','categoria_abogado_id']);
 
 
         return $this->sendResponse($data, 'La operacion finalizo con exito');
     }         
+
+    public function timeCategoriasAbogado()
+    {
+        $data = \App\Models\TimeCategoriaAbogado::orderBy('nombre')->get(['id', 'nombre']);
+        return $this->sendResponse($data, 'La operacion finalizo con exito');
+    }
 
 }
